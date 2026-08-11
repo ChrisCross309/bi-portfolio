@@ -1,0 +1,10 @@
+{
+  "_comment": "Stratified sample of NfipClaims v3 raw, built by just fixture. Deterministic reservoir seed 20260811. Not a live API response.",
+  "hash": "fixture-not-a-real-publisher-hash",
+  "identifier": "openfema-fixture",
+  "lastDataSetRefresh": "1970-01-01T00:00:00.000Z",
+  "lastRefresh": "1970-01-01T00:00:00.000Z",
+  "name": "NfipClaims",
+  "recordCount": 900,
+  "version": 3
+}
