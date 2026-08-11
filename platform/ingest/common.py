@@ -1,0 +1,329 @@
+"""Shared ingestion utilities, extracted from two working fetchers.
+
+Written only after `ingest.insurance.nfip_claims` and `ingest.fintech.cfpb` were both
+complete and verified against live publishers, so everything here is a generalization
+of code that already worked twice rather than a guess at what a fetcher might need.
+See CLAUDE.md section 8.
+
+What deliberately did NOT move here, because the two sources disagree about it and
+inventing a common shape would mean inventing one neither publisher has:
+
+  * discovery          a JSON dataset catalogue (OpenFEMA) vs scraping an HTML page (CFPB)
+  * source counts      a `recordCount` field vs an Elasticsearch `hits.total.value`
+  * refresh keys       a `lastDataSetRefresh` field vs a `last-modified` HTTP header
+  * partition rules    "is this a US state code?" vs "is this a plausible complaint year?"
+  * caveats            deprecation windows vs publication-window coverage limits
+
+Those live with the source that owns them.
+"""
+
+from __future__ import annotations
+
+import hashlib
+import json
+import shutil
+import time
+from collections.abc import Callable
+from pathlib import Path
+from typing import Any
+
+import duckdb
+import httpx
+from tenacity import retry, retry_if_exception_type, stop_after_attempt, wait_exponential
+
+REPO_ROOT = Path(__file__).resolve().parents[2]
+
+# No publisher documents a hard rate limit; behave as if all of them do.
+USER_AGENT = "bi-portfolio-pipeline/0.1 (chris.hall309@gmail.com)"
+PAGE_SLEEP_SECONDS = 1.5
+CHUNK_BYTES = 1024 * 1024
+
+# DuckDB writes rows whose partition key is NULL into this directory and maps it back
+# to NULL on read. Surfaced explicitly everywhere so it can never vanish quietly.
+HIVE_NULL_PARTITION = "__HIVE_DEFAULT_PARTITION__"
+
+
+class DiscoveryError(RuntimeError):
+    """The publisher's metadata did not look the way we require.
+
+    Always carries the raw response. We stop rather than code around a surprise.
+    """
+
+
+class TransientHTTPError(RuntimeError):
+    """A 429 or 5xx worth retrying."""
+
+
+# ── small helpers ─────────────────────────────────────────────────────────────
+
+
+def make_logger(track: str, source: str) -> Callable[[str], None]:
+    def log(message: str) -> None:
+        print(f"[{track}/{source}] {message}", flush=True)
+
+    return log
+
+
+def human_bytes(count: float) -> str:
+    return f"{count / 1e9:.2f} GB" if count >= 1e9 else f"{count / 1e6:.1f} MB"
+
+
+def sha256_of(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as handle:
+        while chunk := handle.read(CHUNK_BYTES):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
+def write_json(path: Path, payload: Any) -> None:
+    """Deterministic committed-artifact JSON: sorted, LF, trailing newline.
+
+    Windows text mode would otherwise emit CRLF and no final newline, so every run
+    would rewrite the file and pre-commit would rewrite it back.
+    """
+    path.write_text(
+        json.dumps(payload, indent=2, sort_keys=True) + "\n", encoding="utf-8", newline="\n"
+    )
+
+
+def sql_literal(path: Path | str) -> str:
+    """Quote a path for inline SQL. DuckDB takes forward slashes on every platform."""
+    return "'" + str(path).replace("\\", "/").replace("'", "''") + "'"
+
+
+def paths_for(mode: str) -> tuple[Path, Path]:
+    """Fixture runs are fully isolated so they can never clobber real raw data."""
+    if mode == "fixture":
+        return REPO_ROOT / "data" / "_fixture", REPO_ROOT / "platform" / "duckdb" / "fixture.duckdb"
+    return REPO_ROOT / "data", REPO_ROOT / "platform" / "duckdb" / "bi_portfolio.duckdb"
+
+
+def read_existing_manifest(raw_dir: Path) -> dict[str, Any] | None:
+    manifest = raw_dir / "manifest.json"
+    if not manifest.exists():
+        return None
+    try:
+        return json.loads(manifest.read_text(encoding="utf-8"))
+    except json.JSONDecodeError:
+        return None
+
+
+# ── network ───────────────────────────────────────────────────────────────────
+
+retrying = retry(
+    retry=retry_if_exception_type((TransientHTTPError, httpx.TimeoutException, httpx.NetworkError)),
+    wait=wait_exponential(multiplier=1, min=2, max=30),
+    stop=stop_after_attempt(5),
+    reraise=True,
+)
+
+
+def raise_for_transient(response: httpx.Response) -> None:
+    if response.status_code == 429 or response.status_code >= 500:
+        raise TransientHTTPError(f"HTTP {response.status_code} from {response.request.url}")
+    response.raise_for_status()
+
+
+def http_client(read_timeout: float = 300.0) -> httpx.Client:
+    """An honest User-Agent on every request. BLS 403s the default one, and a
+    publisher that wants to throttle us should be able to identify us first."""
+    return httpx.Client(
+        timeout=httpx.Timeout(30.0, read=read_timeout),
+        headers={"User-Agent": USER_AGENT},
+        follow_redirects=True,
+    )
+
+
+@retrying
+def stream_download(
+    client: httpx.Client,
+    url: str,
+    destination: Path,
+    *,
+    log: Callable[[str], None],
+    progress_every: int = 50 * CHUNK_BYTES,
+) -> tuple[int, str]:
+    """Stream to a .part file, hashing as we go, and rename only on completion."""
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    part = destination.with_name(destination.name + ".part")
+    digest = hashlib.sha256()
+    total = 0
+    next_progress = progress_every
+
+    with client.stream("GET", url) as response:
+        raise_for_transient(response)
+        expected = int(response.headers.get("content-length") or 0)
+        with part.open("wb") as handle:
+            for chunk in response.iter_bytes(CHUNK_BYTES):
+                handle.write(chunk)
+                digest.update(chunk)
+                total += len(chunk)
+                if total >= next_progress:
+                    share = f" of {human_bytes(expected)}" if expected else ""
+                    log(f"  downloaded {human_bytes(total)}{share}")
+                    next_progress += progress_every
+
+    if expected and total != expected:
+        part.unlink(missing_ok=True)
+        raise TransientHTTPError(f"Truncated download: got {total} bytes, expected {expected}")
+
+    part.replace(destination)
+    return total, digest.hexdigest()
+
+
+@retrying
+def _odata_page(
+    client: httpx.Client, url: str, params: dict[str, str], envelope_key: str
+) -> list[dict[str, Any]]:
+    response = client.get(url, params=params)
+    raise_for_transient(response)
+    return response.json().get(envelope_key, [])
+
+
+def fetch_odata_records(
+    client: httpx.Client,
+    url: str,
+    envelope_key: str,
+    *,
+    params: dict[str, str] | None = None,
+    page_size: int = 1000,
+    sleep: float = PAGE_SLEEP_SECONDS,
+) -> list[dict[str, Any]]:
+    """Page an OpenFEMA endpoint to exhaustion via $top/$skip.
+
+    OData-shaped only: Socrata pages with $limit/$offset and needs an explicit
+    $order to be deterministic, so it will bring its own loop when it lands rather
+    than bending this one into a shape neither publisher actually uses.
+    """
+    records: list[dict[str, Any]] = []
+    skip = 0
+    while True:
+        page = _odata_page(
+            client,
+            url,
+            {**(params or {}), "$top": str(page_size), "$skip": str(skip)},
+            envelope_key,
+        )
+        if not page:
+            return records
+        records.extend(page)
+        skip += len(page)
+        time.sleep(sleep)
+
+
+# ── DuckDB conversion and load ────────────────────────────────────────────────
+
+
+def raw_relation(raw_dir: Path) -> str:
+    """Read the partitioned tree, restoring the partition key from the path.
+
+    DuckDB's PARTITION_BY removes the key from the written files, so hive
+    partitioning reconstructs it rather than colliding with a duplicate column.
+    """
+    pattern = raw_dir / "**" / "*.parquet"
+    return f"read_parquet({sql_literal(pattern)}, hive_partitioning=true)"
+
+
+def repartition_to_raw(
+    con: duckdb.DuckDBPyConnection,
+    *,
+    relation: str,
+    raw_dir: Path,
+    partition_column: str,
+    projection: str = "*",
+) -> tuple[int, int]:
+    """Convert landing -> raw parquet, partitioned. Layout only, no content change.
+
+    Truncate-and-reload: the new tree is built beside the old one and swapped in, so
+    a re-run can never merge fresh partitions into stale ones.
+    """
+    rows_landing = con.execute(f"SELECT count(*) FROM {relation}").fetchone()[0]
+
+    staging = raw_dir.parent / f".{raw_dir.name}.staging"
+    previous = raw_dir.parent / f".{raw_dir.name}.previous"
+    # DuckDB's COPY creates the partition tree but not its parents.
+    raw_dir.parent.mkdir(parents=True, exist_ok=True)
+    for scratch in (staging, previous):
+        shutil.rmtree(scratch, ignore_errors=True)
+
+    con.execute(
+        f"COPY (SELECT {projection} FROM {relation}) TO {sql_literal(staging)} "
+        f"(FORMAT parquet, PARTITION_BY ({partition_column}))"
+    )
+
+    if raw_dir.exists():
+        raw_dir.rename(previous)
+    staging.rename(raw_dir)
+    shutil.rmtree(previous, ignore_errors=True)
+
+    rows_raw = con.execute(f"SELECT count(*) FROM {raw_relation(raw_dir)}").fetchone()[0]
+    return rows_landing, rows_raw
+
+
+def partition_counts(
+    con: duckdb.DuckDBPyConnection, raw_dir: Path, partition_column: str
+) -> dict[str, int]:
+    rows = con.execute(
+        f"SELECT COALESCE({partition_column}, '{HIVE_NULL_PARTITION}') AS partition_key, "
+        f"count(*) AS n FROM {raw_relation(raw_dir)} GROUP BY 1 ORDER BY 1"
+    ).fetchall()
+    return {str(key): int(count) for key, count in rows}
+
+
+def load_table(con: duckdb.DuckDBPyConnection, table: str, raw_dir: Path) -> int:
+    schema = table.split(".")[0]
+    con.execute(f"CREATE SCHEMA IF NOT EXISTS {schema}")
+    con.execute(f"CREATE OR REPLACE TABLE {table} AS SELECT * FROM {raw_relation(raw_dir)}")
+    return con.execute(f"SELECT count(*) FROM {table}").fetchone()[0]
+
+
+# ── manifest ──────────────────────────────────────────────────────────────────
+
+
+def base_manifest(
+    *,
+    track: str,
+    source: str,
+    publisher: str,
+    dataset_name: str | None,
+    resolved_url: str,
+    distribution_format: str,
+    retrieved_at: str,
+    landing_files: list[dict[str, Any]],
+    source_reported_count: int | None,
+    source_last_refresh: str | None,
+    duckdb_table: str,
+    rows_landing: int,
+    rows_raw: int,
+    rows_duckdb: int,
+    partition_column: str,
+    partition_rows: dict[str, int],
+    nonstandard_partitions: dict[str, int],
+) -> dict[str, Any]:
+    """The fields every source records. Callers merge their own on top.
+
+    This is what L1's count chain reads, plus enough provenance to defend a number
+    months later: which URL, retrieved when, what the publisher claimed at the time.
+    """
+    return {
+        "track": track,
+        "source": source,
+        "publisher": publisher,
+        "dataset_name": dataset_name,
+        "resolved_url": resolved_url,
+        "distribution_format": distribution_format,
+        "retrieved_at": retrieved_at,
+        "landing_files": landing_files,
+        "source_reported_count": source_reported_count,
+        "source_last_refresh": source_last_refresh,
+        "duckdb_table": duckdb_table,
+        "rows_landing": rows_landing,
+        "rows_raw": rows_raw,
+        "rows_duckdb": rows_duckdb,
+        "partition_column": partition_column,
+        "partition_rows": partition_rows,
+        "null_partition_rows": partition_rows.get(HIVE_NULL_PARTITION, 0),
+        "nonstandard_partition_keys": sorted(nonstandard_partitions),
+        "nonstandard_partition_rows": sum(nonstandard_partitions.values()),
+    }
