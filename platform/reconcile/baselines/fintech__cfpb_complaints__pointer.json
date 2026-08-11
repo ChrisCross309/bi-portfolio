@@ -1,0 +1,8 @@
+{
+  "api_reference": "https://cfpb.github.io/api/ccdb/api.html",
+  "data_page": "https://www.consumerfinance.gov/data-research/consumer-complaints/",
+  "field_reference": "https://cfpb.github.io/api/ccdb/fields.html",
+  "note": "CFPB publishes no machine-readable field metadata; this is a pointer file, per CLAUDE.md rule 8.",
+  "release_notes": "https://cfpb.github.io/api/ccdb/release-notes.html",
+  "retrieved_at": "2026-08-11T21:29:01.345193Z"
+}

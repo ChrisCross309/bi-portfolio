@@ -1,6 +1,12 @@
 # Normalize line endings: Windows dev machine, Linux CI, and future TMDL diffs.
 * text=auto eol=lf
 
+# Committed fixtures are byte-exact samples of publisher output and must never be
+# normalized. CFPB narratives are consumer-typed free text containing CR bytes and
+# trailing whitespace inside quoted CSV fields -- that is data, not formatting, and
+# rewriting it would make CI's fixture differ from what the live pipeline reads.
+tests/fixtures/** -text
+
 # Binary — never diffed, never eol-converted.
 *.parquet binary
 *.duckdb  binary

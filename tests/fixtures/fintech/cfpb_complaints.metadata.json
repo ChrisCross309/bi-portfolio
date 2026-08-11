@@ -1,0 +1,7 @@
+{
+  "_comment": "Stratified sample of the CFPB bulk archive, built by just fixture. Deterministic reservoir seed 20260811. Not a live publisher response.",
+  "etag": "\"fixture-not-a-real-etag\"",
+  "last_modified": "Thu, 01 Jan 1970 00:00:00 GMT",
+  "source_reported_count": 680,
+  "source_reported_michigan": 212
+}
