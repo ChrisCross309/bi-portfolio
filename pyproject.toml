@@ -1,0 +1,51 @@
+[project]
+name = "bi-portfolio"
+version = "0.1.0"
+description = "One shared BI platform, three separate regulated-domain projects: flood insurance, consumer lending, and cognitive health."
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "duckdb>=1.1",
+    "httpx>=0.27",
+    "pyarrow>=17",
+    "tenacity>=9",
+    # CMS publishes some legacy PUFs as Excel with title rows above the header.
+    "openpyxl>=3.1",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=8",
+    "ruff>=0.6",
+    "pre-commit>=3.8",
+]
+
+# Not an installable package — `platform/` is on the import path instead.
+# See CLAUDE.md section 5 for why there is no `platform/__init__.py`.
+[tool.uv]
+package = false
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = [
+    "E",   # pycodestyle errors
+    "W",   # pycodestyle warnings
+    "F",   # pyflakes
+    "I",   # isort
+    "UP",  # pyupgrade
+    "B",   # flake8-bugbear
+    "SIM", # flake8-simplify
+]
+
+[tool.pytest.ini_options]
+# `platform/` on sys.path, not the repo root: importing `platform` as a top-level
+# package would shadow the standard library module of the same name.
+pythonpath = ["platform"]
+testpaths = ["tests"]
+addopts = "-m 'not slow' --strict-markers"
+markers = [
+    "slow: hits a live publisher endpoint; excluded from CI, which never touches the network",
+]

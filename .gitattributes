@@ -1,0 +1,19 @@
+# Normalize line endings: Windows dev machine, Linux CI, and future TMDL diffs.
+* text=auto eol=lf
+
+# Binary — never diffed, never eol-converted.
+*.parquet binary
+*.duckdb  binary
+*.zip     binary
+*.gz      binary
+*.xlsx    binary
+*.xls     binary
+*.docx    binary
+*.pbix    binary
+*.png     binary
+*.jpg     binary
+
+# Power BI project files (session 3) are text and must stay LF for reviewable diffs.
+*.tmdl        text eol=lf
+*.pbip        text eol=lf
+*.json        text eol=lf

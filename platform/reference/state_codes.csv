@@ -1,0 +1,57 @@
+state_code,state_name,state_fips,entity_type,census_region,census_region_name,census_division,census_division_name
+AK,Alaska,02,state,4,West,9,Pacific
+AL,Alabama,01,state,3,South,6,East South Central
+AR,Arkansas,05,state,3,South,7,West South Central
+AS,American Samoa,60,territory,,,,
+AZ,Arizona,04,state,4,West,8,Mountain
+CA,California,06,state,4,West,9,Pacific
+CO,Colorado,08,state,4,West,8,Mountain
+CT,Connecticut,09,state,1,Northeast,1,New England
+DC,District of Columbia,11,district,3,South,5,South Atlantic
+DE,Delaware,10,state,3,South,5,South Atlantic
+FL,Florida,12,state,3,South,5,South Atlantic
+GA,Georgia,13,state,3,South,5,South Atlantic
+GU,Guam,66,territory,,,,
+HI,Hawaii,15,state,4,West,9,Pacific
+IA,Iowa,19,state,2,Midwest,4,West North Central
+ID,Idaho,16,state,4,West,8,Mountain
+IL,Illinois,17,state,2,Midwest,3,East North Central
+IN,Indiana,18,state,2,Midwest,3,East North Central
+KS,Kansas,20,state,2,Midwest,4,West North Central
+KY,Kentucky,21,state,3,South,6,East South Central
+LA,Louisiana,22,state,3,South,7,West South Central
+MA,Massachusetts,25,state,1,Northeast,1,New England
+MD,Maryland,24,state,3,South,5,South Atlantic
+ME,Maine,23,state,1,Northeast,1,New England
+MI,Michigan,26,state,2,Midwest,3,East North Central
+MN,Minnesota,27,state,2,Midwest,4,West North Central
+MO,Missouri,29,state,2,Midwest,4,West North Central
+MP,Northern Mariana Islands,69,territory,,,,
+MS,Mississippi,28,state,3,South,6,East South Central
+MT,Montana,30,state,4,West,8,Mountain
+NC,North Carolina,37,state,3,South,5,South Atlantic
+ND,North Dakota,38,state,2,Midwest,4,West North Central
+NE,Nebraska,31,state,2,Midwest,4,West North Central
+NH,New Hampshire,33,state,1,Northeast,1,New England
+NJ,New Jersey,34,state,1,Northeast,2,Middle Atlantic
+NM,New Mexico,35,state,4,West,8,Mountain
+NV,Nevada,32,state,4,West,8,Mountain
+NY,New York,36,state,1,Northeast,2,Middle Atlantic
+OH,Ohio,39,state,2,Midwest,3,East North Central
+OK,Oklahoma,40,state,3,South,7,West South Central
+OR,Oregon,41,state,4,West,9,Pacific
+PA,Pennsylvania,42,state,1,Northeast,2,Middle Atlantic
+PR,Puerto Rico,72,territory,,,,
+RI,Rhode Island,44,state,1,Northeast,1,New England
+SC,South Carolina,45,state,3,South,5,South Atlantic
+SD,South Dakota,46,state,2,Midwest,4,West North Central
+TN,Tennessee,47,state,3,South,6,East South Central
+TX,Texas,48,state,3,South,7,West South Central
+UT,Utah,49,state,4,West,8,Mountain
+VA,Virginia,51,state,3,South,5,South Atlantic
+VI,U.S. Virgin Islands,78,territory,,,,
+VT,Vermont,50,state,1,Northeast,1,New England
+WA,Washington,53,state,4,West,9,Pacific
+WI,Wisconsin,55,state,2,Midwest,3,East North Central
+WV,West Virginia,54,state,3,South,5,South Atlantic
+WY,Wyoming,56,state,4,West,8,Mountain
