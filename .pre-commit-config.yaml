@@ -9,10 +9,16 @@ repos:
       - id: check-merge-conflict
       - id: check-yaml
       - id: check-toml
+      # Fixtures are excluded from every whitespace-rewriting hook: they are
+      # byte-exact publisher samples, and CR bytes and trailing spaces inside
+      # quoted narrative fields are data. See .gitattributes.
       - id: end-of-file-fixer
+        exclude: ^tests/fixtures/
       - id: trailing-whitespace
+        exclude: ^tests/fixtures/
       - id: mixed-line-ending
         args: [--fix=lf]
+        exclude: ^tests/fixtures/
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
     rev: v0.16.2
