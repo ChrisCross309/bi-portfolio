@@ -1,0 +1,10 @@
+{
+  "_comment": "Stratified sample of DisasterDeclarationsSummaries, built by just fixture. Reservoir seed 20260811. Anchor declarations [3525, 4547, 4607] are included in full so fixture mode runs the same anchor assertions as the live pull.",
+  "hash": "fixture-not-a-real-publisher-hash",
+  "identifier": "openfema-fixture",
+  "lastDataSetRefresh": "1970-01-01T00:00:00.000Z",
+  "lastRefresh": "1970-01-01T00:00:00.000Z",
+  "name": "DisasterDeclarationsSummaries",
+  "recordCount": 807,
+  "version": 2
+}
