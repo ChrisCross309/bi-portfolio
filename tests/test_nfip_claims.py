@@ -7,10 +7,10 @@ from datetime import UTC, datetime
 
 import httpx
 import pytest
+from ingest.common import USER_AGENT
 from ingest.insurance.nfip_claims import (
     DATASET,
     HIVE_NULL_PARTITION,
-    USER_AGENT,
     DiscoveryError,
     deprecation_notice,
     discover_dataset,
