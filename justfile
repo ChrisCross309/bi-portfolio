@@ -55,6 +55,7 @@ check:
 ci:
     uv run python -m ingest.insurance.nfip_claims --mode fixture
     uv run python -m ingest.insurance.nfip_policies --mode fixture
+    uv run python -m ingest.insurance.fema_declarations --mode fixture
     uv run python -m ingest.fintech.cfpb --mode fixture
     uv run python -m reconcile.l1_integrity --mode fixture
 
