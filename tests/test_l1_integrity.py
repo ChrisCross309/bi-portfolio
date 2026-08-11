@@ -169,8 +169,10 @@ def test_warnings_do_not_fail_the_run_but_failures_do() -> None:
 @pytest.mark.filterwarnings("ignore")
 def test_fixture_mode_load_and_l1_pass_offline() -> None:
     """Exactly what `just ci` runs: load committed fixtures, then verify them."""
+    from ingest.insurance import nfip_policies
     from reconcile import l1_integrity
 
     assert nfip_claims.main(["--mode", "fixture"]) == 0
+    assert nfip_policies.main(["--mode", "fixture"]) == 0
     assert cfpb.main(["--mode", "fixture"]) == 0
     assert l1_integrity.main(["--mode", "fixture"]) == 0

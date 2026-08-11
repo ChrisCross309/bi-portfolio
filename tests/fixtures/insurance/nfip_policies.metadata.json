@@ -1,0 +1,10 @@
+{
+  "_comment": "Stratified sample of NfipPolicies v3 Michigan raw, built by just fixture. Deterministic reservoir seed 20260811. Ordered by id so fixture mode exercises the same ascending-id paging invariant as the live pull.",
+  "hash": "fixture-not-a-real-publisher-hash",
+  "identifier": "openfema-fixture",
+  "lastDataSetRefresh": "1970-01-01T00:00:00.000Z",
+  "lastRefresh": "1970-01-01T00:00:00.000Z",
+  "name": "NfipPolicies",
+  "recordCount": 74349525,
+  "version": 3
+}
