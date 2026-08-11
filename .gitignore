@@ -1,0 +1,31 @@
+# ── data: never committed ──────────────────────────────────
+# Fetchers create these directories on demand; a fresh clone has none.
+data/
+*.duckdb
+*.duckdb.wal
+platform/duckdb/
+
+# ── secrets ────────────────────────────────────────────────
+.env
+.env.*
+!.env.example
+
+# ── python ─────────────────────────────────────────────────
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+*.egg-info/
+
+# ── session 2+ (dbt) ───────────────────────────────────────
+target/
+dbt_packages/
+logs/
+
+# ── os / editor ────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

@@ -1,0 +1,39 @@
+name: ci
+
+# CI NEVER downloads bulk files and NEVER calls an external API.
+# Once the fixture harness lands (PR: feat/l1-core), this workflow gains
+# `just check` and `just ci` — fixture-mode load plus offline L1 logic.
+# Until then it is lint-only, so the required check exists from PR #1.
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    name: lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+
+      - name: Sync dependencies
+        run: uv sync --locked
+
+      - name: Ruff lint
+        run: uv run ruff check --output-format=github .
+
+      - name: Ruff format
+        run: uv run ruff format --check .
