@@ -1,9 +1,9 @@
 name: ci
 
 # CI NEVER downloads bulk files and NEVER calls an external API.
-# Once the fixture harness lands (PR: feat/l1-core), this workflow gains
-# `just check` and `just ci` — fixture-mode load plus offline L1 logic.
-# Until then it is lint-only, so the required check exists from PR #1.
+# `just ci` runs entirely against the committed fixtures in tests/fixtures/, and
+# DATA_MODE=fixture is set job-wide as a second guard: if a recipe ever forgot its
+# --mode flag, the loaders still refuse to reach a publisher.
 
 on:
   pull_request:
@@ -21,6 +21,8 @@ jobs:
   check:
     name: lint
     runs-on: ubuntu-latest
+    env:
+      DATA_MODE: fixture
     steps:
       - uses: actions/checkout@v4
 
@@ -29,11 +31,17 @@ jobs:
         with:
           enable-cache: true
 
+      - name: Install just
+        uses: extractions/setup-just@v2
+
       - name: Sync dependencies
         run: uv sync --locked
 
       - name: Ruff lint
         run: uv run ruff check --output-format=github .
 
-      - name: Ruff format
-        run: uv run ruff format --check .
+      - name: Lint, format, and test
+        run: just check
+
+      - name: Fixture-mode load and L1 integrity
+        run: just ci

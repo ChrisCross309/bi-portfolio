@@ -53,6 +53,8 @@ check:
 
 # what CI runs: load committed fixtures, then L1 logic with network checks skipped
 ci:
+    uv run python -m ingest.insurance.nfip_claims --mode fixture
+    uv run python -m ingest.fintech.cfpb --mode fixture
     uv run python -m reconcile.l1_integrity --mode fixture
 
 # regenerate committed fixtures from local raw — deliberate, never automatic
