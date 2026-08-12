@@ -21,6 +21,7 @@ from ingest.common import (
     load_state_codes,
     nonstandard_partitions,
     paths_for,
+    raw_relation,
     read_existing_manifest,
     repartition_to_raw,
     sha256_of,
@@ -132,6 +133,45 @@ def test_missing_or_corrupt_manifest_reads_as_none(tmp_path: Path) -> None:
     assert read_existing_manifest(tmp_path) is None
     (tmp_path / "manifest.json").write_text("{ not json", encoding="utf-8")
     assert read_existing_manifest(tmp_path) is None
+
+
+@pytest.mark.parametrize(
+    ("key", "column"),
+    [
+        ("2011", "year"),  # cfpb_complaints, and ref_cpi_u
+        ("2018", "activity_year"),  # hmda_lar
+        ("2024", "vintage"),  # ref_acs5_detailed and ref_acs5_subject
+        ("2023", "period"),  # hmda_institutions -- missed by the original defect report
+        ("MI", "state"),  # the keys that were never at risk, still VARCHAR
+    ],
+)
+def test_partition_keys_read_back_as_varchar_whatever_they_look_like(
+    tmp_path: Path, key: str, column: str
+) -> None:
+    """The all-varchar rule holds on read, not just on write (CLAUDE.md rule 2).
+
+    A numeric-looking directory name used to come back BIGINT. Nothing in the parquet was
+    wrong -- DuckDB re-typed the key while reconstructing it from the path.
+    """
+    raw_dir = tmp_path / "raw" / "shared" / "sample"
+    raw_dir.parent.mkdir(parents=True)
+    con = duckdb.connect()
+    try:
+        con.execute(
+            f"COPY (SELECT '{key}' AS {column}, 'x' AS payload) TO '{raw_dir.as_posix()}' "
+            f"(FORMAT parquet, PARTITION_BY ({column}))"
+        )
+        types = {
+            row[0]: row[1]
+            for row in con.execute(
+                f"DESCRIBE SELECT * FROM {raw_relation(raw_dir)} LIMIT 0"
+            ).fetchall()
+        }
+        assert types[column] == "VARCHAR"
+        # And the value survives as written, not as a number that lost its shape.
+        assert con.execute(f"SELECT {column} FROM {raw_relation(raw_dir)}").fetchone()[0] == key
+    finally:
+        con.close()
 
 
 def test_repartition_keeps_the_manifest_the_swap_would_have_destroyed(tmp_path: Path) -> None:

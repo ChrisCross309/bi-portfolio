@@ -385,16 +385,12 @@ def landed_value(
 ) -> dict[str, Any] | None:
     """Find the observation the API named. Trimmed here because of the padding, in the
     check only -- raw keeps what BLS shipped.
-
-    `year` is cast because it is the partition column, and reading a hive-partitioned tree
-    type-infers the key: it comes back BIGINT even though the file stored a padded string.
-    That autocast is a platform-wide wrinkle, not something this source can fix locally.
     """
     if reported is None:
         return None
     row = con.execute(
         f"SELECT trim(value) FROM {OBSERVATIONS_TABLE} "
-        "WHERE trim(series_id) = ? AND trim(CAST(year AS VARCHAR)) = ? AND trim(period) = ?",
+        "WHERE trim(series_id) = ? AND trim(year) = ? AND trim(period) = ?",
         [reported["series_id"], reported["year"], reported["period"]],
     ).fetchone()
     return None if row is None else {"value": row[0]}

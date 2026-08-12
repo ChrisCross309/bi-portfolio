@@ -659,7 +659,7 @@ def run(mode: str, force: bool = False) -> int:
             michigan = {
                 str(row[0]): int(row[1])
                 for row in con.execute(
-                    f"SELECT CAST({PARTITION_COLUMN} AS VARCHAR), count(DISTINCT county) "
+                    f"SELECT {PARTITION_COLUMN}, count(DISTINCT county) "
                     f"FROM {spec['table']} WHERE geo_level = 'county' "
                     f"AND state = '{MICHIGAN_STATE_FIPS}' GROUP BY 1 ORDER BY 1"
                 ).fetchall()

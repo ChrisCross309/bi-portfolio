@@ -17,7 +17,6 @@ Run:  python -m reconcile.l1_integrity [--track TRACK] [--mode live|fixture]
 from __future__ import annotations
 
 import argparse
-import csv
 import json
 import os
 import sys
@@ -30,12 +29,17 @@ from typing import Any
 
 import duckdb
 import httpx
-
-REPO_ROOT = Path(__file__).resolve().parents[2]
+from ingest.common import (
+    HIVE_NULL_PARTITION,
+    REPO_ROOT,
+    load_state_codes,
+    paths_for,
+    raw_relation,
+    sql_literal,
+)
 
 PASS, FAIL, WARN, SKIP = "PASS", "FAIL", "WARN", "SKIP"
 
-HIVE_NULL_PARTITION = "__HIVE_DEFAULT_PARTITION__"
 USER_AGENT = "bi-portfolio-pipeline/0.1 (chris.hall309@gmail.com)"
 NFIP_API = "https://www.fema.gov/api/open/v3/NfipClaims"
 
@@ -74,22 +78,12 @@ class SourceSpec:
 
 
 # ── generic helpers ───────────────────────────────────────────────────────────
-
-
-def sql_literal(path: Path | str) -> str:
-    return "'" + str(path).replace("\\", "/").replace("'", "''") + "'"
-
-
-def load_state_codes() -> frozenset[str]:
-    path = REPO_ROOT / "platform" / "reference" / "state_codes.csv"
-    with path.open(encoding="utf-8", newline="") as handle:
-        return frozenset(row["state_code"] for row in csv.DictReader(handle))
-
-
-def paths_for(mode: str) -> tuple[Path, Path]:
-    if mode == "fixture":
-        return REPO_ROOT / "data" / "_fixture", REPO_ROOT / "platform" / "duckdb" / "fixture.duckdb"
-    return REPO_ROOT / "data", REPO_ROOT / "platform" / "duckdb" / "bi_portfolio.duckdb"
+#
+# `sql_literal`, `load_state_codes`, `paths_for` and `raw_relation` were restated here
+# when the harness was written, before `ingest.common` existed. They are imported now
+# instead. `raw_relation` is why: it decides how the partition key is typed on read, and
+# two copies of that decision meant the harness could profile a tree the loader had
+# written under different rules. Both live under `platform/`, so the import costs nothing.
 
 
 def landing_relation(path: Path, reader: str) -> str:
@@ -97,11 +91,6 @@ def landing_relation(path: Path, reader: str) -> str:
         return f"read_parquet({sql_literal(path)})"
     # parallel=false: newlines inside quoted narrative fields defeat range-splitting.
     return f"read_csv({sql_literal(path)}, all_varchar=true, header=true, parallel=false)"
-
-
-def raw_relation(raw_dir: Path) -> str:
-    pattern = raw_dir / "**" / "*.parquet"
-    return f"read_parquet({sql_literal(pattern)}, hive_partitioning=true)"
 
 
 def profile(

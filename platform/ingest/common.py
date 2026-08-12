@@ -324,9 +324,20 @@ def raw_relation(raw_dir: Path) -> str:
 
     DuckDB's PARTITION_BY removes the key from the written files, so hive
     partitioning reconstructs it rather than colliding with a duplicate column.
+
+    `hive_types_autocast=0` because reconstructing the key from a directory name is
+    where DuckDB would otherwise apply type inference -- the one thing the all-varchar
+    rule forbids in raw (CLAUDE.md rule 2). Nothing in the parquet files is wrong; a
+    `year=2011` directory simply read back as BIGINT. That silently retyped five
+    columns, cost two CASTs written to work around it, and made partition keys come
+    back as `int` from a query but `str` from a re-read CSV.
+
+    This is the only definition of it in the repo. `reconcile.l1_integrity` imports
+    this function rather than restating it, so the harness can never read the same
+    tree with different types than the loader wrote it.
     """
     pattern = raw_dir / "**" / "*.parquet"
-    return f"read_parquet({sql_literal(pattern)}, hive_partitioning=true)"
+    return f"read_parquet({sql_literal(pattern)}, hive_partitioning=true, hive_types_autocast=0)"
 
 
 def repartition_to_raw(
