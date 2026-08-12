@@ -601,7 +601,13 @@ def report(results: list[Result]) -> int:
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
-        "--track", choices=sorted({s.track for s in SOURCES}) + ["all"], default="all"
+        # The four tracks from CLAUDE.md section 1, not just the ones registered above.
+        # Sources join SOURCES as their PRs land, and `just health` / `just shared` call this
+        # with their own track name meanwhile -- main() answers that with "no sources
+        # registered" rather than an argparse error on a track the repo genuinely has.
+        "--track",
+        choices=["insurance", "fintech", "health", "shared", "all"],
+        default="all",
     )
     parser.add_argument(
         "--mode", choices=("live", "fixture"), default=os.environ.get("DATA_MODE", "live")

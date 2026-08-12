@@ -61,6 +61,7 @@ ci:
     uv run python -m ingest.health.cdc --mode fixture
     uv run python -m ingest.health.cms --mode fixture
     uv run python -m ingest.shared.bls --mode fixture
+    uv run python -m ingest.shared.census --mode fixture
     uv run python -m reconcile.l1_integrity --mode fixture
 
 # regenerate committed fixtures from local raw — deliberate, never automatic

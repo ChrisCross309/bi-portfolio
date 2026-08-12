@@ -110,8 +110,11 @@ disk space before the CFPB bulk download.
 | `just ci` | Fixture mode: load committed samples, run L1 logic offline |
 | `just clean-landing` | Reclaim disk once L1 has passed |
 
-**Cost: $0.** All sources are free public APIs or bulk files. No keys are required; the two optional
-free keys noted in `.env.example` exist only in case anonymous throttling bites.
+**Cost: $0.** All sources are free public APIs or bulk files. One key is required —
+`api.census.gov` stopped serving unkeyed data requests, and signals it with an HTML page and an
+HTTP 200 status rather than an auth error. Register free at
+[api.census.gov/data/key_signup.html](https://api.census.gov/data/key_signup.html) and put it in
+`.env` (gitignored); `.env.example` documents it, along with two other keys that remain optional.
 
 Working rules — track separation, the all-varchar raw rule, link discovery, manifests, the Git
 workflow — live in [CLAUDE.md](CLAUDE.md).
