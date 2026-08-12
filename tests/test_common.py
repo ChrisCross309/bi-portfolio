@@ -8,6 +8,7 @@ import hashlib
 import json
 from pathlib import Path
 
+import duckdb
 import httpx
 import pytest
 from ingest import common
@@ -21,9 +22,12 @@ from ingest.common import (
     nonstandard_partitions,
     paths_for,
     read_existing_manifest,
+    repartition_to_raw,
     sha256_of,
+    skip_as_current,
     sql_literal,
     stream_download,
+    tables_present,
     write_baseline,
     write_json,
 )
@@ -128,6 +132,101 @@ def test_missing_or_corrupt_manifest_reads_as_none(tmp_path: Path) -> None:
     assert read_existing_manifest(tmp_path) is None
     (tmp_path / "manifest.json").write_text("{ not json", encoding="utf-8")
     assert read_existing_manifest(tmp_path) is None
+
+
+def test_repartition_keeps_the_manifest_the_swap_would_have_destroyed(tmp_path: Path) -> None:
+    """`manifest.json` lives inside the tree truncate-and-reload replaces.
+
+    Every fetcher writes a fresh manifest after its own checks pass, but a failure between
+    the swap and that write used to leave raw parquet with no provenance at all -- found by
+    interrupting a live HMDA run during `load_table`.
+    """
+    raw_dir = tmp_path / "raw" / "insurance" / "nfip_claims"
+    raw_dir.mkdir(parents=True)
+    (raw_dir / "manifest.json").write_text('{"rows_duckdb": 3}', encoding="utf-8")
+
+    con = duckdb.connect()
+    try:
+        for expected in (3, 5):
+            rows_landing, rows_raw = repartition_to_raw(
+                con,
+                relation=f"(SELECT 'MI' AS state, i AS n FROM range({expected}) t(i))",
+                raw_dir=raw_dir,
+                partition_column="state",
+            )
+            assert (rows_landing, rows_raw) == (expected, expected)
+            assert read_existing_manifest(raw_dir) == {"rows_duckdb": 3}
+    finally:
+        con.close()
+
+
+# ── the currency guard ────────────────────────────────────────────────────────
+
+
+def _database_with(tmp_path: Path, *tables: str) -> Path:
+    db_path = tmp_path / "warehouse.duckdb"
+    con = duckdb.connect(str(db_path))
+    try:
+        for table in tables:
+            con.execute(f"CREATE SCHEMA IF NOT EXISTS {table.split('.')[0]}")
+            con.execute(f"CREATE TABLE {table} AS SELECT 1 AS x")
+    finally:
+        con.close()
+    return db_path
+
+
+def test_tables_present_is_false_for_a_database_that_does_not_exist(tmp_path: Path) -> None:
+    assert tables_present(tmp_path / "nothing.duckdb", "raw.ins_nfip_claims") is False
+
+
+def test_tables_present_is_false_when_any_named_table_is_missing(tmp_path: Path) -> None:
+    db_path = _database_with(tmp_path, "raw.ref_cpi_u")
+    assert tables_present(db_path, "raw.ref_cpi_u") is True
+    # BLS gates two tables from one manifest; one missing must sink the pair.
+    assert tables_present(db_path, "raw.ref_cpi_u", "raw.ref_cpi_u_series") is False
+
+
+def test_tables_present_is_false_for_a_file_that_is_not_a_database(tmp_path: Path) -> None:
+    """A corrupt warehouse is exactly the case a re-run must not skip."""
+    corrupt = tmp_path / "corrupt.duckdb"
+    corrupt.write_bytes(b"not a duckdb file at all")
+    assert tables_present(corrupt, "raw.ins_nfip_claims") is False
+
+
+def test_skip_as_current_requires_both_a_current_manifest_and_the_table(tmp_path: Path) -> None:
+    db_path = _database_with(tmp_path, "raw.ins_nfip_claims")
+    lines: list[str] = []
+    call = {
+        "db_path": db_path,
+        "tables": ("raw.ins_nfip_claims",),
+        "log": lines.append,
+    }
+
+    assert skip_as_current(force=False, publisher_unchanged=True, **call) is True
+    assert lines == []
+    assert skip_as_current(force=False, publisher_unchanged=False, **call) is False
+    assert skip_as_current(force=True, publisher_unchanged=True, **call) is False
+    # Nothing above should have needed to explain itself.
+    assert lines == []
+
+
+def test_skip_as_current_explains_itself_when_the_table_is_gone(tmp_path: Path) -> None:
+    """The defect this exists for: current manifests plus a deleted database used to
+    report SKIPPED for every source and leave an empty warehouse behind."""
+    lines: list[str] = []
+    assert (
+        skip_as_current(
+            force=False,
+            publisher_unchanged=True,
+            db_path=tmp_path / "deleted.duckdb",
+            tables=("raw.ins_nfip_claims",),
+            log=lines.append,
+        )
+        is False
+    )
+    assert len(lines) == 1
+    assert "raw.ins_nfip_claims" in lines[0]
+    assert "just reload" in lines[0]
 
 
 def test_state_reference_holds_states_dc_and_territories_but_no_invented_codes() -> None:

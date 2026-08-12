@@ -99,6 +99,10 @@ just check
 until you run an ingestion recipe. Expect roughly 5–10 GB once all four recipes have run; check free
 disk space before the CFPB bulk download.
 
+Raw parquet under `data/raw/` is the canonical copy, which is what the landing/raw split is for: if
+the DuckDB file is deleted or corrupted, `just reload` rebuilds every table from it without touching
+a publisher.
+
 | Recipe | What it does |
 |---|---|
 | `just insurance` | Track 1 → raw → load → L1 |
@@ -106,6 +110,7 @@ disk space before the CFPB bulk download.
 | `just health` | Track 3 → raw → load → L1 |
 | `just shared` | Reference denominators and deflator → raw → load → L1 |
 | `just ingest-all` | All four, in any order |
+| `just reload` | Rebuild every `raw` table from local parquet — no network |
 | `just check` | ruff + pytest (live-endpoint tests excluded) |
 | `just ci` | Fixture mode: load committed samples, run L1 logic offline |
 | `just clean-landing` | Reclaim disk once L1 has passed |
