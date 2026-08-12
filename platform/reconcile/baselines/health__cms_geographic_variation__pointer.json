@@ -1,0 +1,9 @@
+{
+  "dataset_identifier": "https://data.cms.gov/data-api/v1/dataset/6219697b-8f6c-4164-bed4-cd9317c58ebc/data-viewer",
+  "dataset_title": "Medicare Geographic Variation - by National, State & County",
+  "dcat_catalog": "https://data.cms.gov/data.json",
+  "dcat_modified": "2026-05-15",
+  "field_reference": "https://data.cms.gov/summary-statistics-on-use-and-payments/medicare-geographic-comparisons/medicare-geographic-variation-by-national-state-county",
+  "note": "CMS publishes the GV data dictionary as a PDF alongside the file rather than as machine-readable field metadata; this is a pointer file, per CLAUDE.md rule 8.",
+  "retrieved_at": "2026-08-12T01:30:06.377039Z"
+}

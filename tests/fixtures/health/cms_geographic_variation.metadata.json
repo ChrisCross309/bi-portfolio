@@ -1,0 +1,14 @@
+{
+  "_comment": "Stratified sample of the CMS Medicare Geographic Variation PUF, built from local raw with deterministic md5 ordering (no RNG). Every Michigan county for the earliest and latest year so the county-roster check runs. Strata: ['mi_counties_earliest', 'mi_counties_latest', 'mi_state_all_years', 'national_all_years', 'peer_counties', 'peer_states_latest', 'suppressed_cells'].",
+  "accrualPeriodicity": "R/P1Y",
+  "distribution": [
+    {
+      "downloadURL": "fixture://cms_geographic_variation.csv",
+      "format": "CSV"
+    }
+  ],
+  "identifier": "fixture://cms-geographic-variation",
+  "modified": "1970-01-01",
+  "temporal": "2024-01-01/2024-12-31",
+  "title": "Medicare Geographic Variation - by National, State & County"
+}

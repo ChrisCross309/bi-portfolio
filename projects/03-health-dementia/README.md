@@ -9,8 +9,25 @@ No insurance or fintech data appears anywhere in this track. Build with `just he
 | Source | Scope | Path | Access |
 |---|---|---|---|
 | CDC Alzheimer's Disease & Healthy Aging (`hfr9-rurv`) | Full dataset, 284,142 cells, 2015–2022 | `data/raw/health/cdc_healthy_aging/locationabbr=XX/` | Socrata resource API, paged by `:id`; dataset id resolved from the catalogue |
-| CMS Medicare Chronic Conditions — prevalence / spending | State + county | `data/raw/health/cms_chronic_conditions/` | Discovered from `data.cms.gov/data.json` |
-| CMS Medicare Geographic Variation | National / state / county | `data/raw/health/cms_geographic_variation/` | Discovered from `data.cms.gov/data.json` |
+| CMS Medicare Geographic Variation | National / state / county, 36,994 rows × 246 cols, 2014–2024 | `data/raw/health/cms_geographic_variation/BENE_GEO_LVL=…/` | Discovered from `data.cms.gov/data.json`, bulk CSV |
+| CMS Medicare Chronic Conditions — prevalence / spending | **not ingested — see below** | — | Absent from CMS's catalogue |
+
+**The chronic-conditions gap.** The CMS Medicare chronic-conditions public files are not retrievable
+from any discoverable route. Checked on 2026-08-11:
+
+| Route | Result |
+|---|---|
+| `data.cms.gov/data.json` (CMS's own DCAT catalogue) | 159 datasets, no chronic-conditions entry |
+| `healthdata.gov/data.json` (HHS-wide catalogue) | 777 CMS-published datasets, zero matching chronic condition / dementia / prevalence |
+| `cms.gov/.../chronic-conditions` and the legacy `CC_Main` page | **404**; the legacy URL redirects to a dead page |
+| CMS metastore, search, and the Mapping Medicare Disparities tool | client-rendered shells, no machine-readable index and no file links |
+| Medicare Geographic Variation (ingested above) | no condition-level detail at all — only PQI admission rates for diabetes, COPD, hypertension, CHF, pneumonia, UTI, asthma and amputation |
+
+So **HLT-E2 (dementia prevalence among MI Medicare beneficiaries) has no source**, and the decision on
+it is open. What remains would be a guessed static URL (CLAUDE.md rule 3 forbids it), the Chronic
+Conditions Data Warehouse under a data-use agreement (beneficiary-level restricted data — the ethics
+rule forbids it), or a different measure entirely. The `slow` tripwire test in `tests/test_cms.py`
+fails the day CMS republishes the dataset, so the gap cannot be quietly forgotten.
 
 ## Executive questions
 
