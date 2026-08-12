@@ -40,13 +40,17 @@ YEARS = (2018, 2019, 2020)
 
 # Two real resolved URLs, differing only in the year and the edition segment. The hash is
 # a function of the filter, not of the year -- which is the whole point of the first test.
+# It is abbreviated from the 32-character original so the `no-long-hex-strings` pre-commit
+# hook can cover this file; `dataset_edition` reads the second-to-last path segment and
+# never the hash, and both URLs still carry the *same* hash, which is what is under test.
+FILTER_HASH = "24d72561"
 URL_2023 = (
     "https://files.ffiec.cfpb.gov/data-browser/datasets/2023/filtered-queries/"
-    "one-year/24d725610cddfb66fa9b44fc8afd9576.csv"
+    f"one-year/{FILTER_HASH}.csv"
 )
 URL_2018 = (
     "https://files.ffiec.cfpb.gov/data-browser/datasets/2018/filtered-queries/"
-    "three-year/24d725610cddfb66fa9b44fc8afd9576.csv"
+    f"three-year/{FILTER_HASH}.csv"
 )
 
 
@@ -61,7 +65,7 @@ def _extract(year: int, records: int, by_filers: int, last_modified: str | None 
         edition="one-year",
         landing_bytes=130_462_833,
         last_modified=last_modified,
-        etag='"2f65ea86cab20ff2c63b9a387571b7b5-16"',
+        etag='"2f65ea86-16"',  # abbreviated; nothing under test reads its contents
         records_reported=records,
         filers_reported=by_filers,
         institutions_reported=1014,
