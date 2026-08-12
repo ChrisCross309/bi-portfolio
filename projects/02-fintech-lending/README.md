@@ -9,10 +9,16 @@ No insurance data appears anywhere in this track. Build with `just fintech`.
 | Source | Scope | Path | Access |
 |---|---|---|---|
 | CFPB Consumer Complaint Database | National | `data/raw/fintech/cfpb_complaints/` | Bulk archive, partitioned by `year(date_received)` |
-| HMDA LAR | Michigan, 2018 → latest | `data/raw/fintech/hmda_lar_mi/year=YYYY/` | Data Browser API, one request per year |
-| HMDA institution / transmittal reference | Per year | `data/raw/fintech/hmda_institutions/` | Data Browser API |
+| HMDA LAR | Michigan, 2018–2025 (4.0M rows) | `data/raw/fintech/hmda_lar/activity_year=YYYY/` | Data Browser API, one filtered extract per year |
+| HMDA filers by year | National (39,381 rows) | `data/raw/fintech/hmda_institutions/period=YYYY/` | Data Browser API, `filers` endpoint |
 
-The two datasets are fully separate entities in raw. They join only in session 2, at institution
+The filer list is the institution reference: LEI → name, plus each filer's own record count for
+the year. The transmittal sheet and panel file carry more institution detail but are published only
+inside the annual snapshot bundles, whose URLs cannot be resolved from any machine-readable index —
+S3 listing is denied and the publication page is client-rendered — so taking them would mean
+hardcoding a guessed URL. See CLAUDE.md rule 3.
+
+The datasets are fully separate entities in raw. They join only in session 2, at institution
 level, for FIN-E5.
 
 ## Executive questions

@@ -1,0 +1,21 @@
+{
+  "api_reference": "https://cfpb.github.io/hmda-platform/#data-browser-api",
+  "fields_observed": [
+    "lei",
+    "name",
+    "count",
+    "period"
+  ],
+  "note": "The filers endpoint publishes no field metadata and no schema; this is a pointer file, per CLAUDE.md rule 8.",
+  "retrieved_at": "2026-08-12T00:46:43.257690Z",
+  "years_observed": [
+    2018,
+    2019,
+    2020,
+    2021,
+    2022,
+    2023,
+    2024,
+    2025
+  ]
+}
