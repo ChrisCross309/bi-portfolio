@@ -9,9 +9,15 @@ here. Build with `just insurance`.
 
 | Source | Scope | Path | Access |
 |---|---|---|---|
-| `FimaNfipClaims` v2 | National (~2.6M rows) | `data/raw/insurance/nfip_claims/` | Bulk file, partitioned by state |
-| `FimaNfipPolicies` v2 | Michigan only | `data/raw/insurance/nfip_policies/` | Paginated OpenFEMA API |
-| `DisasterDeclarationsSummaries` v2 | National | `data/raw/insurance/fema_declarations/` | Paginated OpenFEMA API — the event dimension |
+| `NfipClaims` **v3** | National, 2,724,014 rows | `data/raw/insurance/nfip_claims/state=XX/` | Bulk parquet, partitioned by state |
+| `NfipPolicies` **v3** | Michigan, 384,067 rows | `data/raw/insurance/nfip_policies/propertyState=MI/` | Paginated OpenFEMA API, keyset paging |
+| `DisasterDeclarationsSummaries` v2 | National, 70,184 rows | `data/raw/insurance/fema_declarations/state=XX/` | Paginated OpenFEMA API — the event dimension |
+
+**Why v3.** OpenFEMA froze the v2 `FimaNfipClaims` / `FimaNfipPolicies` datasets on 2026-06-01 and
+deletes them on 2026-10-15. Building on a frozen dataset would quietly break INS-E5 the moment FEMA
+computes its published figures from v3. `DisasterDeclarationsSummaries` has no v3 and is unaffected.
+Two field changes matter downstream: v3 drops `censusTract`, so the Michigan geography gate targets
+`censusGeoid`, and it renames `crsClassificationCode` → `crsClassCode`.
 
 ## Executive questions
 

@@ -232,7 +232,6 @@ def test_the_relation_reads_by_position_and_drops_the_header_row() -> None:
         FIXTURE_DIR / "acs5-detailed-*-county.json",
         DATASETS["detailed"]["variables"],
         "county",
-        "detailed",
     )
     assert 'row[1] AS "NAME"' in relation
     assert "WHERE row[1] <> 'NAME'" in relation

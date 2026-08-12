@@ -134,10 +134,6 @@ PARTITION_COLUMN = "vintage"
 MICHIGAN_STATE_FIPS = "26"
 MICHIGAN_COUNTY_COUNT = 83
 
-# ACS annotates unavailable or controlled values with large negative integers rather than
-# nulls -- -555555555 means the estimate is controlled so no margin of error applies.
-SENTINEL_PREFIX = "-5555"
-
 FIELD_REFERENCE = "https://api.census.gov/data/2024/acs/acs5/variables.html"
 KEY_SIGNUP = "https://api.census.gov/data/key_signup.html"
 
@@ -242,9 +238,7 @@ def landing_name(dataset: str, vintage: int, geography: str) -> str:
     return f"acs5-{dataset}-{vintage}-{geography}.json"
 
 
-def geography_relation(
-    landing_glob: Path, variables: tuple[str, ...], geography: str, dataset: str
-) -> str:
+def geography_relation(landing_glob: Path, variables: tuple[str, ...], geography: str) -> str:
     """Project one geography's landed files into the shared column layout.
 
     Positional, because the payload is an array of arrays; safe, because every file's header
@@ -287,9 +281,7 @@ def dataset_relation(landing_dir: Path, dataset: str, variables: tuple[str, ...]
     a true statement about that row, not a missing value.
     """
     parts = [
-        geography_relation(
-            landing_dir / f"acs5-{dataset}-*-{geography}.json", variables, geography, dataset
-        )
+        geography_relation(landing_dir / f"acs5-{dataset}-*-{geography}.json", variables, geography)
         for geography in GEOGRAPHIES
     ]
     return "(" + " UNION ALL ".join(parts) + ")"

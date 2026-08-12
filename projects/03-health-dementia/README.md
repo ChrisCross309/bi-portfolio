@@ -72,5 +72,7 @@ rollups are kept deliberately, because HLT-E1 compares Michigan against them.
 
 ---
 
-> Confidence-interval handling for HLT-E1, the CMS dataset-version provenance record, and the Excel
-> distribution handling notes are written up in the `docs/readmes` PR at the end of session 1.
+> Confidence-interval handling for HLT-E1 and the CMS dataset-version provenance record are written
+> up in the `docs/readmes` PR at the end of session 1. The Excel-distribution notes this line used to
+> promise are not coming: the legacy CMS PUF that was expected to arrive as a workbook never
+> materialised, every landed source is CSV, TSV, JSON or parquet, and `openpyxl` has been dropped.
