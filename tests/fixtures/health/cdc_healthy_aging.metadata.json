@@ -1,0 +1,111 @@
+{
+  "_comment": "Stratified sample of the CDC Alzheimer's & Healthy Aging dataset, built from local raw with deterministic md5 ordering (no RNG). Not a live publisher response. Strata: ['caregiving', 'cognitive_decline', 'footnote_agestd', 'footnote_fewstates', 'footnote_nodata', 'footnote_notcomparable', 'footnote_region', 'michigan', 'other_states', 'overall_null_category2', 'race_stratified', 'rollups', 'sex_stratified', 'suppressed'].",
+  "attribution": "CDC Division of Population Health",
+  "category": "Healthy Aging",
+  "columns": [
+    {
+      "fieldName": "rowid"
+    },
+    {
+      "fieldName": "yearstart"
+    },
+    {
+      "fieldName": "yearend"
+    },
+    {
+      "fieldName": "locationabbr"
+    },
+    {
+      "fieldName": "locationdesc"
+    },
+    {
+      "fieldName": "datasource"
+    },
+    {
+      "fieldName": "class"
+    },
+    {
+      "fieldName": "topic"
+    },
+    {
+      "fieldName": "question"
+    },
+    {
+      "fieldName": "data_value_unit"
+    },
+    {
+      "fieldName": "datavaluetypeid"
+    },
+    {
+      "fieldName": "data_value_type"
+    },
+    {
+      "fieldName": "data_value"
+    },
+    {
+      "fieldName": "data_value_alt"
+    },
+    {
+      "fieldName": "data_value_footnote_symbol"
+    },
+    {
+      "fieldName": "data_value_footnote"
+    },
+    {
+      "fieldName": "low_confidence_limit"
+    },
+    {
+      "fieldName": "high_confidence_limit"
+    },
+    {
+      "fieldName": "stratificationcategory1"
+    },
+    {
+      "fieldName": "stratification1"
+    },
+    {
+      "fieldName": "stratificationcategory2"
+    },
+    {
+      "fieldName": "stratification2"
+    },
+    {
+      "fieldName": "geolocation"
+    },
+    {
+      "fieldName": "classid"
+    },
+    {
+      "fieldName": "topicid"
+    },
+    {
+      "fieldName": "questionid"
+    },
+    {
+      "fieldName": "locationid"
+    },
+    {
+      "fieldName": "stratificationcategoryid1"
+    },
+    {
+      "fieldName": "stratificationid1"
+    },
+    {
+      "fieldName": "stratificationcategoryid2"
+    },
+    {
+      "fieldName": "stratificationid2"
+    },
+    {
+      "fieldName": ":@computed_region_skr5_azej"
+    },
+    {
+      "fieldName": ":@computed_region_hjsp_umg2"
+    }
+  ],
+  "id": "hfr9-rurv",
+  "name": "Alzheimer's Disease and Healthy Aging Data",
+  "reported_total": 792,
+  "rowsUpdatedAt": 0,
+  "viewLastModified": 0
+}

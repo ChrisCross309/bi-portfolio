@@ -58,6 +58,7 @@ ci:
     uv run python -m ingest.insurance.fema_declarations --mode fixture
     uv run python -m ingest.fintech.cfpb --mode fixture
     uv run python -m ingest.fintech.hmda --mode fixture
+    uv run python -m ingest.health.cdc --mode fixture
     uv run python -m reconcile.l1_integrity --mode fixture
 
 # regenerate committed fixtures from local raw — deliberate, never automatic

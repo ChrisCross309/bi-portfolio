@@ -1,0 +1,2252 @@
+[
+  {
+    "cachedContents": {
+      "cardinality": "36046",
+      "count": "284142",
+      "largest": "BRFSS~2022~2022~9004~Q46~TOC10~AGE~SEX",
+      "non_null": "284142",
+      "null": "0",
+      "smallest": "BRFSS~2015~2015~01~Q01~TNC01~AGE~OVERALL",
+      "top": [
+        {
+          "count": "15",
+          "item": "BRFSS~2017~2017~56~Q18~TSC08~AGE~RACE"
+        },
+        {
+          "count": "15",
+          "item": "BRFSS~2021~2021~34~Q46~TOC10~AGE~RACE"
+        },
+        {
+          "count": "15",
+          "item": "BRFSS~2018~2018~47~Q20~TSC03~AGE~RACE"
+        },
+        {
+          "count": "15",
+          "item": "BRFSS~2021~2021~15~Q19~TSC04~AGE~RACE"
+        },
+        {
+          "count": "15",
+          "item": "BRFSS~2020~2020~38~Q19~TSC04~AGE~RACE"
+        },
+        {
+          "count": "15",
+          "item": "BRFSS~2017~2017~47~Q17~TAC01~AGE~RACE"
+        },
+        {
+          "count": "15",
+          "item": "BRFSS~2019~2019~49~Q32~TOC07~AGE~RACE"
+        },
+        {
+          "count": "15",
+          "item": "BRFSS~2018~2018~29~Q19~TSC04~AGE~RACE"
+        },
+        {
+          "count": "15",
+          "item": "BRFSS~2018~2018~36~Q33~TOC08~AGE~RACE"
+        },
+        {
+          "count": "15",
+          "item": "BRFSS~2021~2021~02~Q14~TSC06~AGE~RACE"
+        },
+        {
+          "count": "15",
+          "item": "BRFSS~2019~2019~40~Q44~TOC12~AGE~RACE"
+        },
+        {
+          "count": "15",
+          "item": "BRFSS~2018~2018~04~Q18~TSC08~AGE~RACE"
+        },
+        {
+          "count": "15",
+          "item": "BRFSS~2022~2022~23~Q27~TMC03~AGE~RACE"
+        },
+        {
+          "count": "15",
+          "item": "BRFSS~2015~2015~46~Q32~TOC07~AGE~RACE"
+        },
+        {
+          "count": "15",
+          "item": "BRFSS~2018~2018~45~Q12~TSC01~AGE~RACE"
+        },
+        {
+          "count": "15",
+          "item": "BRFSS~2019~2019~26~Q27~TMC03~AGE~RACE"
+        },
+        {
+          "count": "15",
+          "item": "BRFSS~2020~2020~46~Q09~TSC09~AGE~RACE"
+        },
+        {
+          "count": "15",
+          "item": "BRFSS~2015~2015~44~Q44~TOC12~AGE~RACE"
+        },
+        {
+          "count": "15",
+          "item": "BRFSS~2017~2017~24~Q38~TGC03~AGE~RACE"
+        },
+        {
+          "count": "15",
+          "item": "BRFSS~2017~2017~31~Q14~TSC06~AGE~RACE"
+        }
+      ]
+    },
+    "dataTypeName": "text",
+    "description": "Dataset row identifier",
+    "fieldName": "rowid",
+    "format": {},
+    "id": 605870954,
+    "name": "RowId",
+    "position": 1,
+    "renderTypeName": "text",
+    "tableColumnId": 125932103,
+    "width": 80
+  },
+  {
+    "cachedContents": {
+      "cardinality": "8",
+      "count": "284142",
+      "largest": "2022",
+      "non_null": "284142",
+      "null": "0",
+      "smallest": "2015",
+      "top": [
+        {
+          "count": "41779",
+          "item": "2021"
+        },
+        {
+          "count": "38485",
+          "item": "2019"
+        },
+        {
+          "count": "35426",
+          "item": "2022"
+        },
+        {
+          "count": "35310",
+          "item": "2020"
+        },
+        {
+          "count": "35020",
+          "item": "2015"
+        },
+        {
+          "count": "34145",
+          "item": "2016"
+        },
+        {
+          "count": "33429",
+          "item": "2017"
+        },
+        {
+          "count": "30548",
+          "item": "2018"
+        }
+      ]
+    },
+    "dataTypeName": "number",
+    "description": "Year Start",
+    "fieldName": "yearstart",
+    "format": {
+      "align": "right",
+      "noCommas": "true",
+      "precisionStyle": "standard"
+    },
+    "id": 605870955,
+    "name": "YearStart",
+    "position": 2,
+    "renderTypeName": "number",
+    "tableColumnId": 36215615,
+    "width": 126
+  },
+  {
+    "cachedContents": {
+      "cardinality": "8",
+      "count": "284142",
+      "largest": "2022",
+      "non_null": "284142",
+      "null": "0",
+      "smallest": "2015",
+      "top": [
+        {
+          "count": "44687",
+          "item": "2022"
+        },
+        {
+          "count": "36649",
+          "item": "2021"
+        },
+        {
+          "count": "35310",
+          "item": "2020"
+        },
+        {
+          "count": "35020",
+          "item": "2015"
+        },
+        {
+          "count": "34354",
+          "item": "2019"
+        },
+        {
+          "count": "34145",
+          "item": "2016"
+        },
+        {
+          "count": "33429",
+          "item": "2017"
+        },
+        {
+          "count": "30548",
+          "item": "2018"
+        }
+      ]
+    },
+    "dataTypeName": "number",
+    "description": "Year End",
+    "fieldName": "yearend",
+    "format": {
+      "align": "right",
+      "noCommas": "true",
+      "precisionStyle": "standard"
+    },
+    "id": 605870956,
+    "name": "YearEnd",
+    "position": 3,
+    "renderTypeName": "number",
+    "tableColumnId": 36215616,
+    "width": 125
+  },
+  {
+    "cachedContents": {
+      "cardinality": "59",
+      "count": "284142",
+      "largest": "WY",
+      "non_null": "284142",
+      "null": "0",
+      "smallest": "AK",
+      "top": [
+        {
+          "count": "6132",
+          "item": "US"
+        },
+        {
+          "count": "6126",
+          "item": "WEST"
+        },
+        {
+          "count": "6102",
+          "item": "NRE"
+        },
+        {
+          "count": "6099",
+          "item": "MDW"
+        },
+        {
+          "count": "6030",
+          "item": "SOU"
+        },
+        {
+          "count": "5916",
+          "item": "OR"
+        },
+        {
+          "count": "5787",
+          "item": "NY"
+        },
+        {
+          "count": "5368",
+          "item": "UT"
+        },
+        {
+          "count": "5311",
+          "item": "OH"
+        },
+        {
+          "count": "5164",
+          "item": "HI"
+        },
+        {
+          "count": "5132",
+          "item": "MD"
+        },
+        {
+          "count": "5124",
+          "item": "GA"
+        },
+        {
+          "count": "5113",
+          "item": "MI"
+        },
+        {
+          "count": "4950",
+          "item": "NV"
+        },
+        {
+          "count": "4949",
+          "item": "ME"
+        },
+        {
+          "count": "4947",
+          "item": "TX"
+        },
+        {
+          "count": "4939",
+          "item": "MS"
+        },
+        {
+          "count": "4936",
+          "item": "VA"
+        },
+        {
+          "count": "4928",
+          "item": "WI"
+        },
+        {
+          "count": "4856",
+          "item": "WV"
+        }
+      ]
+    },
+    "dataTypeName": "text",
+    "description": "Location Abbreviation",
+    "fieldName": "locationabbr",
+    "format": {
+      "align": "left"
+    },
+    "id": 605870957,
+    "name": "LocationAbbr",
+    "position": 4,
+    "renderTypeName": "text",
+    "tableColumnId": 36215617,
+    "width": 161
+  },
+  {
+    "cachedContents": {
+      "cardinality": "59",
+      "count": "284142",
+      "largest": "Wyoming",
+      "non_null": "284142",
+      "null": "0",
+      "smallest": "Alabama",
+      "top": [
+        {
+          "count": "6132",
+          "item": "United States, DC & Territories"
+        },
+        {
+          "count": "6126",
+          "item": "West"
+        },
+        {
+          "count": "6102",
+          "item": "Northeast"
+        },
+        {
+          "count": "6099",
+          "item": "Midwest"
+        },
+        {
+          "count": "6030",
+          "item": "South"
+        },
+        {
+          "count": "5916",
+          "item": "Oregon"
+        },
+        {
+          "count": "5787",
+          "item": "New York"
+        },
+        {
+          "count": "5368",
+          "item": "Utah"
+        },
+        {
+          "count": "5311",
+          "item": "Ohio"
+        },
+        {
+          "count": "5164",
+          "item": "Hawaii"
+        },
+        {
+          "count": "5132",
+          "item": "Maryland"
+        },
+        {
+          "count": "5124",
+          "item": "Georgia"
+        },
+        {
+          "count": "5113",
+          "item": "Michigan"
+        },
+        {
+          "count": "4950",
+          "item": "Nevada"
+        },
+        {
+          "count": "4949",
+          "item": "Maine"
+        },
+        {
+          "count": "4947",
+          "item": "Texas"
+        },
+        {
+          "count": "4939",
+          "item": "Mississippi"
+        },
+        {
+          "count": "4936",
+          "item": "Virginia"
+        },
+        {
+          "count": "4928",
+          "item": "Wisconsin"
+        },
+        {
+          "count": "4856",
+          "item": "West Virginia"
+        }
+      ]
+    },
+    "dataTypeName": "text",
+    "description": "Location Description",
+    "fieldName": "locationdesc",
+    "format": {
+      "align": "left"
+    },
+    "id": 605870958,
+    "name": "LocationDesc",
+    "position": 5,
+    "renderTypeName": "text",
+    "tableColumnId": 36215618,
+    "width": 152
+  },
+  {
+    "cachedContents": {
+      "cardinality": "1",
+      "count": "284142",
+      "largest": "BRFSS",
+      "non_null": "284142",
+      "null": "0",
+      "smallest": "BRFSS",
+      "top": [
+        {
+          "count": "284142",
+          "item": "BRFSS"
+        }
+      ]
+    },
+    "dataTypeName": "text",
+    "description": "Data Source",
+    "fieldName": "datasource",
+    "format": {
+      "align": "left"
+    },
+    "id": 605870959,
+    "name": "Datasource",
+    "position": 6,
+    "renderTypeName": "text",
+    "tableColumnId": 36215619,
+    "width": 141
+  },
+  {
+    "cachedContents": {
+      "cardinality": "7",
+      "count": "284142",
+      "largest": "Smoking and Alcohol Use",
+      "non_null": "284142",
+      "null": "0",
+      "smallest": "Caregiving",
+      "top": [
+        {
+          "count": "96753",
+          "item": "Overall Health"
+        },
+        {
+          "count": "62153",
+          "item": "Screenings and Vaccines"
+        },
+        {
+          "count": "33194",
+          "item": "Nutrition/Physical Activity/Obesity"
+        },
+        {
+          "count": "25493",
+          "item": "Caregiving"
+        },
+        {
+          "count": "22184",
+          "item": "Mental Health"
+        },
+        {
+          "count": "22183",
+          "item": "Smoking and Alcohol Use"
+        },
+        {
+          "count": "22182",
+          "item": "Cognitive Decline"
+        }
+      ]
+    },
+    "dataTypeName": "text",
+    "description": "Class description",
+    "fieldName": "class",
+    "format": {
+      "align": "left"
+    },
+    "id": 605870960,
+    "name": "Class",
+    "position": 7,
+    "renderTypeName": "text",
+    "tableColumnId": 36215620,
+    "width": 108
+  },
+  {
+    "cachedContents": {
+      "cardinality": "39",
+      "count": "284142",
+      "largest": "Up-to-date with recommended vaccines and screenings - Women",
+      "non_null": "284142",
+      "null": "0",
+      "smallest": "Arthritis among older adults",
+      "top": [
+        {
+          "count": "11092",
+          "item": "Frequent mental distress"
+        },
+        {
+          "count": "11092",
+          "item": "Current smoking"
+        },
+        {
+          "count": "11092",
+          "item": "Physically unhealthy days (mean number of days)"
+        },
+        {
+          "count": "11092",
+          "item": "Obesity"
+        },
+        {
+          "count": "11092",
+          "item": "No leisure-time physical activity within past month"
+        },
+        {
+          "count": "11092",
+          "item": "Lifetime diagnosis of depression"
+        },
+        {
+          "count": "11092",
+          "item": "Influenza vaccine within past year"
+        },
+        {
+          "count": "11091",
+          "item": "Binge drinking within past 30 days"
+        },
+        {
+          "count": "11091",
+          "item": "Self-rated health (good to excellent health)"
+        },
+        {
+          "count": "11091",
+          "item": "Self-rated health (fair to poor health)"
+        },
+        {
+          "count": "11051",
+          "item": "Ever had pneumococcal vaccine"
+        },
+        {
+          "count": "11002",
+          "item": "Recent activity limitations in past month"
+        },
+        {
+          "count": "9709",
+          "item": "Disability status, including sensory or mobility limitations"
+        },
+        {
+          "count": "8303",
+          "item": "Arthritis among older adults"
+        },
+        {
+          "count": "8214",
+          "item": "Fair or poor health among older adults with arthritis"
+        },
+        {
+          "count": "6148",
+          "item": "Diabetes screening within past 3 years"
+        },
+        {
+          "count": "5854",
+          "item": "Subjective cognitive decline or memory loss among older adults"
+        },
+        {
+          "count": "5581",
+          "item": "Oral health:  tooth retention"
+        },
+        {
+          "count": "5581",
+          "item": "Colorectal cancer screening"
+        },
+        {
+          "count": "5580",
+          "item": "Prevalence of sufficient sleep"
+        }
+      ]
+    },
+    "dataTypeName": "text",
+    "description": "Topic description",
+    "fieldName": "topic",
+    "format": {
+      "align": "left"
+    },
+    "id": 605870961,
+    "name": "Topic",
+    "position": 8,
+    "renderTypeName": "text",
+    "tableColumnId": 36215621,
+    "width": 199
+  },
+  {
+    "cachedContents": {
+      "cardinality": "39",
+      "count": "284142",
+      "largest": "Severe joint pain due to arthritis among older adults with doctor-diagnosed arthritis",
+      "non_null": "284142",
+      "null": "0",
+      "smallest": "Average of 20 or more hours of care per week provided to a friend or family member",
+      "top": [
+        {
+          "count": "11092",
+          "item": "Percentage of older adults who have not had any leisure time physical activity in the past month"
+        },
+        {
+          "count": "11092",
+          "item": "Percentage of older adults who have smoked at least 100 cigarettes in their entire life and still smoke every day or some days"
+        },
+        {
+          "count": "11092",
+          "item": "Physically unhealthy days (mean number of days in past month)"
+        },
+        {
+          "count": "11092",
+          "item": "Percentage of older adults who are currently obese, with a body mass index (BMI) of 30 or more"
+        },
+        {
+          "count": "11092",
+          "item": "Percentage of older adults who reported influenza vaccine within the past year"
+        },
+        {
+          "count": "11092",
+          "item": "Percentage of older adults who are experiencing frequent mental distress"
+        },
+        {
+          "count": "11092",
+          "item": "Percentage of older adults with a lifetime diagnosis of depression"
+        },
+        {
+          "count": "11091",
+          "item": "Percentage of older adults who reported binge drinking within the past 30 days"
+        },
+        {
+          "count": "11091",
+          "item": "Percentage of older adults who self-reported that their health is \"fair\" or \"poor\""
+        },
+        {
+          "count": "11091",
+          "item": "Percentage of older adults who self-reported that their health is \"good\", \"very good\", or \"excellent\""
+        },
+        {
+          "count": "11051",
+          "item": "Percentage of at risk adults (have diabetes, asthma, cardiovascular disease or currently smoke) who ever had a pneumococcal vaccine"
+        },
+        {
+          "count": "11002",
+          "item": "Mean number of days with activity limitations in the past month"
+        },
+        {
+          "count": "9709",
+          "item": "Percentage of older adults who report having a disability (includes limitations related to sensory or mobility impairments or a physical, mental, or emotional condition)"
+        },
+        {
+          "count": "8303",
+          "item": "Percentage of older adults ever told they have arthritis"
+        },
+        {
+          "count": "8214",
+          "item": "Fair or poor health among older adults with doctor-diagnosed arthritis"
+        },
+        {
+          "count": "6148",
+          "item": "Percentage of older adults without diabetes who reported a blood sugar or diabetes test within 3 years"
+        },
+        {
+          "count": "5854",
+          "item": "Percentage of older adults who reported subjective cognitive decline or memory loss that is happening more often or is getting worse in the preceding 12 months"
+        },
+        {
+          "count": "5581",
+          "item": "Percentage of older adults who report having lost 5 or fewer teeth due to decay or gum disease"
+        },
+        {
+          "count": "5581",
+          "item": "Percentage of older adults who had either a home blood stool test within the past year or a sigmoidoscopy or colonoscopy within the past 10 years"
+        },
+        {
+          "count": "5580",
+          "item": "Percentage of older adults getting sufficient sleep (>6 hours)"
+        }
+      ]
+    },
+    "dataTypeName": "text",
+    "description": "Question",
+    "fieldName": "question",
+    "format": {
+      "align": "left"
+    },
+    "id": 605870962,
+    "name": "Question",
+    "position": 9,
+    "renderTypeName": "text",
+    "tableColumnId": 36215622,
+    "width": 416
+  },
+  {
+    "cachedContents": {
+      "cardinality": "2",
+      "count": "284142",
+      "largest": "Number",
+      "non_null": "284142",
+      "null": "0",
+      "smallest": "%",
+      "top": [
+        {
+          "count": "262048",
+          "item": "%"
+        },
+        {
+          "count": "22094",
+          "item": "Number"
+        }
+      ]
+    },
+    "dataTypeName": "text",
+    "description": "The unit, such as \"%\" for percentage",
+    "fieldName": "data_value_unit",
+    "format": {
+      "align": "left"
+    },
+    "id": 605870964,
+    "name": "Data_Value_Unit",
+    "position": 11,
+    "renderTypeName": "text",
+    "tableColumnId": 36215624,
+    "width": 168
+  },
+  {
+    "cachedContents": {
+      "cardinality": "2",
+      "count": "284142",
+      "largest": "PRCTG",
+      "non_null": "284142",
+      "null": "0",
+      "smallest": "MEAN",
+      "top": [
+        {
+          "count": "262048",
+          "item": "PRCTG"
+        },
+        {
+          "count": "22094",
+          "item": "MEAN"
+        }
+      ]
+    },
+    "dataTypeName": "text",
+    "description": "Identifier for the Data Value Type",
+    "fieldName": "datavaluetypeid",
+    "format": {
+      "align": "left"
+    },
+    "id": 605870965,
+    "name": "DataValueTypeID",
+    "position": 12,
+    "renderTypeName": "text",
+    "tableColumnId": 36215625,
+    "width": 173
+  },
+  {
+    "cachedContents": {
+      "cardinality": "2",
+      "count": "284142",
+      "largest": "Percentage",
+      "non_null": "284142",
+      "null": "0",
+      "smallest": "Mean",
+      "top": [
+        {
+          "count": "262048",
+          "item": "Percentage"
+        },
+        {
+          "count": "22094",
+          "item": "Mean"
+        }
+      ]
+    },
+    "dataTypeName": "text",
+    "description": "The data value type, such as age-adjusted prevalence or crude prevalence",
+    "fieldName": "data_value_type",
+    "format": {
+      "align": "left"
+    },
+    "id": 605870966,
+    "name": "Data_Value_Type",
+    "position": 13,
+    "renderTypeName": "text",
+    "tableColumnId": 36215626,
+    "width": 177
+  },
+  {
+    "cachedContents": {
+      "cardinality": "1001",
+      "count": "284142",
+      "largest": "100.0",
+      "non_null": "192808",
+      "null": "91334",
+      "smallest": "0.0",
+      "top": [
+        {
+          "count": "629",
+          "item": "6.0"
+        },
+        {
+          "count": "599",
+          "item": "5.8"
+        },
+        {
+          "count": "590",
+          "item": "5.5"
+        },
+        {
+          "count": "588",
+          "item": "5.6"
+        },
+        {
+          "count": "581",
+          "item": "6.1"
+        },
+        {
+          "count": "580",
+          "item": "5.1"
+        },
+        {
+          "count": "576",
+          "item": "6.3"
+        },
+        {
+          "count": "574",
+          "item": "5.2"
+        },
+        {
+          "count": "572",
+          "item": "5.9"
+        },
+        {
+          "count": "556",
+          "item": "5.7"
+        },
+        {
+          "count": "556",
+          "item": "5.0"
+        },
+        {
+          "count": "556",
+          "item": "6.2"
+        },
+        {
+          "count": "552",
+          "item": "4.9"
+        },
+        {
+          "count": "550",
+          "item": "5.3"
+        },
+        {
+          "count": "542",
+          "item": "6.6"
+        },
+        {
+          "count": "542",
+          "item": "6.4"
+        },
+        {
+          "count": "532",
+          "item": "5.4"
+        },
+        {
+          "count": "528",
+          "item": "6.5"
+        },
+        {
+          "count": "493",
+          "item": "6.7"
+        },
+        {
+          "count": "481",
+          "item": "4.7"
+        }
+      ]
+    },
+    "dataTypeName": "number",
+    "description": "Data Value, such as 14.7 ",
+    "fieldName": "data_value",
+    "format": {
+      "align": "left",
+      "noCommas": "false",
+      "precision": "1",
+      "precisionStyle": "standard"
+    },
+    "id": 605870967,
+    "name": "Data_Value",
+    "position": 14,
+    "renderTypeName": "number",
+    "tableColumnId": 36215627,
+    "width": 147
+  },
+  {
+    "cachedContents": {
+      "cardinality": "1001",
+      "count": "284142",
+      "largest": "100.0",
+      "non_null": "192808",
+      "null": "91334",
+      "smallest": "0.0",
+      "top": [
+        {
+          "count": "629",
+          "item": "6.0"
+        },
+        {
+          "count": "599",
+          "item": "5.8"
+        },
+        {
+          "count": "590",
+          "item": "5.5"
+        },
+        {
+          "count": "588",
+          "item": "5.6"
+        },
+        {
+          "count": "581",
+          "item": "6.1"
+        },
+        {
+          "count": "580",
+          "item": "5.1"
+        },
+        {
+          "count": "576",
+          "item": "6.3"
+        },
+        {
+          "count": "574",
+          "item": "5.2"
+        },
+        {
+          "count": "572",
+          "item": "5.9"
+        },
+        {
+          "count": "556",
+          "item": "5.7"
+        },
+        {
+          "count": "556",
+          "item": "5.0"
+        },
+        {
+          "count": "556",
+          "item": "6.2"
+        },
+        {
+          "count": "552",
+          "item": "4.9"
+        },
+        {
+          "count": "550",
+          "item": "5.3"
+        },
+        {
+          "count": "542",
+          "item": "6.6"
+        },
+        {
+          "count": "542",
+          "item": "6.4"
+        },
+        {
+          "count": "532",
+          "item": "5.4"
+        },
+        {
+          "count": "528",
+          "item": "6.5"
+        },
+        {
+          "count": "493",
+          "item": "6.7"
+        },
+        {
+          "count": "481",
+          "item": "4.7"
+        }
+      ]
+    },
+    "dataTypeName": "number",
+    "description": "Equal to data value, but format is numeric",
+    "fieldName": "data_value_alt",
+    "format": {
+      "align": "right",
+      "precision": "1",
+      "precisionStyle": "standard"
+    },
+    "id": 605870968,
+    "name": "Data_Value_Alt",
+    "position": 15,
+    "renderTypeName": "number",
+    "tableColumnId": 36215628,
+    "width": 80
+  },
+  {
+    "cachedContents": {
+      "cardinality": "5",
+      "count": "284142",
+      "largest": "#",
+      "non_null": "109976",
+      "null": "174166",
+      "smallest": "~",
+      "top": [
+        {
+          "count": "78875",
+          "item": "****"
+        },
+        {
+          "count": "14224",
+          "item": "&"
+        },
+        {
+          "count": "12459",
+          "item": "~"
+        },
+        {
+          "count": "3361",
+          "item": "#"
+        },
+        {
+          "count": "1057",
+          "item": "**"
+        }
+      ]
+    },
+    "dataTypeName": "text",
+    "description": "Footnote Symbol",
+    "fieldName": "data_value_footnote_symbol",
+    "format": {
+      "align": "left"
+    },
+    "id": 605870969,
+    "name": "Data_Value_Footnote_Symbol",
+    "position": 16,
+    "renderTypeName": "text",
+    "tableColumnId": 36215629,
+    "width": 94
+  },
+  {
+    "cachedContents": {
+      "cardinality": "5",
+      "count": "284142",
+      "largest": "Sample size of denominator and/or age group for age-standardization is less than 50 or relative standard error is more than 30%",
+      "non_null": "109976",
+      "null": "174166",
+      "smallest": "Estimate is not comparable to those generated using data from years prior to 2019 due to survey question changes",
+      "top": [
+        {
+          "count": "78875",
+          "item": "Sample size of denominator and/or age group for age-standardization is less than 50 or relative standard error is more than 30%"
+        },
+        {
+          "count": "14224",
+          "item": "Regional estimates may not represent all states in the region"
+        },
+        {
+          "count": "12459",
+          "item": "No Data Available"
+        },
+        {
+          "count": "3361",
+          "item": "Fewer than 50 States reporting"
+        },
+        {
+          "count": "1057",
+          "item": "Estimate is not comparable to those generated using data from years prior to 2019 due to survey question changes"
+        }
+      ]
+    },
+    "dataTypeName": "text",
+    "description": "Footnote Text",
+    "fieldName": "data_value_footnote",
+    "format": {
+      "align": "left"
+    },
+    "id": 605870970,
+    "name": "Data_Value_Footnote",
+    "position": 17,
+    "renderTypeName": "text",
+    "tableColumnId": 36215630,
+    "width": 208
+  },
+  {
+    "cachedContents": {
+      "cardinality": "995",
+      "count": "284142",
+      "largest": "99.6",
+      "non_null": "192597",
+      "null": "91545",
+      "smallest": "0.0",
+      "top": [
+        {
+          "count": "769",
+          "item": "4.8"
+        },
+        {
+          "count": "765",
+          "item": "4.7"
+        },
+        {
+          "count": "765",
+          "item": "4.9"
+        },
+        {
+          "count": "727",
+          "item": "4.6"
+        },
+        {
+          "count": "719",
+          "item": "5.1"
+        },
+        {
+          "count": "708",
+          "item": "5.4"
+        },
+        {
+          "count": "707",
+          "item": "5.6"
+        },
+        {
+          "count": "701",
+          "item": "5.0"
+        },
+        {
+          "count": "694",
+          "item": "4.4"
+        },
+        {
+          "count": "692",
+          "item": "4.5"
+        },
+        {
+          "count": "683",
+          "item": "4.3"
+        },
+        {
+          "count": "672",
+          "item": "4.2"
+        },
+        {
+          "count": "672",
+          "item": "5.3"
+        },
+        {
+          "count": "670",
+          "item": "5.5"
+        },
+        {
+          "count": "650",
+          "item": "5.7"
+        },
+        {
+          "count": "641",
+          "item": "5.2"
+        },
+        {
+          "count": "618",
+          "item": "4.1"
+        },
+        {
+          "count": "600",
+          "item": "4.0"
+        },
+        {
+          "count": "595",
+          "item": "5.9"
+        },
+        {
+          "count": "568",
+          "item": "5.8"
+        }
+      ]
+    },
+    "dataTypeName": "text",
+    "description": "Low Confidence Limit",
+    "fieldName": "low_confidence_limit",
+    "format": {
+      "align": "right",
+      "precisionStyle": "standard"
+    },
+    "id": 605870971,
+    "name": "Low_Confidence_Limit",
+    "position": 18,
+    "renderTypeName": "text",
+    "tableColumnId": 142246608,
+    "width": 129
+  },
+  {
+    "cachedContents": {
+      "cardinality": "989",
+      "count": "284142",
+      "largest": "99.9",
+      "non_null": "192597",
+      "null": "91545",
+      "smallest": "10.0",
+      "top": [
+        {
+          "count": "450",
+          "item": "6.5"
+        },
+        {
+          "count": "446",
+          "item": "5.5"
+        },
+        {
+          "count": "444",
+          "item": "6.9"
+        },
+        {
+          "count": "439",
+          "item": "5.8"
+        },
+        {
+          "count": "431",
+          "item": "6.6"
+        },
+        {
+          "count": "430",
+          "item": "5.9"
+        },
+        {
+          "count": "430",
+          "item": "6.1"
+        },
+        {
+          "count": "426",
+          "item": "5.6"
+        },
+        {
+          "count": "425",
+          "item": "6.8"
+        },
+        {
+          "count": "423",
+          "item": "5.7"
+        },
+        {
+          "count": "420",
+          "item": "6.7"
+        },
+        {
+          "count": "419",
+          "item": "7.5"
+        },
+        {
+          "count": "417",
+          "item": "6.0"
+        },
+        {
+          "count": "417",
+          "item": "6.4"
+        },
+        {
+          "count": "413",
+          "item": "6.2"
+        },
+        {
+          "count": "408",
+          "item": "6.3"
+        },
+        {
+          "count": "407",
+          "item": "7.0"
+        },
+        {
+          "count": "406",
+          "item": "7.3"
+        },
+        {
+          "count": "405",
+          "item": "7.2"
+        },
+        {
+          "count": "402",
+          "item": "7.4"
+        }
+      ]
+    },
+    "dataTypeName": "text",
+    "description": "High Confidence Limit",
+    "fieldName": "high_confidence_limit",
+    "format": {
+      "align": "right",
+      "precisionStyle": "standard"
+    },
+    "id": 605870972,
+    "name": "High_Confidence_Limit",
+    "position": 19,
+    "renderTypeName": "text",
+    "tableColumnId": 142246609,
+    "width": 118
+  },
+  {
+    "cachedContents": {
+      "cardinality": "1",
+      "count": "284142",
+      "largest": "Age Group",
+      "non_null": "284142",
+      "null": "0",
+      "smallest": "Age Group",
+      "top": [
+        {
+          "count": "284142",
+          "item": "Age Group"
+        }
+      ]
+    },
+    "dataTypeName": "text",
+    "description": "Lookup Identification value, such as Age Group, Sex, or Race/Ethnicity",
+    "fieldName": "stratificationcategory1",
+    "format": {
+      "align": "left"
+    },
+    "id": 605870974,
+    "name": "StratificationCategory1",
+    "position": 21,
+    "renderTypeName": "text",
+    "tableColumnId": 36215634,
+    "width": 214
+  },
+  {
+    "cachedContents": {
+      "cardinality": "3",
+      "count": "284142",
+      "largest": "Overall",
+      "non_null": "284142",
+      "null": "0",
+      "smallest": "50-64 years",
+      "top": [
+        {
+          "count": "95233",
+          "item": "Overall"
+        },
+        {
+          "count": "94741",
+          "item": "50-64 years"
+        },
+        {
+          "count": "94168",
+          "item": "65 years or older"
+        }
+      ]
+    },
+    "dataTypeName": "text",
+    "description": "Data stratified by this value, such as 50-54, 55-59, 60-64, 65 years or older",
+    "fieldName": "stratification1",
+    "format": {
+      "align": "left"
+    },
+    "id": 605870975,
+    "name": "Stratification1",
+    "position": 22,
+    "renderTypeName": "text",
+    "tableColumnId": 36215635,
+    "width": 166
+  },
+  {
+    "cachedContents": {
+      "cardinality": "2",
+      "count": "284142",
+      "largest": "Sex",
+      "non_null": "247269",
+      "null": "36873",
+      "smallest": "Race/Ethnicity",
+      "top": [
+        {
+          "count": "178431",
+          "item": "Race/Ethnicity"
+        },
+        {
+          "count": "68838",
+          "item": "Sex"
+        }
+      ]
+    },
+    "dataTypeName": "text",
+    "description": "Lookup Identification value, such as Sex or Race/Ethnicity",
+    "fieldName": "stratificationcategory2",
+    "format": {
+      "align": "left"
+    },
+    "id": 605870976,
+    "name": "StratificationCategory2",
+    "position": 23,
+    "renderTypeName": "text",
+    "tableColumnId": 36215636,
+    "width": 207
+  },
+  {
+    "cachedContents": {
+      "cardinality": "7",
+      "count": "284142",
+      "largest": "White, non-Hispanic",
+      "non_null": "247269",
+      "null": "36873",
+      "smallest": "Asian/Pacific Islander",
+      "top": [
+        {
+          "count": "36450",
+          "item": "White, non-Hispanic"
+        },
+        {
+          "count": "36326",
+          "item": "Hispanic"
+        },
+        {
+          "count": "35770",
+          "item": "Black, non-Hispanic"
+        },
+        {
+          "count": "35021",
+          "item": "Native Am/Alaskan Native"
+        },
+        {
+          "count": "34864",
+          "item": "Asian/Pacific Islander"
+        },
+        {
+          "count": "34596",
+          "item": "Female"
+        },
+        {
+          "count": "34242",
+          "item": "Male"
+        }
+      ]
+    },
+    "dataTypeName": "text",
+    "description": "Data  stratified by this value, such as Male, Female, Asian/Pacific Islander, Black, non-Hispanc, Hispanic, Native Am/Alaskan Native, or White, non-Hispanic",
+    "fieldName": "stratification2",
+    "format": {
+      "align": "left"
+    },
+    "id": 605870977,
+    "name": "Stratification2",
+    "position": 24,
+    "renderTypeName": "text",
+    "tableColumnId": 36215637,
+    "width": 172
+  },
+  {
+    "cachedContents": {
+      "cardinality": "54",
+      "count": "284142",
+      "non_null": "253653",
+      "null": "30489",
+      "top": [
+        {
+          "count": "5916",
+          "item": {
+            "coordinates": [
+              -120.15503132599969,
+              44.56744942400047
+            ],
+            "type": "Point"
+          }
+        },
+        {
+          "count": "5787",
+          "item": {
+            "coordinates": [
+              -75.54397042699964,
+              42.82700103200045
+            ],
+            "type": "Point"
+          }
+        },
+        {
+          "count": "5368",
+          "item": {
+            "coordinates": [
+              -111.58713063499971,
+              39.360700171000474
+            ],
+            "type": "Point"
+          }
+        },
+        {
+          "count": "5311",
+          "item": {
+            "coordinates": [
+              -82.40426005599966,
+              40.06021014100048
+            ],
+            "type": "Point"
+          }
+        },
+        {
+          "count": "5164",
+          "item": {
+            "coordinates": [
+              -157.85774940299973,
+              21.304850435000446
+            ],
+            "type": "Point"
+          }
+        },
+        {
+          "count": "5132",
+          "item": {
+            "coordinates": [
+              -76.60926011099963,
+              39.29058096400047
+            ],
+            "type": "Point"
+          }
+        },
+        {
+          "count": "5124",
+          "item": {
+            "coordinates": [
+              -83.62758034599966,
+              32.83968109300048
+            ],
+            "type": "Point"
+          }
+        },
+        {
+          "count": "5113",
+          "item": {
+            "coordinates": [
+              -84.71439026999968,
+              44.6613195430005
+            ],
+            "type": "Point"
+          }
+        },
+        {
+          "count": "4950",
+          "item": {
+            "coordinates": [
+              -117.07184056399967,
+              39.493240390000494
+            ],
+            "type": "Point"
+          }
+        },
+        {
+          "count": "4949",
+          "item": {
+            "coordinates": [
+              -68.98503133599962,
+              45.254228894000505
+            ],
+            "type": "Point"
+          }
+        },
+        {
+          "count": "4947",
+          "item": {
+            "coordinates": [
+              -99.42677020599967,
+              31.827240407000488
+            ],
+            "type": "Point"
+          }
+        },
+        {
+          "count": "4939",
+          "item": {
+            "coordinates": [
+              -89.53803082499968,
+              32.745510099000455
+            ],
+            "type": "Point"
+          }
+        },
+        {
+          "count": "4936",
+          "item": {
+            "coordinates": [
+              -78.45789046299967,
+              37.54268067400045
+            ],
+            "type": "Point"
+          }
+        },
+        {
+          "count": "4928",
+          "item": {
+            "coordinates": [
+              -89.81637074199966,
+              44.39319117400049
+            ],
+            "type": "Point"
+          }
+        },
+        {
+          "count": "4856",
+          "item": {
+            "coordinates": [
+              -80.71264013499967,
+              38.66551020200046
+            ],
+            "type": "Point"
+          }
+        },
+        {
+          "count": "4844",
+          "item": {
+            "coordinates": [
+              -85.77449091399967,
+              35.68094058000048
+            ],
+            "type": "Point"
+          }
+        },
+        {
+          "count": "4810",
+          "item": {
+            "coordinates": [
+              -77.86070029399963,
+              40.79373015200048
+            ],
+            "type": "Point"
+          }
+        },
+        {
+          "count": "4807",
+          "item": {
+            "coordinates": [
+              -86.63186076199969,
+              32.84057112200048
+            ],
+            "type": "Point"
+          }
+        },
+        {
+          "count": "4807",
+          "item": {
+            "coordinates": [
+              -81.04537120699968,
+              33.998821303000454
+            ],
+            "type": "Point"
+          }
+        },
+        {
+          "count": "4805",
+          "item": {
+            "coordinates": [
+              -106.24058098499967,
+              34.52088095200048
+            ],
+            "type": "Point"
+          }
+        }
+      ]
+    },
+    "dataTypeName": "point",
+    "description": "Geolocation data for mapping purposes",
+    "fieldName": "geolocation",
+    "format": {},
+    "id": 605870980,
+    "name": "Geolocation",
+    "position": 27,
+    "renderTypeName": "point",
+    "tableColumnId": 152396914
+  },
+  {
+    "cachedContents": {
+      "cardinality": "7",
+      "count": "284142",
+      "largest": "C07",
+      "non_null": "284142",
+      "null": "0",
+      "smallest": "C01",
+      "top": [
+        {
+          "count": "96753",
+          "item": "C01"
+        },
+        {
+          "count": "62153",
+          "item": "C03"
+        },
+        {
+          "count": "33194",
+          "item": "C02"
+        },
+        {
+          "count": "25493",
+          "item": "C07"
+        },
+        {
+          "count": "22184",
+          "item": "C05"
+        },
+        {
+          "count": "22183",
+          "item": "C04"
+        },
+        {
+          "count": "22182",
+          "item": "C06"
+        }
+      ]
+    },
+    "dataTypeName": "text",
+    "description": "Identifier for Class",
+    "fieldName": "classid",
+    "format": {
+      "align": "left"
+    },
+    "id": 605870981,
+    "name": "ClassID",
+    "position": 28,
+    "renderTypeName": "text",
+    "tableColumnId": 36215641,
+    "width": 80
+  },
+  {
+    "cachedContents": {
+      "cardinality": "39",
+      "count": "284142",
+      "largest": "TSC11",
+      "non_null": "284142",
+      "null": "0",
+      "smallest": "TAC01",
+      "top": [
+        {
+          "count": "11092",
+          "item": "TMC03"
+        },
+        {
+          "count": "11092",
+          "item": "TMC01"
+        },
+        {
+          "count": "11092",
+          "item": "TAC01"
+        },
+        {
+          "count": "11092",
+          "item": "TOC01"
+        },
+        {
+          "count": "11092",
+          "item": "TSC08"
+        },
+        {
+          "count": "11092",
+          "item": "TNC04"
+        },
+        {
+          "count": "11092",
+          "item": "TNC03"
+        },
+        {
+          "count": "11091",
+          "item": "TOC08"
+        },
+        {
+          "count": "11091",
+          "item": "TAC03"
+        },
+        {
+          "count": "11091",
+          "item": "TOC07"
+        },
+        {
+          "count": "11051",
+          "item": "TSC09"
+        },
+        {
+          "count": "11002",
+          "item": "TOC03"
+        },
+        {
+          "count": "9709",
+          "item": "TOC10"
+        },
+        {
+          "count": "8303",
+          "item": "TOC11"
+        },
+        {
+          "count": "8214",
+          "item": "TOC13"
+        },
+        {
+          "count": "6148",
+          "item": "TSC04"
+        },
+        {
+          "count": "5854",
+          "item": "TCC01"
+        },
+        {
+          "count": "5581",
+          "item": "TOC05"
+        },
+        {
+          "count": "5581",
+          "item": "TSC02"
+        },
+        {
+          "count": "5580",
+          "item": "TOC09"
+        }
+      ]
+    },
+    "dataTypeName": "text",
+    "description": "Identifier for topic",
+    "fieldName": "topicid",
+    "format": {
+      "align": "left"
+    },
+    "id": 605870982,
+    "name": "TopicID",
+    "position": 29,
+    "renderTypeName": "text",
+    "tableColumnId": 36215642,
+    "width": 80
+  },
+  {
+    "cachedContents": {
+      "cardinality": "39",
+      "count": "284142",
+      "largest": "Q46",
+      "non_null": "284142",
+      "null": "0",
+      "smallest": "Q01",
+      "top": [
+        {
+          "count": "11092",
+          "item": "Q13"
+        },
+        {
+          "count": "11092",
+          "item": "Q27"
+        },
+        {
+          "count": "11092",
+          "item": "Q08"
+        },
+        {
+          "count": "11092",
+          "item": "Q18"
+        },
+        {
+          "count": "11092",
+          "item": "Q17"
+        },
+        {
+          "count": "11092",
+          "item": "Q16"
+        },
+        {
+          "count": "11092",
+          "item": "Q03"
+        },
+        {
+          "count": "11091",
+          "item": "Q21"
+        },
+        {
+          "count": "11091",
+          "item": "Q33"
+        },
+        {
+          "count": "11091",
+          "item": "Q32"
+        },
+        {
+          "count": "11051",
+          "item": "Q09"
+        },
+        {
+          "count": "11002",
+          "item": "Q35"
+        },
+        {
+          "count": "9709",
+          "item": "Q46"
+        },
+        {
+          "count": "8303",
+          "item": "Q43"
+        },
+        {
+          "count": "8214",
+          "item": "Q45"
+        },
+        {
+          "count": "6148",
+          "item": "Q19"
+        },
+        {
+          "count": "5854",
+          "item": "Q30"
+        },
+        {
+          "count": "5581",
+          "item": "Q07"
+        },
+        {
+          "count": "5581",
+          "item": "Q15"
+        },
+        {
+          "count": "5580",
+          "item": "Q34"
+        }
+      ]
+    },
+    "dataTypeName": "text",
+    "description": "Identifier for question or indicator",
+    "fieldName": "questionid",
+    "format": {
+      "align": "left"
+    },
+    "id": 605870983,
+    "name": "QuestionID",
+    "position": 30,
+    "renderTypeName": "text",
+    "tableColumnId": 36215643,
+    "width": 80
+  },
+  {
+    "cachedContents": {
+      "cardinality": "59",
+      "count": "284142",
+      "largest": "9004",
+      "non_null": "284142",
+      "null": "0",
+      "smallest": "01",
+      "top": [
+        {
+          "count": "6132",
+          "item": "59"
+        },
+        {
+          "count": "6126",
+          "item": "9004"
+        },
+        {
+          "count": "6102",
+          "item": "9001"
+        },
+        {
+          "count": "6099",
+          "item": "9002"
+        },
+        {
+          "count": "6030",
+          "item": "9003"
+        },
+        {
+          "count": "5916",
+          "item": "41"
+        },
+        {
+          "count": "5787",
+          "item": "36"
+        },
+        {
+          "count": "5368",
+          "item": "49"
+        },
+        {
+          "count": "5311",
+          "item": "39"
+        },
+        {
+          "count": "5164",
+          "item": "15"
+        },
+        {
+          "count": "5132",
+          "item": "24"
+        },
+        {
+          "count": "5124",
+          "item": "13"
+        },
+        {
+          "count": "5113",
+          "item": "26"
+        },
+        {
+          "count": "4950",
+          "item": "32"
+        },
+        {
+          "count": "4949",
+          "item": "23"
+        },
+        {
+          "count": "4947",
+          "item": "48"
+        },
+        {
+          "count": "4939",
+          "item": "28"
+        },
+        {
+          "count": "4936",
+          "item": "51"
+        },
+        {
+          "count": "4928",
+          "item": "55"
+        },
+        {
+          "count": "4856",
+          "item": "54"
+        }
+      ]
+    },
+    "dataTypeName": "text",
+    "description": "Location number value corresponding to geographic location like state",
+    "fieldName": "locationid",
+    "format": {
+      "align": "left"
+    },
+    "id": 605870985,
+    "name": "LocationID",
+    "position": 32,
+    "renderTypeName": "text",
+    "tableColumnId": 36215645,
+    "width": 80
+  },
+  {
+    "cachedContents": {
+      "cardinality": "1",
+      "count": "284142",
+      "largest": "AGE",
+      "non_null": "284142",
+      "null": "0",
+      "smallest": "AGE",
+      "top": [
+        {
+          "count": "284142",
+          "item": "AGE"
+        }
+      ]
+    },
+    "dataTypeName": "text",
+    "description": "Identifier for the first category stratification ",
+    "fieldName": "stratificationcategoryid1",
+    "format": {
+      "align": "left"
+    },
+    "id": 605870986,
+    "name": "StratificationCategoryID1",
+    "position": 33,
+    "renderTypeName": "text",
+    "tableColumnId": 36215646,
+    "width": 112
+  },
+  {
+    "cachedContents": {
+      "cardinality": "3",
+      "count": "284142",
+      "largest": "AGE_OVERALL",
+      "non_null": "284142",
+      "null": "0",
+      "smallest": "5064",
+      "top": [
+        {
+          "count": "95233",
+          "item": "AGE_OVERALL"
+        },
+        {
+          "count": "94741",
+          "item": "5064"
+        },
+        {
+          "count": "94168",
+          "item": "65PLUS"
+        }
+      ]
+    },
+    "dataTypeName": "text",
+    "description": "Identifier for the first stratification ",
+    "fieldName": "stratificationid1",
+    "format": {
+      "align": "left"
+    },
+    "id": 605870987,
+    "name": "StratificationID1",
+    "position": 34,
+    "renderTypeName": "text",
+    "tableColumnId": 36215647,
+    "width": 169
+  },
+  {
+    "cachedContents": {
+      "cardinality": "3",
+      "count": "284142",
+      "largest": "SEX",
+      "non_null": "284142",
+      "null": "0",
+      "smallest": "OVERALL",
+      "top": [
+        {
+          "count": "178431",
+          "item": "RACE"
+        },
+        {
+          "count": "68838",
+          "item": "SEX"
+        },
+        {
+          "count": "36873",
+          "item": "OVERALL"
+        }
+      ]
+    },
+    "dataTypeName": "text",
+    "description": "Identifier for the second category stratification ",
+    "fieldName": "stratificationcategoryid2",
+    "format": {
+      "align": "left"
+    },
+    "id": 605870988,
+    "name": "StratificationCategoryID2",
+    "position": 35,
+    "renderTypeName": "text",
+    "tableColumnId": 36215648,
+    "width": 95
+  },
+  {
+    "cachedContents": {
+      "cardinality": "8",
+      "count": "284142",
+      "largest": "WHT",
+      "non_null": "284142",
+      "null": "0",
+      "smallest": "ASN",
+      "top": [
+        {
+          "count": "36873",
+          "item": "OVERALL"
+        },
+        {
+          "count": "36450",
+          "item": "WHT"
+        },
+        {
+          "count": "36326",
+          "item": "HIS"
+        },
+        {
+          "count": "35770",
+          "item": "BLK"
+        },
+        {
+          "count": "35021",
+          "item": "NAA"
+        },
+        {
+          "count": "34864",
+          "item": "ASN"
+        },
+        {
+          "count": "34596",
+          "item": "FEMALE"
+        },
+        {
+          "count": "34242",
+          "item": "MALE"
+        }
+      ]
+    },
+    "dataTypeName": "text",
+    "description": "Identifier for the second stratification",
+    "fieldName": "stratificationid2",
+    "format": {
+      "align": "left"
+    },
+    "id": 605870989,
+    "name": "StratificationID2",
+    "position": 36,
+    "renderTypeName": "text",
+    "tableColumnId": 36215649,
+    "width": 131
+  },
+  {
+    "computationStrategy": {
+      "parameters": {
+        "primary_key": "_feature_id",
+        "region": "_skr5-azej"
+      },
+      "source_columns": [
+        "geolocation"
+      ],
+      "type": "georegion_match_on_point"
+    },
+    "dataTypeName": "number",
+    "description": "This column was automatically created in order to record in what polygon from the dataset 'Counties' (skr5-azej) the point in column 'geolocation' is located.  This enables the creation of region maps (choropleths) in the visualization canvas and data lens.",
+    "fieldName": ":@computed_region_skr5_azej",
+    "format": {},
+    "id": 605870993,
+    "name": "Counties",
+    "position": 42,
+    "renderTypeName": "number",
+    "tableColumnId": 152396915
+  },
+  {
+    "computationStrategy": {
+      "parameters": {
+        "primary_key": "_feature_id",
+        "region": "_hjsp-umg2"
+      },
+      "source_columns": [
+        "geolocation"
+      ],
+      "type": "georegion_match_on_point"
+    },
+    "dataTypeName": "number",
+    "description": "This column was automatically created in order to record in what polygon from the dataset 'States' (hjsp-umg2) the point in column 'geolocation' is located.  This enables the creation of region maps (choropleths) in the visualization canvas and data lens.",
+    "fieldName": ":@computed_region_hjsp_umg2",
+    "format": {},
+    "id": 605870994,
+    "name": "States",
+    "position": 43,
+    "renderTypeName": "number",
+    "tableColumnId": 152396916
+  }
+]
