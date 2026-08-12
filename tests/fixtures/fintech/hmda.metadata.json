@@ -1,0 +1,61 @@
+{
+  "_comment": "Per-year control totals for fixture mode, matching the committed sample rather than the live publisher. deterministic md5 ordering, no RNG. Strata: ['age_code', 'exempt', 'multifamily', 'na_tract', 'no_msa'].",
+  "years": [
+    {
+      "institutions": 40,
+      "last_modified": "Thu, 01 Jan 1970 00:00:00 GMT",
+      "source_reported_by_filers": 124,
+      "source_reported_records": 124,
+      "year": 2018
+    },
+    {
+      "institutions": 40,
+      "last_modified": "Thu, 01 Jan 1970 00:00:00 GMT",
+      "source_reported_by_filers": 128,
+      "source_reported_records": 128,
+      "year": 2019
+    },
+    {
+      "institutions": 40,
+      "last_modified": "Thu, 01 Jan 1970 00:00:00 GMT",
+      "source_reported_by_filers": 128,
+      "source_reported_records": 128,
+      "year": 2020
+    },
+    {
+      "institutions": 40,
+      "last_modified": "Thu, 01 Jan 1970 00:00:00 GMT",
+      "source_reported_by_filers": 130,
+      "source_reported_records": 130,
+      "year": 2021
+    },
+    {
+      "institutions": 40,
+      "last_modified": "Thu, 01 Jan 1970 00:00:00 GMT",
+      "source_reported_by_filers": 123,
+      "source_reported_records": 123,
+      "year": 2022
+    },
+    {
+      "institutions": 40,
+      "last_modified": "Thu, 01 Jan 1970 00:00:00 GMT",
+      "source_reported_by_filers": 123,
+      "source_reported_records": 123,
+      "year": 2023
+    },
+    {
+      "institutions": 40,
+      "last_modified": "Thu, 01 Jan 1970 00:00:00 GMT",
+      "source_reported_by_filers": 118,
+      "source_reported_records": 121,
+      "year": 2024
+    },
+    {
+      "institutions": 40,
+      "last_modified": "Thu, 01 Jan 1970 00:00:00 GMT",
+      "source_reported_by_filers": 118,
+      "source_reported_records": 121,
+      "year": 2025
+    }
+  ]
+}

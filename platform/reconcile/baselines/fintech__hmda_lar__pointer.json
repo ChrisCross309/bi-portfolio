@@ -1,0 +1,18 @@
+{
+  "api_reference": "https://cfpb.github.io/hmda-platform/#data-browser-api",
+  "columns_observed": 99,
+  "field_reference": "https://ffiec.cfpb.gov/documentation/publications/loan-level-datasets/lar-data-fields",
+  "filing_instructions": "https://ffiec.cfpb.gov/documentation/publications/loan-level-datasets/lar-data-fields",
+  "note": "HMDA publishes no machine-readable field metadata; this is a pointer file, per CLAUDE.md rule 8.",
+  "retrieved_at": "2026-08-12T00:46:43.251324Z",
+  "years_observed": [
+    2018,
+    2019,
+    2020,
+    2021,
+    2022,
+    2023,
+    2024,
+    2025
+  ]
+}
