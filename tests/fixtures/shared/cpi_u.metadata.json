@@ -1,0 +1,10 @@
+{
+  "_comment": "Committed sample of the BLS cu flat files: the CPI-U all-items deflator CUUR0000SA0 and its seasonally adjusted twin CUSR0000SA0, filtered as text so BLS's fixed-width padding survives byte for byte. Not a live publisher response.",
+  "api_latest": {
+    "period": "M06",
+    "series_id": "CUUR0000SA0",
+    "value": "333.952",
+    "year": "2026"
+  },
+  "last_modified": "Thu, 01 Jan 1970 00:00:00 GMT"
+}
