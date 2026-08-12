@@ -21,7 +21,11 @@ build command, and its own deliverables. **Nothing from one project's domain app
 |---|---|---|---|---|
 | 1 | [Insurance / Insurtech](projects/01-insurance-nfip/README.md) | Flood insurance analytics | FEMA NFIP claims + policies, FEMA disaster declarations | `just insurance` |
 | 2 | [Fintech / Consumer Lending](projects/02-fintech-lending/README.md) | Complaints + mortgage lending | CFPB Consumer Complaints, HMDA LAR + institutions | `just fintech` |
-| 3 | [Health / Alzheimer's & Dementia](projects/03-health-dementia/README.md) | Cognitive-health & Medicare | CDC Alzheimer's & Healthy Aging, CMS Chronic Conditions + Geographic Variation | `just health` |
+| 3 | [Health / Alzheimer's & Dementia](projects/03-health-dementia/README.md) | Cognitive-health & Medicare | CDC Alzheimer's & Healthy Aging, CMS Medicare Geographic Variation | `just health` |
+
+CMS Medicare Chronic Conditions was planned for track 3 and is **not ingested**: it is absent from
+CMS's own catalogue and from every other discoverable route. That leaves HLT-E2 without a source,
+which is recorded with its evidence in the [health README](projects/03-health-dementia/README.md).
 
 What they share is **platform, not data**: DuckDB, the ingestion utilities, the integrity harness,
 and a small set of domain-neutral reference series — CPI-U, Census population and housing
@@ -69,19 +73,27 @@ the L1 harness, not asserted.
 ## Integrity
 
 `platform/reconcile/l1_integrity.py` runs after every ingestion and exits non-zero on any failure.
-Output is grouped by project track. It checks:
+Output is grouped by project track.
+
+**Registered today: NFIP claims and CFPB complaints — 2 of the 12 raw sources.**
 
 - **Count chain** — source-reported total → landing rows → raw parquet rows → DuckDB table rows,
-  with differences itemized.
+  with differences itemized. A gap between a publisher's own count and the bulk file it serves is
+  a timing observation; a gap anywhere downstream of landing is ours and fails the run.
 - **Lossless conversion** — landing vs. raw control totals. Monetary sums where summing is
-  meaningful; counts and spot-cell equality where it is not (CMS and CDC aggregates must never be
-  summed as controls — mixed averaging grains make the sum meaningless).
-- **Partition completeness** — NFIP states including territories and the null-state partition;
-  every expected year present for CFPB and HMDA.
-- **Michigan geography-quality gate** — MI vs. national null rates for county and tract codes;
-  warns above 10%.
-- **Question-coverage smoke checks** — per track, that the data each executive question needs is
-  actually present.
+  meaningful; per-partition counts where it is not (CMS and CDC aggregates must never be summed as
+  controls — mixed averaging grains make the sum meaningless).
+- **Partition completeness** — every state, territory and the null-state partition for NFIP; an
+  unbroken run of years for CFPB.
+- **Publisher spot checks** — NFIP per-state counts asked of the FEMA API directly.
+
+**Still to land, and listed here because it is session 1's finish line rather than because it
+runs:** the remaining ten sources, the Michigan geography-quality gate (MI vs. national missing
+rates for county and `censusGeoid`, counting empty strings as missing), and the per-track
+question-coverage smoke checks that prove every executive question is answerable from raw.
+
+Separately, `just reload` rebuilds every `raw` table from local parquet with no network, so a
+deleted or corrupt warehouse never means re-downloading from a publisher.
 
 ---
 
