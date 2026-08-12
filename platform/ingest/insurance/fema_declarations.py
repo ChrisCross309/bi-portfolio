@@ -31,8 +31,10 @@ from ingest.common import (
     base_manifest,
     http_client,
     human_bytes,
+    load_state_codes,
     load_table,
     make_logger,
+    nonstandard_partitions,
     partition_counts,
     paths_for,
     raise_for_transient,
@@ -44,13 +46,11 @@ from ingest.common import (
     stream_download,
     write_json,
 )
-from ingest.insurance.nfip_claims import (
+from ingest.openfema import (
     deprecation_notice,
     discover_dataset,
-    fetch_field_baseline,
-    load_state_codes,
-    nonstandard_partitions,
     select_distribution,
+    snapshot_field_baseline,
 )
 
 TRACK = "insurance"
@@ -188,7 +188,7 @@ def run(mode: str, force: bool = False) -> int:
             if notice:
                 log(f"WARNING  {notice}")
 
-            distribution_format, resolved_url = select_distribution(dataset["distribution"])
+            distribution_format, resolved_url = select_distribution(dataset)
             source_count = source_reported_count(client)
             refreshed = dataset.get("lastDataSetRefresh")
             log(f"resolved {distribution_format}: {resolved_url}")
@@ -203,11 +203,9 @@ def run(mode: str, force: bool = False) -> int:
                 log("SKIPPED (current): manifest matches the publisher's refresh timestamp")
                 return 0
 
-            baseline_dir = REPO_ROOT / "platform" / "reconcile" / "baselines"
-            baseline_dir.mkdir(parents=True, exist_ok=True)
-            fields = fetch_field_baseline(client, DATASET)
-            write_json(baseline_dir / f"{TRACK}__{SOURCE}__fields.json", fields)
-            log(f"schema baseline: {len(fields)} fields")
+            snapshot_field_baseline(
+                client, track=TRACK, source=SOURCE, dataset_name=DATASET, log=log
+            )
 
             landing = landing_dir / resolved_url.rsplit("/", 1)[-1]
             log(f"downloading -> {landing}")

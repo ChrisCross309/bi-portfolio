@@ -14,11 +14,15 @@ inventing a common shape would mean inventing one neither publisher has:
   * partition rules    "is this a US state code?" vs "is this a plausible complaint year?"
   * caveats            deprecation windows vs publication-window coverage limits
 
-Those live with the source that owns them.
+Those live with the source that owns them. A publisher surface that several sources do
+share gets its own module rather than a home here -- `ingest.openfema` for the FEMA
+dataset catalogue -- so that "shared by everything" and "shared by the FEMA sources"
+stay visibly different things.
 """
 
 from __future__ import annotations
 
+import csv
 import hashlib
 import json
 import shutil
@@ -32,6 +36,8 @@ import httpx
 from tenacity import retry, retry_if_exception_type, stop_after_attempt, wait_exponential
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
+BASELINE_DIR = REPO_ROOT / "platform" / "reconcile" / "baselines"
+STATE_CODES_CSV = REPO_ROOT / "platform" / "reference" / "state_codes.csv"
 
 # No publisher documents a hard rate limit; behave as if all of them do.
 USER_AGENT = "bi-portfolio-pipeline/0.1 (chris.hall309@gmail.com)"
@@ -85,6 +91,19 @@ def write_json(path: Path, payload: Any) -> None:
     path.write_text(
         json.dumps(payload, indent=2, sort_keys=True) + "\n", encoding="utf-8", newline="\n"
     )
+
+
+def write_baseline(track: str, source: str, payload: Any, *, kind: str = "fields") -> Path:
+    """Commit a schema baseline under one per-source name, and return where it went.
+
+    Session 1 captures baselines only; diffing them for drift is L2's job. `kind` is
+    'fields' for publishers that expose machine-readable field metadata and 'pointer'
+    for the ones that only publish documentation -- CLAUDE.md rule 8.
+    """
+    BASELINE_DIR.mkdir(parents=True, exist_ok=True)
+    path = BASELINE_DIR / f"{track}__{source}__{kind}.json"
+    write_json(path, payload)
+    return path
 
 
 def sql_literal(path: Path | str) -> str:
@@ -276,6 +295,28 @@ def load_table(con: duckdb.DuckDBPyConnection, table: str, raw_dir: Path) -> int
     con.execute(f"CREATE SCHEMA IF NOT EXISTS {schema}")
     con.execute(f"CREATE OR REPLACE TABLE {table} AS SELECT * FROM {raw_relation(raw_dir)}")
     return con.execute(f"SELECT count(*) FROM {table}").fetchone()[0]
+
+
+# ── reference data and partition keys ─────────────────────────────────────────
+
+
+def load_state_codes() -> frozenset[str]:
+    """The domain-neutral state reference, used to recognise partition keys."""
+    with STATE_CODES_CSV.open(encoding="utf-8", newline="") as handle:
+        return frozenset(row["state_code"] for row in csv.DictReader(handle))
+
+
+def nonstandard_partitions(
+    partition_rows: dict[str, int], known_keys: frozenset[str]
+) -> dict[str, int]:
+    """Partition keys the reference set does not recognise, kept and counted.
+
+    Publishers put real rows behind keys their own code lists do not contain, and those
+    rows stay in raw. Surfacing them here is what stops them from disappearing into a
+    failed join in session 2. Sources whose keys are not code-list members -- CFPB
+    partitions on year -- bring their own plausibility rule instead.
+    """
+    return {key: rows for key, rows in sorted(partition_rows.items()) if key not in known_keys}
 
 
 # ── manifest ──────────────────────────────────────────────────────────────────

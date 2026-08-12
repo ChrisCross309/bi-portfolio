@@ -7,15 +7,19 @@ import json
 from pathlib import Path
 
 import pytest
+from ingest import common
 from ingest.common import (
     HIVE_NULL_PARTITION,
     REPO_ROOT,
     base_manifest,
     human_bytes,
+    load_state_codes,
+    nonstandard_partitions,
     paths_for,
     read_existing_manifest,
     sha256_of,
     sql_literal,
+    write_baseline,
     write_json,
 )
 
@@ -70,6 +74,44 @@ def test_missing_or_corrupt_manifest_reads_as_none(tmp_path: Path) -> None:
     assert read_existing_manifest(tmp_path) is None
     (tmp_path / "manifest.json").write_text("{ not json", encoding="utf-8")
     assert read_existing_manifest(tmp_path) is None
+
+
+def test_state_reference_holds_states_dc_and_territories_but_no_invented_codes() -> None:
+    known = load_state_codes()
+    assert {"MI", "DC", "PR", "GU"} <= known
+    assert len(known) == 56  # 50 states + DC + 5 territories
+    assert "UN" not in known
+
+
+def test_nonstandard_partitions_flags_only_keys_outside_the_reference() -> None:
+    """The NFIP case that motivated it: state='UN' is a real code FEMA uses and no
+    state list contains, so it must be reported rather than silently dropped."""
+    known = load_state_codes()
+    assert nonstandard_partitions({"MI": 14_938, "PR": 25_386}, known) == {}
+    assert nonstandard_partitions({"MI": 14_938, "UN": 16_441}, known) == {"UN": 16_441}
+
+
+def test_nonstandard_partitions_returns_keys_in_sorted_order() -> None:
+    """The manifest is a committed artifact; a set's iteration order would churn it."""
+    flagged = nonstandard_partitions({"ZZ": 1, "UN": 2, "XX": 3}, frozenset())
+    assert list(flagged) == ["UN", "XX", "ZZ"]
+
+
+def test_write_baseline_names_files_per_source_and_kind(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """Field metadata and documentation pointers share one naming scheme and one writer."""
+    monkeypatch.setattr(common, "BASELINE_DIR", tmp_path / "baselines")
+
+    fields = write_baseline("insurance", "nfip_claims", [{"name": "state"}])
+    pointer = write_baseline("fintech", "cfpb_complaints", {"field_reference": "x"}, kind="pointer")
+
+    assert fields.name == "insurance__nfip_claims__fields.json"
+    assert pointer.name == "fintech__cfpb_complaints__pointer.json"
+    # Proves the monkeypatch took: without it this test would rewrite committed baselines.
+    assert fields.is_relative_to(tmp_path)
+    assert json.loads(fields.read_text(encoding="utf-8")) == [{"name": "state"}]
+    assert fields.read_bytes().endswith(b"\n")
 
 
 def _manifest(partition_rows: dict[str, int], nonstandard: dict[str, int]):

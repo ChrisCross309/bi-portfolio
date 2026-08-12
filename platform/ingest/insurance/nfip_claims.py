@@ -11,7 +11,6 @@ Run:  python -m ingest.insurance.nfip_claims [--mode live|fixture]
 from __future__ import annotations
 
 import argparse
-import csv
 import json
 import os
 import sys
@@ -20,26 +19,31 @@ from pathlib import Path
 from typing import Any
 
 import duckdb
-import httpx
 from ingest.common import (
     HIVE_NULL_PARTITION,
     REPO_ROOT,
     DiscoveryError,
     base_manifest,
-    fetch_odata_records,
     http_client,
+    load_state_codes,
     load_table,
     make_logger,
+    nonstandard_partitions,
     partition_counts,
     paths_for,
-    raise_for_transient,
     read_existing_manifest,
     repartition_to_raw,
-    retrying,
     sha256_of,
     sql_literal,
     stream_download,
     write_json,
+)
+from ingest.openfema import (
+    OPENFEMA_DATASETS,
+    deprecation_notice,
+    discover_dataset,
+    select_distribution,
+    snapshot_field_baseline,
 )
 
 TRACK = "insurance"
@@ -48,76 +52,10 @@ DATASET = "NfipClaims"
 TABLE = "raw.ins_nfip_claims"
 PARTITION_COLUMN = "state"
 
-OPENFEMA_DATASETS = "https://www.fema.gov/api/open/v1/OpenFemaDataSets"
-OPENFEMA_FIELDS = "https://www.fema.gov/api/open/v1/OpenFemaDataSetFields"
-
 log = make_logger(TRACK, SOURCE)
 
 
 # ── pure helpers (unit-tested without a network) ───────────────────────────────
-
-
-def select_distribution(
-    distributions: list[dict[str, Any]],
-    preferred: tuple[str, ...] = ("parquet", "csv"),
-) -> tuple[str, str]:
-    """Pick the best bulk distribution the publisher offers, in preference order."""
-    available: dict[str, str] = {}
-    for distribution in distributions:
-        fmt = (distribution.get("format") or "").strip().lower()
-        url = distribution.get("accessURL")
-        if fmt and url:
-            available.setdefault(fmt, url)
-
-    for fmt in preferred:
-        if fmt in available:
-            return fmt, available[fmt]
-
-    raise DiscoveryError(
-        f"No {' or '.join(preferred)} distribution for {DATASET}. "
-        f"Publisher offered: {sorted(available) or 'nothing'}. "
-        f"Raw distribution block: {json.dumps(distributions)}"
-    )
-
-
-def deprecation_notice(dataset: dict[str, Any], now: datetime | None = None) -> str | None:
-    """Warn when the publisher has scheduled this dataset for removal.
-
-    FEMA deprecated the v2 NFIP datasets with a two-month runway and froze the data
-    months before that. A pipeline that does not read `depDate` finds out by breaking.
-    """
-    deprecation_date = dataset.get("depDate")
-    if not deprecation_date:
-        return None
-
-    removal = datetime.fromisoformat(deprecation_date.replace("Z", "+00:00"))
-    days_left = (removal - (now or datetime.now(UTC))).days
-    return (
-        f"DEPRECATED: {dataset.get('name')} v{dataset.get('version')} is removed on "
-        f"{removal.date().isoformat()} ({days_left} days from now). "
-        f"Replacement: {dataset.get('depNewURL') or 'none published'}. "
-        f"Publisher note: {(dataset.get('depApiMessage') or '').strip()[:200]}"
-    )
-
-
-def load_state_codes() -> frozenset[str]:
-    """The domain-neutral state reference, used here only to recognise partition keys."""
-    path = REPO_ROOT / "platform" / "reference" / "state_codes.csv"
-    with path.open(encoding="utf-8", newline="") as handle:
-        return frozenset(row["state_code"] for row in csv.DictReader(handle))
-
-
-def nonstandard_partitions(
-    partition_rows: dict[str, int], known_codes: frozenset[str]
-) -> dict[str, int]:
-    """Partition keys the state reference does not recognise.
-
-    NFIP uses the literal code 'UN' for claims whose state is unavailable -- roughly
-    16k rows, mostly pre-1990 with `reportedCity` set to "Currently Unavailable". They
-    are real claims and stay in raw. Surfacing them here is what stops them from
-    disappearing into a failed join in session 2.
-    """
-    return {key: rows for key, rows in sorted(partition_rows.items()) if key not in known_codes}
 
 
 def source_relation(landing: Path, distribution_format: str) -> str:
@@ -165,6 +103,10 @@ def manifest_payload(
             rows_duckdb=rows_duckdb,
             partition_column=PARTITION_COLUMN,
             partition_rows=partition_rows,
+            # NFIP uses the literal code 'UN' for claims whose state is unavailable --
+            # roughly 16k rows, mostly pre-1990 with `reportedCity` set to "Currently
+            # Unavailable". Real claims, kept in raw, and named in the manifest so they
+            # cannot vanish into a failed state join in session 2.
             nonstandard_partitions=nonstandard_partitions(partition_rows, known_partition_keys),
         ),
         "dataset_version": dataset.get("version"),
@@ -178,36 +120,6 @@ def manifest_payload(
             else {"removal_date": dataset["depDate"], "replacement": dataset.get("depNewURL")}
         ),
     }
-
-
-# ── network ───────────────────────────────────────────────────────────────────
-
-
-@retrying
-def discover_dataset(client: httpx.Client, name: str) -> dict[str, Any]:
-    """Resolve dataset metadata from the publisher. Never hardcode a bulk URL."""
-    response = client.get(OPENFEMA_DATASETS, params={"$filter": f"name eq '{name}'"})
-    raise_for_transient(response)
-    records = response.json().get("OpenFemaDataSets", [])
-    if len(records) != 1:
-        raise DiscoveryError(
-            f"Expected exactly one dataset named {name!r}, got {len(records)}. "
-            f"Raw response: {response.text[:2000]}"
-        )
-    return records[0]
-
-
-def fetch_field_baseline(client: httpx.Client, name: str) -> list[dict[str, Any]]:
-    """Snapshot the publisher's own field metadata. Capture only -- drift diffing is L2."""
-    fields = fetch_odata_records(
-        client,
-        OPENFEMA_FIELDS,
-        "OpenFemaDataSetFields",
-        params={"$filter": f"openFemaDataSet eq '{name}'"},
-    )
-    if not fields:
-        raise DiscoveryError(f"No field metadata returned for {name!r}; refusing a blank baseline.")
-    return sorted(fields, key=lambda field: field.get("name", ""))
 
 
 # ── orchestration ─────────────────────────────────────────────────────────────
@@ -242,7 +154,7 @@ def run(mode: str, force: bool = False) -> int:
             if notice:
                 log(f"WARNING  {notice}")
 
-            distribution_format, resolved_url = select_distribution(dataset["distribution"])
+            distribution_format, resolved_url = select_distribution(dataset)
             log(f"resolved {distribution_format} distribution: {resolved_url}")
             log(
                 f"source reports {dataset.get('recordCount'):,} rows, "
@@ -258,12 +170,9 @@ def run(mode: str, force: bool = False) -> int:
                 log("SKIPPED (current): manifest matches the publisher's refresh timestamp")
                 return 0
 
-            baseline_dir = REPO_ROOT / "platform" / "reconcile" / "baselines"
-            baseline_dir.mkdir(parents=True, exist_ok=True)
-            baseline = baseline_dir / f"{TRACK}__{SOURCE}__fields.json"
-            fields = fetch_field_baseline(client, DATASET)
-            write_json(baseline, fields)
-            log(f"schema baseline: {len(fields)} fields -> {baseline.name}")
+            snapshot_field_baseline(
+                client, track=TRACK, source=SOURCE, dataset_name=DATASET, log=log
+            )
 
             landing = landing_dir / resolved_url.rsplit("/", 1)[-1]
             log(f"downloading -> {landing}")
