@@ -44,6 +44,7 @@ from ingest.common import (
     sha256_of,
     sql_literal,
     stream_download,
+    write_baseline,
     write_json,
 )
 
@@ -302,10 +303,9 @@ def run(mode: str, force: bool = False) -> int:
             source_michigan = source_reported_count(client, state="MI")
             log(f"search API reports {source_count:,} complaints ({source_michigan:,} Michigan)")
 
-            baseline_dir = REPO_ROOT / "platform" / "reconcile" / "baselines"
-            baseline_dir.mkdir(parents=True, exist_ok=True)
-            write_json(
-                baseline_dir / f"{TRACK}__{SOURCE}__pointer.json",
+            write_baseline(
+                TRACK,
+                SOURCE,
                 {
                     "note": "CFPB publishes no machine-readable field metadata; this is a "
                     "pointer file, per CLAUDE.md rule 8.",
@@ -315,6 +315,7 @@ def run(mode: str, force: bool = False) -> int:
                     "data_page": DATA_PAGE,
                     "retrieved_at": datetime.now(UTC).isoformat().replace("+00:00", "Z"),
                 },
+                kind="pointer",
             )
 
             archive = landing_dir / resolved_url.rsplit("/", 1)[-1]

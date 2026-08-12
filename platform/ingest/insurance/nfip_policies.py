@@ -42,7 +42,6 @@ from ingest.common import (
     REPO_ROOT,
     DiscoveryError,
     base_manifest,
-    fetch_odata_records,
     http_client,
     human_bytes,
     load_table,
@@ -57,7 +56,7 @@ from ingest.common import (
     sql_literal,
     write_json,
 )
-from ingest.insurance.nfip_claims import deprecation_notice, discover_dataset
+from ingest.openfema import deprecation_notice, discover_dataset, snapshot_field_baseline
 
 TRACK = "insurance"
 SOURCE = "nfip_policies"
@@ -67,7 +66,6 @@ PARTITION_COLUMN = "propertyState"
 SCOPE_STATE = "MI"
 
 POLICIES_API = "https://www.fema.gov/api/open/v3/NfipPolicies"
-OPENFEMA_FIELDS = "https://www.fema.gov/api/open/v1/OpenFemaDataSetFields"
 PAGE_SIZE = 10000
 LANDING_GLOB = "page-*.parquet"
 
@@ -220,18 +218,6 @@ def _policy_page(client: httpx.Client, state_field: str, after_id: int) -> bytes
     return response.content
 
 
-def fetch_state_field_names(client: httpx.Client) -> list[dict[str, Any]]:
-    fields = fetch_odata_records(
-        client,
-        OPENFEMA_FIELDS,
-        "OpenFemaDataSetFields",
-        params={"$filter": f"openFemaDataSet eq '{DATASET}'"},
-    )
-    if not fields:
-        raise DiscoveryError(f"No field metadata returned for {DATASET!r}; refusing to guess.")
-    return sorted(fields, key=lambda field: field.get("name", ""))
-
-
 def download_pages(
     client: httpx.Client, state_field: str, landing_dir: Path
 ) -> tuple[list[dict[str, Any]], list[int], list[int]]:
@@ -323,12 +309,11 @@ def run(mode: str, force: bool = False) -> int:
                 log("SKIPPED (current): manifest matches the publisher's refresh timestamp")
                 return 0
 
-            fields = fetch_state_field_names(client)
-            baseline_dir = REPO_ROOT / "platform" / "reconcile" / "baselines"
-            baseline_dir.mkdir(parents=True, exist_ok=True)
-            write_json(baseline_dir / f"{TRACK}__{SOURCE}__fields.json", fields)
+            fields = snapshot_field_baseline(
+                client, track=TRACK, source=SOURCE, dataset_name=DATASET, log=log
+            )
             state_field = resolve_state_field([field["name"] for field in fields])
-            log(f"schema baseline: {len(fields)} fields; state field is {state_field!r}")
+            log(f"state field is {state_field!r}")
 
             log(f"keyset paging {SCOPE_STATE} at {PAGE_SIZE:,} rows/page")
             landing_files, page_sizes, ids = download_pages(client, state_field, landing_dir)
