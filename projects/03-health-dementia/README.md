@@ -8,7 +8,7 @@ No insurance or fintech data appears anywhere in this track. Build with `just he
 
 | Source | Scope | Path | Access |
 |---|---|---|---|
-| CDC Alzheimer's Disease & Healthy Aging (`hfr9-rurv`) | Full dataset | `data/raw/health/cdc_healthy_aging/` | Socrata full-CSV export |
+| CDC Alzheimer's Disease & Healthy Aging (`hfr9-rurv`) | Full dataset, 284,142 cells, 2015–2022 | `data/raw/health/cdc_healthy_aging/locationabbr=XX/` | Socrata resource API, paged by `:id`; dataset id resolved from the catalogue |
 | CMS Medicare Chronic Conditions — prevalence / spending | State + county | `data/raw/health/cms_chronic_conditions/` | Discovered from `data.cms.gov/data.json` |
 | CMS Medicare Geographic Variation | National / state / county | `data/raw/health/cms_geographic_variation/` | Discovered from `data.cms.gov/data.json` |
 
@@ -45,6 +45,13 @@ individual-level inference.** Nothing in this repo describes any person.
 
 **3 · Honest grain.** Annual and survey-cycle only. No structure that invites fake daily or quarterly
 reporting on annual data, and no interpolation to manufacture a trend line.
+
+**4 · Two traps in the CDC file specifically.** Its `rowid` column is **not a key** — 284,142 rows
+carry 36,046 distinct values, because it encodes the stratification categories and not their values.
+Never test it for uniqueness and never join on it; the real grain is recorded in that source's
+manifest. And `locationabbr` mixes 51 states and DC, three territories, four census regions and a
+national `US` row **as peers** — summing across it double counts every state up to three times. The
+rollups are kept deliberately, because HLT-E1 compares Michigan against them.
 
 ---
 
