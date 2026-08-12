@@ -152,6 +152,61 @@ def read_existing_manifest(raw_dir: Path) -> dict[str, Any] | None:
         return None
 
 
+def tables_present(db_path: Path, *tables: str) -> bool:
+    """True only when the database exists, opens, and holds every table named.
+
+    A database that will not open counts as absent. That is the case this exists for: a
+    deleted or corrupt warehouse is exactly when a run must not decide it has nothing to do.
+    """
+    if not db_path.exists():
+        return False
+    try:
+        con = duckdb.connect(str(db_path), read_only=True)
+    except duckdb.Error:
+        return False
+    try:
+        for table in tables:
+            schema, _, name = table.rpartition(".")
+            found = con.execute(
+                "SELECT count(*) FROM duckdb_tables() WHERE schema_name = ? AND table_name = ?",
+                [schema or "main", name],
+            ).fetchone()[0]
+            if not found:
+                return False
+        return True
+    finally:
+        con.close()
+
+
+def skip_as_current(
+    *,
+    force: bool,
+    publisher_unchanged: bool,
+    db_path: Path,
+    tables: tuple[str, ...],
+    log: Callable[[str], None],
+) -> bool:
+    """Is skipping this run safe? A manifest on its own cannot answer that.
+
+    `publisher_unchanged` is the source's own answer to "has the publisher's copy moved?" --
+    a refresh timestamp, a last-modified header, a per-year fingerprint; every publisher
+    signals it differently and that half stays with the source. This adds the half that is
+    identical everywhere: a skip is only safe if the tables the run would have produced are
+    actually in the warehouse. Without it, a deleted database plus current manifests reports
+    "SKIPPED (current)" for every source and leaves nothing behind.
+    """
+    if force or not publisher_unchanged:
+        return False
+    missing = [table for table in tables if not tables_present(db_path, table)]
+    if not missing:
+        return True
+    log(
+        f"manifest is current but {', '.join(missing)} is not in {db_path.name}; re-running. "
+        "`just reload` rebuilds every table from raw parquet without the network."
+    )
+    return False
+
+
 # ── network ───────────────────────────────────────────────────────────────────
 
 retrying = retry(
@@ -304,6 +359,17 @@ def repartition_to_raw(
     if raw_dir.exists():
         raw_dir.rename(previous)
     staging.rename(raw_dir)
+
+    # The manifest lives inside the tree we just replaced, so the swap would destroy it.
+    # Carry it across: every caller writes a fresh manifest once its own checks pass, but
+    # between here and there sit the table load and the source's validation -- and a failure
+    # in that window would leave raw parquet with no record of which URL it came from, what
+    # the publisher reported, or when. A stale manifest beside fresh parquet is a state
+    # `just reload` names as a count disagreement, which is the honest signal that a run
+    # did not finish. Silently having none is not.
+    carried = previous / "manifest.json"
+    if carried.exists():
+        shutil.copy2(carried, raw_dir / "manifest.json")
     shutil.rmtree(previous, ignore_errors=True)
 
     rows_raw = con.execute(f"SELECT count(*) FROM {raw_relation(raw_dir)}").fetchone()[0]

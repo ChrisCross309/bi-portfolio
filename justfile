@@ -43,6 +43,10 @@ shared:
 # all four tracks, in any order
 ingest-all: insurance fintech health shared
 
+# rebuild every DuckDB raw table from local parquet — no network, no publisher
+reload track="all":
+    uv run python -m ingest.reload --track {{track}}
+
 # ── verification ───────────────────────────────────────────
 
 # ruff + pytest; live-endpoint tests are marked `slow` and excluded
@@ -62,6 +66,7 @@ ci:
     uv run python -m ingest.health.cms --mode fixture
     uv run python -m ingest.shared.bls --mode fixture
     uv run python -m ingest.shared.census --mode fixture
+    uv run python -m ingest.reload --mode fixture
     uv run python -m reconcile.l1_integrity --mode fixture
 
 # regenerate committed fixtures from local raw — deliberate, never automatic

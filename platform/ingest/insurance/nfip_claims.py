@@ -34,6 +34,7 @@ from ingest.common import (
     read_existing_manifest,
     repartition_to_raw,
     sha256_of,
+    skip_as_current,
     sql_literal,
     stream_download,
     write_json,
@@ -162,10 +163,13 @@ def run(mode: str, force: bool = False) -> int:
             )
 
             existing = read_existing_manifest(raw_dir)
-            if (
-                not force
-                and existing
-                and existing.get("source_last_refresh") == dataset.get("lastDataSetRefresh")
+            if skip_as_current(
+                force=force,
+                publisher_unchanged=bool(existing)
+                and existing.get("source_last_refresh") == dataset.get("lastDataSetRefresh"),
+                db_path=db_path,
+                tables=(TABLE,),
+                log=log,
             ):
                 log("SKIPPED (current): manifest matches the publisher's refresh timestamp")
                 return 0

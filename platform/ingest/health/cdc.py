@@ -76,6 +76,7 @@ from ingest.common import (
     repartition_to_raw,
     retrying,
     sha256_of,
+    skip_as_current,
     sql_literal,
     write_baseline,
     write_json,
@@ -471,7 +472,14 @@ def run(mode: str, force: bool = False) -> int:
             )
 
             existing = read_existing_manifest(raw_dir)
-            if not force and existing and existing.get("source_last_refresh") == refresh_before:
+            if skip_as_current(
+                force=force,
+                publisher_unchanged=bool(existing)
+                and existing.get("source_last_refresh") == refresh_before,
+                db_path=db_path,
+                tables=(TABLE,),
+                log=log,
+            ):
                 log("SKIPPED (current): manifest matches the publisher's rowsUpdatedAt")
                 return 0
 

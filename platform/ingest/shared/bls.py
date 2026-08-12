@@ -68,6 +68,7 @@ from ingest.common import (
     read_existing_manifest,
     repartition_to_raw,
     retrying,
+    skip_as_current,
     sql_literal,
     stream_download,
     write_baseline,
@@ -450,7 +451,15 @@ def run(mode: str, force: bool = False) -> int:
             }
             fingerprint = {name: meta["last_modified"] for name, meta in resolved.items()}
             existing = read_existing_manifest(observations_raw)
-            if not force and existing and existing.get("refresh_fingerprint") == fingerprint:
+            # One manifest gates both tables, so both have to be there for a skip to be safe.
+            if skip_as_current(
+                force=force,
+                publisher_unchanged=bool(existing)
+                and existing.get("refresh_fingerprint") == fingerprint,
+                db_path=db_path,
+                tables=(OBSERVATIONS_TABLE, SERIES_TABLE),
+                log=log,
+            ):
                 log("SKIPPED (current): both files match the recorded last-modified")
                 return 0
 

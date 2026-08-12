@@ -76,6 +76,7 @@ from ingest.common import (
     repartition_to_raw,
     retrying,
     sha256_of,
+    skip_as_current,
     sql_literal,
     stream_download,
     write_baseline,
@@ -698,10 +699,16 @@ def run(mode: str, force: bool = False) -> int:
             extracts = resolve_extracts(client, years)
 
             existing = read_existing_manifest(lar_raw_dir)
-            lar_current = bool(
-                not force
-                and existing
-                and existing.get("refresh_fingerprint") == refresh_fingerprint(extracts)
+            # Guarded on the table as well as the fingerprint: the skip branch below reads
+            # `SELECT count(*) FROM raw.fin_hmda_lar`, so skipping into a missing table
+            # crashed rather than no-opped.
+            lar_current = skip_as_current(
+                force=force,
+                publisher_unchanged=bool(existing)
+                and existing.get("refresh_fingerprint") == refresh_fingerprint(extracts),
+                db_path=db_path,
+                tables=(LAR_TABLE,),
+                log=log,
             )
 
             write_baseline(

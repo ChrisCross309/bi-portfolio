@@ -83,6 +83,7 @@ from ingest.common import (
     repartition_to_raw,
     retrying,
     sha256_of,
+    skip_as_current,
     sql_literal,
     write_baseline,
     write_json,
@@ -542,7 +543,15 @@ def run(mode: str, force: bool = False) -> int:
             existing = read_existing_manifest(
                 data_root / "raw" / TRACK / DATASETS["detailed"]["source"]
             )
-            if not force and existing and existing.get("refresh_fingerprint") == fingerprint:
+            # The detailed manifest gates both datasets, so both tables have to be there.
+            if skip_as_current(
+                force=force,
+                publisher_unchanged=bool(existing)
+                and existing.get("refresh_fingerprint") == fingerprint,
+                db_path=db_path,
+                tables=tuple(spec["table"] for spec in DATASETS.values()),
+                log=log,
+            ):
                 log("SKIPPED (current): the catalogue's modified dates are unchanged")
                 return 0
 
