@@ -17,6 +17,7 @@ Run:  python -m reconcile.l1_integrity [--track TRACK] [--mode live|fixture]
 from __future__ import annotations
 
 import argparse
+import functools
 import json
 import os
 import sys
@@ -37,13 +38,15 @@ from ingest.common import (
     raw_relation,
     sql_literal,
 )
+from ingest.fintech import cfpb, hmda
+from ingest.insurance import nfip_claims, nfip_policies
+from ingest.registry import SOURCES as RAW_SOURCES
+from ingest.registry import RawSource
 
 PASS, FAIL, WARN, SKIP = "PASS", "FAIL", "WARN", "SKIP"
 
 USER_AGENT = "bi-portfolio-pipeline/0.1 (chris.hall309@gmail.com)"
 NFIP_API = "https://www.fema.gov/api/open/v3/NfipClaims"
-
-FIRST_COMPLAINT_YEAR = 2011
 
 
 @dataclass(frozen=True)
@@ -66,15 +69,49 @@ class Profile:
 
 @dataclass(frozen=True)
 class SourceSpec:
-    track: str
-    source: str
-    table: str
-    partition_column: str
-    landing_extension: str
-    landing_reader: str  # "parquet" or "csv"
-    control_sum_columns: tuple[str, ...]
+    """One registered source: what raw says it is, plus how to find and read its landing.
+
+    `raw` carries track, source, table and partition column. It is not restated here --
+    `ingest.registry` owns those four for the whole repo, and `tests/test_registry.py`
+    proves they match the fetchers. What this adds is the landing side, which the registry
+    deliberately excludes because only L1 consumes it.
+
+    The globs are separate from `landing_relation` on purpose: the globs answer "which
+    files, and are they still on disk?", the relation answers "what SQL reads them?".
+    Neither can drift into disagreeing with the other because they are never compared.
+    """
+
+    raw: RawSource
+    landing_relation: Callable[[Path], str]
     landing_partition_expr: Callable[[dict[str, Any]], str]
     partition_check: Callable[..., list[Result]]
+    landing_glob: str
+    fixture_glob: str
+    control_sum_columns: tuple[str, ...] = ()
+    # Two publishers land more than one source into a single directory, so the directory
+    # is not always the source name: census -> shared/acs5, bls -> shared/cpi_u.
+    landing_subdir: str = ""
+    # Only census nests its fixtures; every other source's sit directly under the track.
+    fixture_subdir: str = ""
+    # The earliest partition key a year-partitioned source should carry. CFPB's database
+    # opened in 2011, HMDA's modern schema in 2018, ACS's overlap in 2010, CPI-U in 1913.
+    first_expected_year: int | None = None
+
+    @property
+    def track(self) -> str:
+        return self.raw.track
+
+    @property
+    def source(self) -> str:
+        return self.raw.source
+
+    @property
+    def table(self) -> str:
+        return self.raw.table
+
+    @property
+    def partition_column(self) -> str:
+        return self.raw.partition_column
 
 
 # ── generic helpers ───────────────────────────────────────────────────────────
@@ -86,11 +123,9 @@ class SourceSpec:
 # written under different rules. Both live under `platform/`, so the import costs nothing.
 
 
-def landing_relation(path: Path, reader: str) -> str:
-    if reader == "parquet":
-        return f"read_parquet({sql_literal(path)})"
-    # parallel=false: newlines inside quoted narrative fields defeat range-splitting.
-    return f"read_csv({sql_literal(path)}, all_varchar=true, header=true, parallel=false)"
+def parquet_relation(landing: Path) -> str:
+    """The plain read the two OpenFEMA paged sources use. Types come from the file."""
+    return f"read_parquet({sql_literal(landing)})"
 
 
 def profile(
@@ -334,7 +369,13 @@ def check_state_partitions(
 def check_year_partitions(
     spec: SourceSpec, raw: Profile, table_rows: int, mode: str = "live"
 ) -> list[Result]:
-    """CFPB: an unbroken run of years from the database's first year to the newest."""
+    """An unbroken run of years from the source's first published year to its newest.
+
+    The first year is the source's, not a constant: CFPB's database opened in 2011, HMDA's
+    modern schema in 2018, the ACS vintage overlap in 2010, and CPI-U reaches back to 1913.
+    A hole in the middle is a load failure; a different starting year is a publisher
+    changing what it offers, which is worth a warning rather than a stop.
+    """
     years = sorted(key for key in raw.by_partition if key.isdigit())
     results: list[Result] = []
 
@@ -356,14 +397,14 @@ def check_year_partitions(
         )
     )
 
-    if int(years[0]) != FIRST_COMPLAINT_YEAR:
+    if spec.first_expected_year is not None and int(years[0]) != spec.first_expected_year:
         results.append(
             Result(
                 spec.track,
                 spec.source,
                 "earliest year",
                 WARN,
-                f"earliest partition {years[0]}, expected {FIRST_COMPLAINT_YEAR}",
+                f"earliest partition {years[0]}, expected {spec.first_expected_year}",
             )
         )
 
@@ -375,6 +416,54 @@ def check_year_partitions(
             "malformed dates kept",
             PASS,
             ", ".join(f"{k!r}={v:,}" for k, v in sorted(malformed.items())) or "none present",
+        )
+    )
+    results.append(_partition_sum_result(spec, raw, table_rows))
+    return results
+
+
+def check_expected_keys(
+    spec: SourceSpec, raw: Profile, table_rows: int, mode: str = "live", expected: frozenset = None
+) -> list[Result]:
+    """A partition column whose whole domain is small, fixed and known in advance.
+
+    Three sources qualify, for three different reasons. NFIP policies is MI-only by a
+    scope decision, so any other state is the leak CLAUDE.md section 4 warns about, not a
+    coverage gap. CMS ships National/State/County grains stacked in one file. The CPI-U
+    series file partitions on seasonal adjustment, which is two values and always will be.
+
+    A missing key and an unexpected key are different failures and are reported that way:
+    the first means something did not land, the second means the publisher's domain grew
+    and every downstream filter written against it is now incomplete.
+    """
+    present = set(raw.by_partition)
+    results: list[Result] = []
+
+    missing = sorted(expected - present)
+    results.append(
+        Result(
+            spec.track,
+            spec.source,
+            "expected keys present",
+            FAIL if missing else PASS,
+            f"missing {missing}"
+            if missing
+            else f"all {len(expected)} present: "
+            + ", ".join(f"{key}={raw.by_partition[key]:,}" for key in sorted(expected)),
+        )
+    )
+
+    unexpected = sorted(present - expected)
+    results.append(
+        Result(
+            spec.track,
+            spec.source,
+            "no unexpected keys",
+            FAIL if unexpected else PASS,
+            f"keys outside the known domain {sorted(expected)}: "
+            + ", ".join(f"{key}={raw.by_partition[key]:,}" for key in unexpected)
+            if unexpected
+            else f"domain is exactly {sorted(expected)}",
         )
     )
     results.append(_partition_sum_result(spec, raw, table_rows))
@@ -448,14 +537,22 @@ def check_nfip_api_spot_counts(
 
 # ── source registry ───────────────────────────────────────────────────────────
 
+
+def raw_source(source: str) -> RawSource:
+    """Look the four registry-owned fields up rather than restating them here."""
+    return next(spec for spec in RAW_SOURCES if spec.source == source)
+
+
 SOURCES: tuple[SourceSpec, ...] = (
     SourceSpec(
-        track="insurance",
-        source="nfip_claims",
-        table="raw.ins_nfip_claims",
-        partition_column="state",
-        landing_extension=".parquet",
-        landing_reader="parquet",
+        raw=raw_source("nfip_claims"),
+        # The fetcher's own reader, so what is compared is the conversion and not the
+        # parse. Reimplementing it here would mean reimplementing its quirks too.
+        landing_relation=lambda path: nfip_claims.source_relation(path, "parquet"),
+        landing_partition_expr=lambda manifest: '"state"',
+        partition_check=check_state_partitions,
+        landing_glob="*.parquet",
+        fixture_glob="nfip_claims.parquet",
         control_sum_columns=(
             "amountPaidOnBuildingClaim",
             "amountPaidOnContentsClaim",
@@ -464,19 +561,65 @@ SOURCES: tuple[SourceSpec, ...] = (
             "netContentsPaymentAmount",
             "netIccPaymentAmount",
         ),
-        landing_partition_expr=lambda manifest: '"state"',
-        partition_check=check_state_partitions,
     ),
     SourceSpec(
-        track="fintech",
-        source="cfpb_complaints",
-        table="raw.fin_cfpb_complaints",
-        partition_column="year",
-        landing_extension=".csv",
-        landing_reader="csv",
+        raw=raw_source("nfip_policies"),
+        landing_relation=parquet_relation,
+        landing_partition_expr=lambda manifest: '"propertyState"',
+        partition_check=functools.partial(check_expected_keys, expected=frozenset({"MI"})),
+        # 39 keyset pages, so the glob is doing real work here.
+        landing_glob=nfip_policies.LANDING_GLOB,
+        fixture_glob="nfip_policies.parquet",
+        # Monetary and integer. The DOUBLE latitude and elevation columns are neither, and
+        # a float sum would be a control total nobody could defend.
+        control_sum_columns=(
+            "policyCost",
+            "totalInsurancePremiumOfThePolicy",
+            "totalBuildingInsuranceCoverage",
+            "totalContentsInsuranceCoverage",
+        ),
+    ),
+    SourceSpec(
+        raw=raw_source("fema_declarations"),
+        landing_relation=parquet_relation,
+        landing_partition_expr=lambda manifest: '"state"',
+        partition_check=check_state_partitions,
+        landing_glob="*.parquet",
+        fixture_glob="fema_declarations.parquet",
+        # No numeric column at all: declarations are dates, codes and names. Per-partition
+        # counts carry the lossless proof instead.
         control_sum_columns=(),
+    ),
+    SourceSpec(
+        raw=raw_source("cfpb_complaints"),
+        landing_relation=cfpb.source_relation,
         landing_partition_expr=lambda manifest: f'substr("{manifest["date_column"]}", 1, 4)',
         partition_check=check_year_partitions,
+        # `*.csv` and not `*` because the archive it was extracted from sits beside it.
+        landing_glob="*.csv",
+        fixture_glob="cfpb_complaints.csv",
+        first_expected_year=2011,
+    ),
+    SourceSpec(
+        raw=raw_source("hmda_lar"),
+        landing_relation=hmda.lar_relation,
+        landing_partition_expr=lambda manifest: '"activity_year"',
+        partition_check=check_year_partitions,
+        landing_glob=hmda.LAR_GLOB,
+        fixture_glob="hmda_lar.csv",
+        # Every numeric-looking column can hold the literal "Exempt", so nothing here is
+        # summable without the typing that is session 2's job.
+        control_sum_columns=(),
+        first_expected_year=hmda.FIRST_MODERN_YEAR,
+    ),
+    SourceSpec(
+        raw=raw_source("hmda_institutions"),
+        landing_relation=hmda.institutions_relation,
+        landing_partition_expr=lambda manifest: '"period"',
+        partition_check=check_year_partitions,
+        landing_glob=hmda.FILERS_GLOB,
+        fixture_glob="hmda_institutions.json",
+        first_expected_year=hmda.FIRST_MODERN_YEAR,
     ),
 )
 
@@ -484,21 +627,29 @@ SOURCES: tuple[SourceSpec, ...] = (
 # ── orchestration ─────────────────────────────────────────────────────────────
 
 
-def resolve_landing_path(spec: SourceSpec, manifest: dict[str, Any], mode: str, root: Path) -> Path:
+def resolve_landing_path(spec: SourceSpec, mode: str, root: Path) -> Path:
+    """Where this source's landing lives, as a glob DuckDB can read directly.
+
+    A glob and not a filename, because half the sources land many files: 39 keyset pages
+    for NFIP policies, 45 per ACS dataset, 8 per HMDA source, 6 for CDC. The previous
+    version returned the manifest's first recorded name, which for those sources silently
+    verified one file out of many.
+
+    Two more things the manifest cannot be asked for. The landing directory is not always
+    the source name -- census lands both ACS sources under `shared/acs5` and bls lands both
+    CPI sources under `shared/cpi_u` -- so specs that share a directory name it. And
+    matching by file extension does not work at all for BLS, whose files are
+    `cu.data.1.AllItems` and `cu.series`.
+    """
     if mode == "fixture":
-        return (
-            REPO_ROOT / "tests" / "fixtures" / spec.track / f"{spec.source}{spec.landing_extension}"
-        )
-    names = [
-        entry["name"]
-        for entry in manifest.get("landing_files", [])
-        if entry["name"].lower().endswith(spec.landing_extension)
-    ]
-    if not names:
-        raise FileNotFoundError(
-            f"no {spec.landing_extension} landing file recorded in the manifest"
-        )
-    return root / "landing" / spec.track / spec.source / names[0]
+        base = REPO_ROOT / "tests" / "fixtures" / spec.track
+        return (base / spec.fixture_subdir if spec.fixture_subdir else base) / spec.fixture_glob
+    return root / "landing" / spec.track / (spec.landing_subdir or spec.source) / spec.landing_glob
+
+
+def landing_files(pattern: Path) -> list[Path]:
+    """The files a landing glob actually matches, so "is it still there?" has an answer."""
+    return sorted(pattern.parent.glob(pattern.name)) if pattern.parent.is_dir() else []
 
 
 def check_source(spec: SourceSpec, mode: str) -> list[Result]:
@@ -518,16 +669,18 @@ def check_source(spec: SourceSpec, mode: str) -> list[Result]:
         )
 
         results: list[Result] = []
-        landing_path = resolve_landing_path(spec, manifest, mode, data_root)
-        if not landing_path.exists():
+        landing_path = resolve_landing_path(spec, mode, data_root)
+        landed = landing_files(landing_path)
+        if not landed:
             results.append(
                 Result(
                     spec.track,
                     spec.source,
                     "landing available",
                     SKIP,
-                    f"{landing_path.name} reclaimed by `just clean-landing`; "
-                    "lossless conversion cannot be re-proved until the next ingest",
+                    f"no file matches {landing_path.name} -- reclaimed by "
+                    "`just clean-landing`; lossless conversion cannot be re-proved "
+                    "until the next ingest",
                 )
             )
             landing = raw  # count-chain checks below degrade to raw-vs-table only
@@ -535,19 +688,20 @@ def check_source(spec: SourceSpec, mode: str) -> list[Result]:
             started = time.monotonic()
             landing = profile(
                 con,
-                landing_relation(landing_path, spec.landing_reader),
+                spec.landing_relation(landing_path),
                 spec.landing_partition_expr(manifest),
                 spec.control_sum_columns,
             )
             elapsed = time.monotonic() - started
+            size = sum(path.stat().st_size for path in landed)
             results.append(
                 Result(
                     spec.track,
                     spec.source,
                     "landing available",
                     PASS,
-                    f"re-read {landing_path.name} in {elapsed:,.1f}s "
-                    f"({landing_path.stat().st_size / 1e9:.2f} GB)",
+                    f"re-read {len(landed)} file(s) matching {landing_path.name} in "
+                    f"{elapsed:,.1f}s ({size / 1e6:,.1f} MB)",
                 )
             )
             results += check_lossless(spec, landing, raw)
