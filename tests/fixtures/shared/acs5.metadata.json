@@ -1,0 +1,8 @@
+{
+  "_comment": "Committed sample of the ACS 5-year API responses, filtered from landed files with the array-of-arrays shape preserved so the header check runs. Vintages 2011 and 2024: 2011 is the only vintage-dataset pair that lists the island areas, with null estimates. All Michigan counties and all state rows are kept because the loader asserts both rosters. Not a live publisher response.",
+  "modified": "1970-01-01 00:00:00.0",
+  "vintages": [
+    2011,
+    2024
+  ]
+}

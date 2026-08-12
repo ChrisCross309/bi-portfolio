@@ -25,6 +25,7 @@ from __future__ import annotations
 import csv
 import hashlib
 import json
+import os
 import shutil
 import time
 from collections.abc import Callable
@@ -91,6 +92,29 @@ def write_json(path: Path, payload: Any) -> None:
     path.write_text(
         json.dumps(payload, indent=2, sort_keys=True) + "\n", encoding="utf-8", newline="\n"
     )
+
+
+def read_secret(name: str) -> str | None:
+    """Read an API key from the environment, falling back to a gitignored `.env` file.
+
+    Ten lines instead of a dependency, and it makes `.env.example`'s instruction ("copy to
+    `.env`") actually true. Only api.census.gov requires a key today; the value is never
+    logged, never written to a manifest, and `.env` is gitignored.
+    """
+    if value := os.environ.get(name):
+        return value.strip() or None
+
+    env_file = REPO_ROOT / ".env"
+    if not env_file.exists():
+        return None
+    for line in env_file.read_text(encoding="utf-8").splitlines():
+        stripped = line.strip()
+        if not stripped or stripped.startswith("#") or "=" not in stripped:
+            continue
+        key, _, value = stripped.partition("=")
+        if key.strip() == name:
+            return value.strip().strip("'\"") or None
+    return None
 
 
 def write_baseline(track: str, source: str, payload: Any, *, kind: str = "fields") -> Path:
@@ -310,6 +334,12 @@ def load_state_codes() -> frozenset[str]:
     """The domain-neutral state reference, used to recognise partition keys."""
     with STATE_CODES_CSV.open(encoding="utf-8", newline="") as handle:
         return frozenset(row["state_code"] for row in csv.DictReader(handle))
+
+
+def load_state_fips() -> dict[str, str]:
+    """The same reference keyed by FIPS, for publishers that identify states numerically."""
+    with STATE_CODES_CSV.open(encoding="utf-8", newline="") as handle:
+        return {row["state_fips"]: row["state_code"] for row in csv.DictReader(handle)}
 
 
 def nonstandard_partitions(
