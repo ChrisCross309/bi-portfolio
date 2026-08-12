@@ -26,3 +26,48 @@ repos:
       - id: ruff-check
         args: [--fix]
       - id: ruff-format
+
+  # Secrets. A live api.census.gov key was pasted into `.env.example` -- a tracked
+  # file -- and survived only because it happened to still be unstaged.
+  # `detect-private-key` above looks for PEM blocks and would not have caught a bare
+  # hex key. Local hooks rather than a scanner dependency: three rules, each one a
+  # sentence, is the whole requirement here.
+  - repo: local
+    hooks:
+      # `.env` is gitignored, so reaching this hook at all means `git add -f`.
+      - id: dotenv-is-never-committed
+        name: .env must never be staged
+        language: fail
+        entry: >-
+          .env holds live API keys and is gitignored, so staging it took a force-add.
+          Unstage it with `git rm --cached .env` and keep the key out of history.
+        files: ^\.env$
+
+      # The template names keys and explains them; it never carries a value. Anything
+      # after the `=` is a secret that has escaped into a tracked file.
+      - id: env-example-has-no-values
+        name: .env.example must keep every value empty
+        language: pygrep
+        entry: '^\s*[A-Za-z_][A-Za-z0-9_]*\s*=\s*\S'
+        files: ^\.env\.example$
+
+      # A Census key is 40 lowercase hex; 32 is the shortest length worth calling a
+      # token rather than a coincidence. Three exclusions, every one of them hex we did
+      # not choose and cannot shorten:
+      #   uv.lock                package digests, machine-written by uv
+      #   reconcile/baselines/   field hashes inside publishers' own schema metadata
+      #   *.parquet              OpenFEMA publishes a 40-char SHA-1 `hash` column, so
+      #                          every NFIP and declarations fixture carries hundreds of
+      #                          them -- and scanning a compressed binary for hex runs
+      #                          would be noise even if it did not
+      # Everything else is scanned, including every text fixture and every test.
+      - id: no-long-hex-strings
+        name: no long hex strings (API keys and tokens)
+        language: pygrep
+        entry: '[0-9a-fA-F]{32,}'
+        exclude: |
+          (?x)^(
+            uv\.lock
+            |platform/reconcile/baselines/.*
+            |.*\.parquet
+          )$

@@ -43,7 +43,11 @@ from ingest.shared.census import (
 )
 
 FIXTURE_DIR = Path("tests/fixtures/shared/acs5")
-KEY = "abcdef0123456789abcdef0123456789abcdef01"
+# Deliberately not shaped like a real key. A Census key is 40 lowercase hex, which the
+# `no-long-hex-strings` pre-commit hook rejects on sight -- and a stand-in that trips the
+# secret scanner would teach the wrong lesson about what belongs in a tracked file.
+# `redact` is a string replace, so the shape was never what these tests exercise.
+KEY = "NOT-A-REAL-CENSUS-KEY"
 
 
 # ── the key, and never leaking it ─────────────────────────────────────────────
