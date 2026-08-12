@@ -173,17 +173,23 @@ def stream_download(
     with client.stream("GET", url) as response:
         raise_for_transient(response)
         expected = int(response.headers.get("content-length") or 0)
+        # A compressed transfer makes content-length describe the *encoded* body while we
+        # count decoded bytes, so the two legitimately disagree -- CMS serves this file
+        # gzipped at 24.9 MB for 57.9 MB of CSV. Comparing them would fail every time.
+        # Truncation is still caught: gzip carries its own CRC and length trailer, and the
+        # decoder raises when a stream ends early.
+        encoded = (response.headers.get("content-encoding") or "").strip().lower()
         with part.open("wb") as handle:
             for chunk in response.iter_bytes(CHUNK_BYTES):
                 handle.write(chunk)
                 digest.update(chunk)
                 total += len(chunk)
                 if total >= next_progress:
-                    share = f" of {human_bytes(expected)}" if expected else ""
+                    share = f" of {human_bytes(expected)}" if expected and not encoded else ""
                     log(f"  downloaded {human_bytes(total)}{share}")
                     next_progress += progress_every
 
-    if expected and total != expected:
+    if expected and not encoded and total != expected:
         part.unlink(missing_ok=True)
         raise TransientHTTPError(f"Truncated download: got {total} bytes, expected {expected}")
 

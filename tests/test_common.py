@@ -3,14 +3,18 @@
 These lock the behaviour both fetchers already depended on before the extraction.
 """
 
+import gzip
+import hashlib
 import json
 from pathlib import Path
 
+import httpx
 import pytest
 from ingest import common
 from ingest.common import (
     HIVE_NULL_PARTITION,
     REPO_ROOT,
+    TransientHTTPError,
     base_manifest,
     human_bytes,
     load_state_codes,
@@ -19,9 +23,15 @@ from ingest.common import (
     read_existing_manifest,
     sha256_of,
     sql_literal,
+    stream_download,
     write_baseline,
     write_json,
 )
+from tenacity import stop_after_attempt
+
+
+def _silent(message: str) -> None:
+    """stream_download logs progress; these tests do not care about it."""
 
 
 def test_sql_literal_normalizes_separators_and_escapes_quotes() -> None:
@@ -60,6 +70,50 @@ def test_write_json_is_byte_stable_across_runs(tmp_path: Path) -> None:
     assert b"\r\n" not in first
     assert first.endswith(b"\n")
     assert first.index(b'"a"') < first.index(b'"b"')
+
+
+def _mock_client(handler) -> httpx.Client:
+    return httpx.Client(transport=httpx.MockTransport(handler))
+
+
+def test_a_compressed_body_is_not_mistaken_for_a_truncated_one(tmp_path: Path) -> None:
+    """CMS serves its geographic-variation CSV gzipped, with content-length describing the
+    compressed body while we count decoded bytes. Comparing the two failed every attempt."""
+    payload = b"col_a,col_b\n" + b"26001,11949.75\n" * 5_000
+    compressed = gzip.compress(payload)
+    assert len(compressed) < len(payload)
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        return httpx.Response(
+            200,
+            headers={"content-encoding": "gzip", "content-length": str(len(compressed))},
+            content=compressed,
+        )
+
+    target = tmp_path / "gv.csv"
+    with _mock_client(handler) as client:
+        total, digest = stream_download(client, "https://example.gov/gv.csv", target, log=_silent)
+
+    assert total == len(payload)
+    assert target.read_bytes() == payload
+    assert digest == hashlib.sha256(payload).hexdigest()
+
+
+def test_a_truncated_uncompressed_body_is_still_caught(tmp_path: Path) -> None:
+    """The guard above must not have disarmed the check it was narrowing."""
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        return httpx.Response(200, headers={"content-length": "999999"}, content=b"short")
+
+    # One attempt only: the retry policy would otherwise back off for ~30s on the way to
+    # the same failure.
+    single_attempt = stream_download.retry_with(stop=stop_after_attempt(1))
+    with _mock_client(handler) as client, pytest.raises(TransientHTTPError) as caught:
+        single_attempt(client, "https://example.gov/x.csv", tmp_path / "x.csv", log=_silent)
+
+    assert "Truncated download" in str(caught.value)
+    assert not (tmp_path / "x.csv").exists()
+    assert not (tmp_path / "x.csv.part").exists()
 
 
 def test_sha256_of_matches_hashlib(tmp_path: Path) -> None:
