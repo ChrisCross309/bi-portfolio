@@ -117,15 +117,44 @@ def read_secret(name: str) -> str | None:
     return None
 
 
+def _without_retrieved_at(payload: Any) -> Any:
+    """A baseline's content, minus the one field that changes on every run."""
+    if isinstance(payload, dict):
+        return {key: value for key, value in payload.items() if key != "retrieved_at"}
+    return payload
+
+
 def write_baseline(track: str, source: str, payload: Any, *, kind: str = "fields") -> Path:
     """Commit a schema baseline under one per-source name, and return where it went.
 
     Session 1 captures baselines only; diffing them for drift is L2's job. `kind` is
     'fields' for publishers that expose machine-readable field metadata and 'pointer'
     for the ones that only publish documentation -- CLAUDE.md rule 8.
+
+    **Only rewritten when the publisher's own metadata changed.** Six of these files carry
+    a `retrieved_at`, so writing unconditionally left them modified after every single
+    ingest. The noise was not the real cost: it meant a publisher renaming a column
+    produced exactly the same "modified" marker as a run where nothing happened, so genuine
+    drift was invisible. Comparing content first makes `git status` the drift alarm -- a
+    modified baseline means a publisher moved, a clean tree means none did.
+
+    The timestamp therefore records **when the schema last changed**, not when it was last
+    checked. Every run's own retrieval time is still recorded per source in that source's
+    manifest, so nothing is lost.
     """
     BASELINE_DIR.mkdir(parents=True, exist_ok=True)
     path = BASELINE_DIR / f"{track}__{source}__{kind}.json"
+
+    if path.exists():
+        try:
+            existing = json.loads(path.read_text(encoding="utf-8"))
+        except json.JSONDecodeError:
+            existing = None  # unreadable: rewrite it rather than preserve corruption
+        if existing is not None and _without_retrieved_at(existing) == _without_retrieved_at(
+            payload
+        ):
+            return path
+
     write_json(path, payload)
     return path
 
