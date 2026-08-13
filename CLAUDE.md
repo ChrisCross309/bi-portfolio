@@ -13,7 +13,7 @@ mix.**
 |---|---|---|---|
 | Project 1 | `insurance` | Insurance / Insurtech | FEMA NFIP claims, NFIP policies, FEMA disaster declarations |
 | Project 2 | `fintech` | Fintech / Consumer Lending | CFPB consumer complaints, HMDA LAR, HMDA institution reference |
-| Project 3 | `health` | Health / Alzheimer's & Dementia | CDC Alzheimer's & Healthy Aging, CMS Chronic Conditions, CMS Geographic Variation |
+| Project 3 | `health` | Health / Alzheimer's & Dementia | CDC Alzheimer's & Healthy Aging, CMS Geographic Variation |
 | Shared | `shared` | Domain-neutral reference | Census ACS denominators, BLS CPI-U, state codes |
 
 No insurance data in the fintech or health tracks. No fintech data in the insurance or health tracks.
