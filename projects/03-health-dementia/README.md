@@ -121,7 +121,56 @@ rollups are kept deliberately, because HLT-E1 compares Michigan against them.
 
 ---
 
-> Confidence-interval handling for HLT-E1 and the CMS dataset-version provenance record are written
-> up in the `docs/readmes` PR at the end of session 1. The Excel-distribution notes this line used to
-> promise are not coming: the legacy CMS PUF that was expected to arrive as a workbook never
-> materialised, every landed source is CSV, TSV, JSON or parquet, and `openpyxl` has been dropped.
+## Confidence intervals are not decoration
+
+HLT-E1 asks whether Michigan is *significantly* better or worse than national. The CDC file publishes
+`low_confidence_limit` and `high_confidence_limit` on every cell, and BRFSS is a self-reported
+telephone survey — state estimates carry real sampling error. Ranking point estimates would
+manufacture a story out of noise, so every comparison in this track uses the intervals and is allowed
+to return **"no significant difference"** when they overlap. That is a finding, not a failure to find
+one, and the executive page shows it as such rather than forcing a direction arrow.
+
+A third of the file — 91,334 rows — has an empty `data_value` with a footnote symbol giving the
+reason. Suppression is information, not a null:
+
+| Symbol | Meaning |
+|---|---|
+| `****` | sample size too small to age-standardize |
+| `~` | no data available |
+| `#` | fewer than 50 states reporting |
+| `&` | regional estimate may not represent every state in the region |
+
+## CMS: original Medicare only, and three grains in one column
+
+**The spending is FFS spending.** Beneficiaries in Medicare Advantage are counted in
+`BENES_MA_CNT`, but their utilization and spending are *not* in this file. So per-capita spend is per
+**fee-for-service** beneficiary, and a county with high MA penetration will look different for
+reasons that have nothing to do with cost of care. HLT-E2 and HLT-E3 both state this.
+
+**Use the standardized payment columns.** The `_STDZD_` columns remove geographic wage adjustment and
+are the ones that make a Michigan-vs-national comparison mean anything. The unstandardized twins
+measure something real but different, and mixing them is an easy, invisible error.
+
+**Age levels double count.** County rows are `All` only, while state and national rows also appear as
+`<65` and `>=65` — which sum to their own `All`. Every measure filters to one age level; forgetting
+to is how a state total ends up twice its true size.
+
+**One unassigned-county bucket.** `26000` / `MI-UNKNOWN` holds Michigan beneficiaries whose county
+could not be assigned — one row per year, eleven in total. Real people, kept in raw. A county-level
+denominator either includes them explicitly or states that it does not; the loader separates them
+from the 83-county roster so neither choice happens by accident.
+
+## Dataset-version provenance
+
+CMS republishes this file annually under a new URL, and the DCAT `temporal` field names only the
+newest year (`2024-01-01/2024-12-31`) even though the file covers 2014–2024. So the manifest records
+the resolved URL, the DCAT `modified` date, the identifier, the accrual periodicity and the other
+distributions CMS offers — enough to say months later exactly which publication a number came from.
+The URL is resolved at runtime from `data.cms.gov/data.json` and never hardcoded, so next year's
+republication is picked up rather than missed.
+
+---
+
+> The Excel-distribution notes this file used to promise are not coming: the legacy CMS PUF expected
+> to arrive as a workbook never materialised, every landed source is CSV, TSV, JSON or parquet, and
+> `openpyxl` has been dropped.
