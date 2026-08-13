@@ -39,9 +39,11 @@ from ingest.common import (
     sql_literal,
 )
 from ingest.fintech import cfpb, hmda
+from ingest.health import cdc, cms
 from ingest.insurance import nfip_claims, nfip_policies
 from ingest.registry import SOURCES as RAW_SOURCES
 from ingest.registry import RawSource
+from ingest.shared import bls, census
 
 PASS, FAIL, WARN, SKIP = "PASS", "FAIL", "WARN", "SKIP"
 
@@ -383,30 +385,48 @@ def check_year_partitions(
         results.append(Result(spec.track, spec.source, "year coverage", FAIL, "no year partitions"))
         return results
 
-    expected = {str(year) for year in range(int(years[0]), int(years[-1]) + 1)}
-    gaps = sorted(expected - set(years))
-    results.append(
-        Result(
-            spec.track,
-            spec.source,
-            "year coverage",
-            FAIL if gaps else PASS,
-            f"missing years {gaps}"
-            if gaps
-            else f"{years[0]}..{years[-1]} unbroken, {len(years)} partitions",
-        )
-    )
-
-    if spec.first_expected_year is not None and int(years[0]) != spec.first_expected_year:
+    if mode == "fixture":
+        # The same rule the state roster follows: "is a year missing?" is a question about
+        # the whole dataset, and a committed fixture is a stratified sample by
+        # construction. The ACS fixture is the proof -- it carries vintages 2011 and 2024
+        # deliberately, because 2011 is the only vintage that enumerates the island areas.
+        # Padding it to fifteen vintages so this check could pass would make the fixture
+        # bigger and prove nothing about production.
+        for check in ("year coverage", "earliest year"):
+            results.append(
+                Result(
+                    spec.track,
+                    spec.source,
+                    check,
+                    SKIP,
+                    "fixture is a stratified sample, not a census; coverage is a live check",
+                )
+            )
+    else:
+        expected = {str(year) for year in range(int(years[0]), int(years[-1]) + 1)}
+        gaps = sorted(expected - set(years))
         results.append(
             Result(
                 spec.track,
                 spec.source,
-                "earliest year",
-                WARN,
-                f"earliest partition {years[0]}, expected {spec.first_expected_year}",
+                "year coverage",
+                FAIL if gaps else PASS,
+                f"missing years {gaps}"
+                if gaps
+                else f"{years[0]}..{years[-1]} unbroken, {len(years)} partitions",
             )
         )
+
+        if spec.first_expected_year is not None and int(years[0]) != spec.first_expected_year:
+            results.append(
+                Result(
+                    spec.track,
+                    spec.source,
+                    "earliest year",
+                    WARN,
+                    f"earliest partition {years[0]}, expected {spec.first_expected_year}",
+                )
+            )
 
     malformed = {k: v for k, v in raw.by_partition.items() if not k.isdigit()}
     results.append(
@@ -464,6 +484,78 @@ def check_expected_keys(
             + ", ".join(f"{key}={raw.by_partition[key]:,}" for key in unexpected)
             if unexpected
             else f"domain is exactly {sorted(expected)}",
+        )
+    )
+    results.append(_partition_sum_result(spec, raw, table_rows))
+    return results
+
+
+def check_peer_and_rollup_partitions(
+    spec: SourceSpec, raw: Profile, table_rows: int, mode: str = "live"
+) -> list[Result]:
+    """CDC: states, territories, census regions and the nation, all stored as peers.
+
+    `locationabbr` mixes four different grains in one column. Michigan sits beside `MDW`,
+    which contains it, which sits beside `US`, which contains both -- so summing across
+    this column counts every state up to three times. The rollups are kept deliberately,
+    because HLT-E1 compares Michigan against exactly them, and naming them here is what
+    stops session 2 from discovering the double count the hard way.
+
+    The state roster is a coverage question and is skipped against a fixture, for the same
+    reason NFIP's is: a stratified sample cannot answer "did we drop a state?", and padding
+    one until it could would prove nothing about production.
+    """
+    known = load_state_codes()
+    present = set(raw.by_partition)
+    rollups = present - known
+    results: list[Result] = []
+
+    if mode == "fixture":
+        results.append(
+            Result(
+                spec.track,
+                spec.source,
+                "states + DC present",
+                SKIP,
+                "fixture is a stratified sample, not a census; coverage is a live check",
+            )
+        )
+    else:
+        # CDC publishes three territories, not five: no American Samoa, no Northern
+        # Marianas. So the expectation is the states and DC, and territories are counted
+        # rather than required.
+        states_and_dc = known - {"AS", "GU", "MP", "PR", "VI"}
+        missing = sorted(states_and_dc - present)
+        results.append(
+            Result(
+                spec.track,
+                spec.source,
+                "states + DC present",
+                FAIL if missing else PASS,
+                f"missing {missing}" if missing else f"all {len(states_and_dc)} present",
+            )
+        )
+        territories = sorted((known - states_and_dc) & present)
+        results.append(
+            Result(
+                spec.track,
+                spec.source,
+                "territories present",
+                PASS,
+                ", ".join(f"{key}={raw.by_partition[key]:,}" for key in territories) or "none",
+            )
+        )
+
+    results.append(
+        Result(
+            spec.track,
+            spec.source,
+            "rollups kept, not summed",
+            FAIL if not rollups else PASS,
+            "no rollup rows found; HLT-E1 has nothing to compare Michigan against"
+            if not rollups
+            else ", ".join(f"{key}={raw.by_partition[key]:,}" for key in sorted(rollups))
+            + " -- peers of the states in this column, so summing it double counts",
         )
     )
     results.append(_partition_sum_result(spec, raw, table_rows))
@@ -543,6 +635,22 @@ def raw_source(source: str) -> RawSource:
     return next(spec for spec in RAW_SOURCES if spec.source == source)
 
 
+def _acs_relation(dataset: str) -> Callable[[Path], str]:
+    """The one source whose reader wants a directory rather than a glob.
+
+    `census.dataset_relation` unions three geographies, each with its own glob, because the
+    API returns a different shape for us, state and county. It builds those globs itself,
+    so it is handed the directory the spec's glob lives in.
+    """
+
+    def build(landing_glob: Path) -> str:
+        return census.dataset_relation(
+            landing_glob.parent, dataset, census.DATASETS[dataset]["variables"]
+        )
+
+    return build
+
+
 SOURCES: tuple[SourceSpec, ...] = (
     SourceSpec(
         raw=raw_source("nfip_claims"),
@@ -620,6 +728,68 @@ SOURCES: tuple[SourceSpec, ...] = (
         landing_glob=hmda.FILERS_GLOB,
         fixture_glob="hmda_institutions.json",
         first_expected_year=hmda.FIRST_MODERN_YEAR,
+    ),
+    SourceSpec(
+        raw=raw_source("cdc_healthy_aging"),
+        landing_relation=cdc.source_relation,
+        landing_partition_expr=lambda manifest: '"locationabbr"',
+        partition_check=check_peer_and_rollup_partitions,
+        landing_glob=cdc.LANDING_GLOB,
+        fixture_glob="cdc_healthy_aging.csv",
+        # Aggregate cells over mixed averaging grains: a sum of them has no referent.
+        control_sum_columns=(),
+    ),
+    SourceSpec(
+        raw=raw_source("cms_geographic_variation"),
+        landing_relation=cms.source_relation,
+        landing_partition_expr=lambda manifest: '"BENE_GEO_LVL"',
+        partition_check=functools.partial(check_expected_keys, expected=frozenset(cms.GEO_LEVELS)),
+        # One file, whose name carries the year range and several spaces.
+        landing_glob="*.csv",
+        fixture_glob="cms_geographic_variation.csv",
+        control_sum_columns=(),
+    ),
+    # Both ACS datasets land under one directory, and their fixtures nest in one too --
+    # the two cases `landing_subdir` and `fixture_subdir` exist for.
+    *(
+        SourceSpec(
+            raw=raw_source(spec["source"]),
+            landing_relation=_acs_relation(dataset),
+            landing_partition_expr=lambda manifest: '"vintage"',
+            partition_check=check_year_partitions,
+            landing_glob=f"acs5-{dataset}-*.json",
+            fixture_glob=f"acs5-{dataset}-*.json",
+            landing_subdir="acs5",
+            fixture_subdir="acs5",
+            # Estimates carry annotations like -555555555, which are not measurements.
+            control_sum_columns=(),
+            first_expected_year=2010,
+        )
+        for dataset, spec in census.DATASETS.items()
+    ),
+    SourceSpec(
+        raw=raw_source("cpi_u"),
+        landing_relation=bls.tsv_relation,
+        landing_partition_expr=lambda manifest: '"year"',
+        partition_check=check_year_partitions,
+        # Not a glob and not an extension: BLS names this file `cu.data.1.AllItems`, which
+        # is why matching landing by suffix could never have worked here.
+        landing_glob=bls.OBSERVATIONS_FILE,
+        fixture_glob="cpi_u.tsv",
+        landing_subdir="cpi_u",
+        # `value` is a space-padded index level, not an amount; summing it is meaningless.
+        control_sum_columns=(),
+        first_expected_year=1913,
+    ),
+    SourceSpec(
+        raw=raw_source("cpi_u_series"),
+        landing_relation=bls.tsv_relation,
+        landing_partition_expr=lambda manifest: '"seasonal"',
+        partition_check=functools.partial(check_expected_keys, expected=frozenset({"S", "U"})),
+        landing_glob=bls.SERIES_FILE,
+        fixture_glob="cpi_u_series.tsv",
+        landing_subdir="cpi_u",
+        control_sum_columns=(),
     ),
 )
 

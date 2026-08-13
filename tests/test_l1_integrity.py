@@ -19,6 +19,7 @@ from reconcile.l1_integrity import (
     Profile,
     Result,
     check_expected_keys,
+    check_peer_and_rollup_partitions,
     check_state_partitions,
     check_year_partitions,
     classify_source_gap,
@@ -32,6 +33,10 @@ NFIP = next(s for s in SOURCES if s.source == "nfip_claims")
 CFPB = next(s for s in SOURCES if s.source == "cfpb_complaints")
 POLICIES = next(s for s in SOURCES if s.source == "nfip_policies")
 HMDA_LAR = next(s for s in SOURCES if s.source == "hmda_lar")
+CDC = next(s for s in SOURCES if s.source == "cdc_healthy_aging")
+ACS_DETAILED = next(s for s in SOURCES if s.source == "acs5_detailed")
+CPI_U = next(s for s in SOURCES if s.source == "cpi_u")
+CPI_SERIES = next(s for s in SOURCES if s.source == "cpi_u_series")
 
 
 def _manifest(reported: int, data_refresh: str | None, metadata_refresh: str | None) -> dict:
@@ -173,12 +178,10 @@ def test_every_spec_is_backed_by_a_registry_entry() -> None:
         assert (spec.track, spec.source, spec.table, spec.partition_column) in registered
 
 
-def test_the_insurance_and_fintech_tracks_are_fully_covered() -> None:
-    """Both tracks are complete; health and shared land in the next PR."""
-    covered = {s.source for s in SOURCES}
-    for track in ("insurance", "fintech"):
-        expected = {s.source for s in RAW_SOURCES if s.track == track}
-        assert expected <= covered, f"{track} missing {sorted(expected - covered)}"
+def test_every_raw_source_is_registered_in_l1() -> None:
+    """All twelve. A source that lands but is never verified is the gap this closes."""
+    assert {s.source for s in SOURCES} == {s.source for s in RAW_SOURCES}
+    assert len(SOURCES) == 12
 
 
 # ── landing resolution ────────────────────────────────────────────────────────
@@ -212,6 +215,89 @@ def test_every_fixture_glob_matches_a_committed_file() -> None:
 def test_landing_files_is_empty_when_the_directory_is_gone(tmp_path: Path) -> None:
     """Reclaimed landing must read as absent, not raise."""
     assert landing_files(tmp_path / "nope" / "*.parquet") == []
+
+
+def test_sources_sharing_a_landing_directory_resolve_into_it() -> None:
+    """census lands both ACS sources under shared/acs5, bls both CPI sources under
+    shared/cpi_u, so the directory is not the source name for four of the twelve."""
+    detailed = resolve_landing_path(ACS_DETAILED, "live", Path("data"))
+    assert detailed.parent == Path("data/landing/shared/acs5")
+    assert detailed.name == "acs5-detailed-*.json"
+
+    series = resolve_landing_path(CPI_SERIES, "live", Path("data"))
+    assert series.parent == Path("data/landing/shared/cpi_u")
+
+
+def test_bls_files_resolve_by_name_because_they_have_no_usable_extension() -> None:
+    """`cu.data.1.AllItems` and `cu.series` are why matching landing by file extension --
+    what the resolver used to do -- could never have worked for this publisher."""
+    assert resolve_landing_path(CPI_U, "live", Path("data")).name == "cu.data.1.AllItems"
+    assert resolve_landing_path(CPI_SERIES, "live", Path("data")).name == "cu.series"
+
+
+def test_the_nested_acs_fixtures_resolve_into_their_subdirectory() -> None:
+    """Every other source's fixtures sit directly under the track directory."""
+    pattern = resolve_landing_path(ACS_DETAILED, "fixture", REPO_ROOT / "data")
+    assert pattern.parent.name == "acs5"
+    assert len(landing_files(pattern)) == 6  # 2 vintages x 3 geographies
+
+
+# ── peers and rollups ─────────────────────────────────────────────────────────
+
+
+def test_rollup_rows_are_reported_as_peers_of_the_states() -> None:
+    """The trap this exists for: MI sits beside MDW, which contains it, beside US, which
+    contains both. Summing `locationabbr` counts every state up to three times."""
+    by_partition = dict.fromkeys(load_state_codes() - {"AS", "MP"}, 100)
+    by_partition.update({"MDW": 6_099, "NRE": 6_102, "SOU": 6_030, "WEST": 6_126, "US": 6_132})
+    profile = Profile(total=sum(by_partition.values()), by_partition=by_partition)
+
+    results = check_peer_and_rollup_partitions(CDC, profile, profile.total)
+    assert _statuses(results, "states + DC present") == PASS
+    rollups = next(r for r in results if r.check == "rollups kept, not summed")
+    assert rollups.status == PASS
+    for key in ("MDW", "NRE", "SOU", "WEST", "US"):
+        assert key in rollups.detail
+    assert "double counts" in rollups.detail
+
+
+def test_losing_the_rollups_fails_because_hlt_e1_needs_them() -> None:
+    """HLT-E1 compares Michigan against exactly those rows, so dropping them is a defect."""
+    by_partition = dict.fromkeys(load_state_codes() - {"AS", "MP"}, 100)
+    profile = Profile(total=sum(by_partition.values()), by_partition=by_partition)
+    results = check_peer_and_rollup_partitions(CDC, profile, profile.total)
+    assert _statuses(results, "rollups kept, not summed") == FAIL
+
+
+def test_a_missing_state_fails_for_cdc_too() -> None:
+    by_partition = dict.fromkeys(load_state_codes() - {"AS", "MP", "MI"}, 100)
+    by_partition["US"] = 6_132
+    profile = Profile(total=sum(by_partition.values()), by_partition=by_partition)
+    results = check_peer_and_rollup_partitions(CDC, profile, profile.total)
+    assert _statuses(results, "states + DC present") == FAIL
+
+
+# ── coverage questions are never answered by a sample ─────────────────────────
+
+
+def test_year_coverage_is_skipped_against_a_fixture() -> None:
+    """The ACS fixture carries vintages 2011 and 2024 on purpose -- 2011 is the only one
+    that enumerates the island areas. Demanding an unbroken run of it would mean padding
+    the sample to fifteen vintages to prove nothing about production, which is the same
+    reason the state roster is skipped."""
+    profile = Profile(total=20, by_partition={"2011": 10, "2024": 10})
+    results = check_year_partitions(ACS_DETAILED, profile, profile.total, mode="fixture")
+    assert _statuses(results, "year coverage") == SKIP
+    assert _statuses(results, "earliest year") == SKIP
+    # Structural checks still run on the sample.
+    assert _statuses(results, "partitions sum to table") == PASS
+
+
+def test_the_same_gap_fails_live() -> None:
+    """The skip above must not have disarmed the check it was narrowing."""
+    profile = Profile(total=20, by_partition={"2011": 10, "2024": 10})
+    results = check_year_partitions(ACS_DETAILED, profile, profile.total)
+    assert _statuses(results, "year coverage") == FAIL
 
 
 # ── a small fixed domain ──────────────────────────────────────────────────────
@@ -293,14 +379,24 @@ def test_fixture_mode_load_and_l1_pass_offline() -> None:
     manifest; not ingested yet" -- on a clean checkout.
     """
     from ingest.fintech import hmda
+    from ingest.health import cdc as cdc_module
+    from ingest.health import cms
     from ingest.insurance import fema_declarations, nfip_policies
+    from ingest.shared import bls, census
     from reconcile import l1_integrity
 
-    assert nfip_claims.main(["--mode", "fixture"]) == 0
-    assert nfip_policies.main(["--mode", "fixture"]) == 0
-    assert fema_declarations.main(["--mode", "fixture"]) == 0
-    assert cfpb.main(["--mode", "fixture"]) == 0
-    assert hmda.main(["--mode", "fixture"]) == 0
+    for module in (
+        nfip_claims,
+        nfip_policies,
+        fema_declarations,
+        cfpb,
+        hmda,
+        cdc_module,
+        cms,
+        bls,
+        census,
+    ):
+        assert module.main(["--mode", "fixture"]) == 0, module.__name__
     assert l1_integrity.main(["--mode", "fixture"]) == 0
 
 
