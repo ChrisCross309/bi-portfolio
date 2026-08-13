@@ -123,6 +123,7 @@ a publisher.
 | `just shared` | Reference denominators and deflator → raw → load → L1 |
 | `just ingest-all` | All four, in any order |
 | `just reload` | Rebuild every `raw` table from local parquet — no network |
+| `just fixture` | Rebuild the committed test fixtures from local raw, deterministically |
 | `just check` | ruff + pytest (live-endpoint tests excluded) |
 | `just ci` | Fixture mode: load committed samples, run L1 logic offline |
 | `just clean-landing` | Reclaim disk once L1 has passed |

@@ -1,60 +1,60 @@
 {
-  "_comment": "Per-year control totals for fixture mode, matching the committed sample rather than the live publisher. deterministic md5 ordering, no RNG. Strata: ['age_code', 'exempt', 'multifamily', 'na_tract', 'no_msa'].",
+  "_comment": "Per-year control totals for fixture mode, matching the committed sample rather than the live publisher. Rebuilt by `just fixture`, deterministic md5 ordering, no RNG. The live source's two totals disagree for three years; that is a fact about the publisher and is recorded in the live manifest, not here.",
   "years": [
     {
       "institutions": 40,
       "last_modified": "Thu, 01 Jan 1970 00:00:00 GMT",
-      "source_reported_by_filers": 124,
-      "source_reported_records": 124,
+      "source_reported_by_filers": 138,
+      "source_reported_records": 138,
       "year": 2018
     },
     {
       "institutions": 40,
       "last_modified": "Thu, 01 Jan 1970 00:00:00 GMT",
-      "source_reported_by_filers": 128,
-      "source_reported_records": 128,
+      "source_reported_by_filers": 127,
+      "source_reported_records": 127,
       "year": 2019
     },
     {
       "institutions": 40,
       "last_modified": "Thu, 01 Jan 1970 00:00:00 GMT",
-      "source_reported_by_filers": 128,
-      "source_reported_records": 128,
+      "source_reported_by_filers": 125,
+      "source_reported_records": 125,
       "year": 2020
     },
     {
       "institutions": 40,
       "last_modified": "Thu, 01 Jan 1970 00:00:00 GMT",
-      "source_reported_by_filers": 130,
-      "source_reported_records": 130,
+      "source_reported_by_filers": 118,
+      "source_reported_records": 118,
       "year": 2021
     },
     {
       "institutions": 40,
       "last_modified": "Thu, 01 Jan 1970 00:00:00 GMT",
-      "source_reported_by_filers": 123,
-      "source_reported_records": 123,
+      "source_reported_by_filers": 84,
+      "source_reported_records": 84,
       "year": 2022
     },
     {
       "institutions": 40,
       "last_modified": "Thu, 01 Jan 1970 00:00:00 GMT",
-      "source_reported_by_filers": 123,
-      "source_reported_records": 123,
+      "source_reported_by_filers": 67,
+      "source_reported_records": 67,
       "year": 2023
     },
     {
       "institutions": 40,
       "last_modified": "Thu, 01 Jan 1970 00:00:00 GMT",
-      "source_reported_by_filers": 118,
-      "source_reported_records": 121,
+      "source_reported_by_filers": 71,
+      "source_reported_records": 71,
       "year": 2024
     },
     {
       "institutions": 40,
       "last_modified": "Thu, 01 Jan 1970 00:00:00 GMT",
-      "source_reported_by_filers": 118,
-      "source_reported_records": 121,
+      "source_reported_by_filers": 100,
+      "source_reported_records": 100,
       "year": 2025
     }
   ]

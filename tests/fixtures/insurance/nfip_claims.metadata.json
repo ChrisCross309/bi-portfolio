@@ -1,10 +1,10 @@
 {
-  "_comment": "Stratified sample of NfipClaims v3 raw, built by just fixture. Deterministic reservoir seed 20260811. Not a live API response.",
+  "_comment": "Stratified sample of raw.ins_nfip_claims, rebuilt by `just fixture` from local raw. Deterministic md5 ordering, no RNG. Strata: ['michigan', 'national_spread', 'null_geoid', 'territories', 'unknown_state', 'zero_paid']. Not a live publisher response.",
   "hash": "fixture-not-a-real-publisher-hash",
   "identifier": "openfema-fixture",
   "lastDataSetRefresh": "1970-01-01T00:00:00.000Z",
   "lastRefresh": "1970-01-01T00:00:00.000Z",
   "name": "NfipClaims",
-  "recordCount": 900,
+  "recordCount": 910,
   "version": 3
 }
