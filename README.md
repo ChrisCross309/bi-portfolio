@@ -34,6 +34,29 @@ table. Those live under `data/raw/shared/` and build with `just shared`.
 
 The story is *one platform, three regulated domains*. The separation between domains is the point.
 
+### The shared series, and the two traps in them
+
+Both shared sources exist to serve questions in more than one track, and both carry a caveat that
+would quietly corrupt a measure if it were missed.
+
+**ACS 5-year estimates are not a time series.** Consecutive vintages share four years of sample —
+the 2020 vintage covers 2016–2020, the 2021 covers 2017–2021 — so plotting them as a trend shows
+mostly the same survey responses moving against themselves. Only every fifth vintage is independent,
+and the Census Bureau advises against comparing overlapping ones. All 15 vintages (2010–2024) are
+landed because each is the right denominator *for its own window*; using one as a denominator is
+correct, drawing a line through them is not. Two further notes: a 5-year estimate describes its whole
+window rather than its final year, so labelling the 2024 vintage as "2024 population" overstates it;
+and ACS annotates rather than nulls, so a margin of error of `-555555555` means "controlled estimate,
+no margin applies" and is not a measurement.
+
+**CPI-U comes in two flavours and only one is right here.** `CUUR0000SA0` is not seasonally adjusted;
+`CUSR0000SA0` is. Constant-dollar comparisons use the **unadjusted annual average** — seasonal
+adjustment exists for month-over-month movement and is the wrong series for deflating a yearly
+figure. That annual average is published as a thirteenth month, `period = 'M13'`, sitting in the same
+column as the twelve real months alongside semiannual averages `S01`–`S03`, so averaging across
+`period` double counts. And BLS pads `series_id` to 17 characters: a filter on `'CUUR0000SA0'`
+matches nothing at all until you `trim()` it.
+
 ---
 
 ## The question principle
@@ -60,7 +83,7 @@ compared against. National sources are never filtered to Michigan in raw.
 
 | Session | Scope | Status |
 |---|---|---|
-| **1** | Every raw pipeline, all three tracks: discover → download → land → parquet → DuckDB `raw` → L1 integrity → schema baselines | **in progress** |
+| **1** | Every raw pipeline, all three tracks: discover → download → land → parquet → DuckDB `raw` → L1 integrity → schema baselines | **complete** — 12 sources, 24.8M rows |
 | 2 | Semantic layer: dbt staging/intermediate/marts per project, seeds, contracts, tests, conformed dimensions, deeper reconciliation | planned |
 | 3 | Power BI: one `.pbip` semantic model and report per project, executive summary drilling to detail | planned |
 
@@ -75,7 +98,7 @@ the L1 harness, not asserted.
 `platform/reconcile/l1_integrity.py` runs after every ingestion and exits non-zero on any failure.
 Output is grouped by project track.
 
-**Registered today: NFIP claims and CFPB complaints — 2 of the 12 raw sources.**
+**All 12 raw sources are registered.** A live run reports 104 passed, 3 warned, 18 skipped, 0 failed.
 
 - **Count chain** — source-reported total → landing rows → raw parquet rows → DuckDB table rows,
   with differences itemized. A gap between a publisher's own count and the bulk file it serves is
@@ -84,16 +107,23 @@ Output is grouped by project track.
   meaningful; per-partition counts where it is not (CMS and CDC aggregates must never be summed as
   controls — mixed averaging grains make the sum meaningless).
 - **Partition completeness** — every state, territory and the null-state partition for NFIP; an
-  unbroken run of years for CFPB.
+  unbroken run of years for CFPB, HMDA, ACS and CPI-U; the fixed domains CMS and NFIP policies
+  are allowed to have; and CDC's rollup rows named rather than summed.
+- **Michigan geography gate** — the share of Michigan rows carrying no usable county, against the
+  national share, for the eight sources that have a geography. Every publisher spells "no county"
+  differently, so each source declares its own predicate.
+- **Question coverage** — all fifteen executive questions, checked for the columns, geographies,
+  benchmarks and deflators they need. This is session 1's finish line.
 - **Publisher spot checks** — NFIP per-state counts asked of the FEMA API directly.
 
-**Still to land, and listed here because it is session 1's finish line rather than because it
-runs:** the remaining ten sources, the Michigan geography-quality gate (MI vs. national missing
-rates for county and `censusGeoid`, counting empty strings as missing), and the per-track
-question-coverage smoke checks that prove every executive question is answerable from raw.
+**A `SKIP` is never a silent pass.** Fixture mode skips anything that would call a publisher; a
+stratified sample skips coverage questions it cannot answer; and a source whose landing has been
+reclaimed skips the lossless re-proof until its next download.
 
-Separately, `just reload` rebuilds every `raw` table from local parquet with no network, so a
-deleted or corrupt warehouse never means re-downloading from a publisher.
+Two more recipes back it up. `just reload` rebuilds every `raw` table from local parquet with no
+network, so a deleted or corrupt warehouse never means re-downloading from a publisher. `just
+fixture` rebuilds the committed test samples from local raw, deterministically — run it twice and
+the files are byte-identical.
 
 ---
 
