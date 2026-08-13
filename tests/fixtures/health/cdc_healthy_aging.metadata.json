@@ -1,5 +1,5 @@
 {
-  "_comment": "Stratified sample of the CDC Alzheimer's & Healthy Aging dataset, built from local raw with deterministic md5 ordering (no RNG). Not a live publisher response. Strata: ['caregiving', 'cognitive_decline', 'footnote_agestd', 'footnote_fewstates', 'footnote_nodata', 'footnote_notcomparable', 'footnote_region', 'michigan', 'other_states', 'overall_null_category2', 'race_stratified', 'rollups', 'sex_stratified', 'suppressed'].",
+  "_comment": "Stratified sample of raw.hlt_cdc_healthy_aging, rebuilt by `just fixture` from local raw. Deterministic md5 ordering, no RNG. Strata: ['caregiving', 'cognitive_decline', 'michigan', 'overall_null_category2', 'race_stratified', 'rollups', 'sex_stratified', 'suppressed', 'territories']. Not a live publisher response.",
   "attribution": "CDC Division of Population Health",
   "category": "Healthy Aging",
   "columns": [

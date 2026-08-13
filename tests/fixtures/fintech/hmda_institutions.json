@@ -1,1925 +1,1925 @@
 {
- "_comment": "Stratified sample of the HMDA filer list, 40 LEIs per year, deterministic md5 ordering, no RNG. Not a live publisher response.",
- "institutions": [
-  {
-   "lei": "254900EZO02JGHXM3V19",
-   "name": "San Diego Funding",
-   "count": 548,
-   "period": 2018
-  },
-  {
-   "lei": "254900FK0S1L00V2UL14",
-   "name": "Elderton State Bank",
-   "count": 134,
-   "period": 2018
-  },
-  {
-   "lei": "254900XF62I1YBJP7H05",
-   "name": "Kalamazoo County State Bank",
-   "count": 38,
-   "period": 2018
-  },
-  {
-   "lei": "254900YY34KGK5BI2L42",
-   "name": "First South Bancorp, Inc.",
-   "count": 37,
-   "period": 2018
-  },
-  {
-   "lei": "5493000JHK8ZOZKD8J96",
-   "name": "Beverly - Hanks Mortgage Services, Inc.",
-   "count": 91,
-   "period": 2018
-  },
-  {
-   "lei": "54930017CJWOENP0BZ82",
-   "name": "SUNMARK",
-   "count": 1294,
-   "period": 2018
-  },
-  {
-   "lei": "549300248R1MFWPWXA09",
-   "name": "State Employees Credit Union",
-   "count": 382,
-   "period": 2018
-  },
-  {
-   "lei": "5493002FQ43Q3BNXZW27",
-   "name": "Macon Bank And Trust Company",
-   "count": 133,
-   "period": 2018
-  },
-  {
-   "lei": "54930038YN5XV3SDVZ83",
-   "name": "BankIowa of Cedar Rapids",
-   "count": 508,
-   "period": 2018
-  },
-  {
-   "lei": "5493003ST36V2G6YFH54",
-   "name": "Pioneer WV Federal Credit Union",
-   "count": 130,
-   "period": 2018
-  },
-  {
-   "lei": "54930065PWY9N8KCRQ96",
-   "name": "Baraboo State Bank",
-   "count": 277,
-   "period": 2018
-  },
-  {
-   "lei": "54930076NULTCIRS5P09",
-   "name": "Harvest Bank",
-   "count": 57,
-   "period": 2018
-  },
-  {
-   "lei": "5493007WZXR2YE227I23",
-   "name": "Blue Ridge Bank, National Association",
-   "count": 834,
-   "period": 2018
-  },
-  {
-   "lei": "5493007ZNQ6MSZ2J3966",
-   "name": "PEOPLE FIRST",
-   "count": 557,
-   "period": 2018
-  },
-  {
-   "lei": "5493009FTGT1RX4J7Y04",
-   "name": "SOLIDARITY COMMUNITY",
-   "count": 478,
-   "period": 2018
-  },
-  {
-   "lei": "5493009KSPF2426CPQ08",
-   "name": "CROWN MORTGAGE COMPANY",
-   "count": 366,
-   "period": 2018
-  },
-  {
-   "lei": "5493009WLD1EC45QKX71",
-   "name": "Greenleaf Wayside Bank",
-   "count": 83,
-   "period": 2018
-  },
-  {
-   "lei": "549300AO417FCNJGKM49",
-   "name": "First State Bank and Trust",
-   "count": 110,
-   "period": 2018
-  },
-  {
-   "lei": "549300B4IYL7TZT8FA34",
-   "name": "Premier Mortgage Resources, L.L.C.",
-   "count": 3329,
-   "period": 2018
-  },
-  {
-   "lei": "549300DUTN4RUBI81Z18",
-   "name": "Lakeside Bank",
-   "count": 191,
-   "period": 2018
-  },
-  {
-   "lei": "549300E8JTSHNU1K4K92",
-   "name": "The First National Bank and Trust Company of Okmulgee",
-   "count": 168,
-   "period": 2018
-  },
-  {
-   "lei": "549300FCKH37LHQEEV88",
-   "name": "SANBORN MORTGAGE CORPORATION",
-   "count": 51,
-   "period": 2018
-  },
-  {
-   "lei": "549300JY7AI2T0M8WT17",
-   "name": "LAND OF LINCOLN CREDIT UNION",
-   "count": 444,
-   "period": 2018
-  },
-  {
-   "lei": "549300K6K2IS7FRS7S09",
-   "name": "North American Savings Bank, F.S.B.",
-   "count": 9461,
-   "period": 2018
-  },
-  {
-   "lei": "549300KMSWBCIPI3OQ86",
-   "name": "SOUTHERN FIDELITY MORTGAGE, LLC",
-   "count": 588,
-   "period": 2018
-  },
-  {
-   "lei": "549300KZVNU4UKZSWD59",
-   "name": "CANTON SCHOOL EMPLOYEES",
-   "count": 143,
-   "period": 2018
-  },
-  {
-   "lei": "549300M5DZ6P9KNT7H33",
-   "name": "The Bank of Elk River",
-   "count": 88,
-   "period": 2018
-  },
-  {
-   "lei": "549300OF721EQSY24237",
-   "name": "TRUSTLINE MORTGAGE, INC.",
-   "count": 35,
-   "period": 2018
-  },
-  {
-   "lei": "549300OO44FL6BHIUV48",
-   "name": "1ST PREFERENCE MORTGAGE CORP.",
-   "count": 423,
-   "period": 2018
-  },
-  {
-   "lei": "549300QZED00YTPAWQ69",
-   "name": "GREATER NEVADA LLC",
-   "count": 824,
-   "period": 2018
-  },
-  {
-   "lei": "549300R1DB8186CV7Z17",
-   "name": "COMMUNITY CREDIT UNION OF LYNN",
-   "count": 100,
-   "period": 2018
-  },
-  {
-   "lei": "549300RV4T4YZCSHWF37",
-   "name": "First Savings and Loan Association",
-   "count": 70,
-   "period": 2018
-  },
-  {
-   "lei": "549300SQKZC6HESYGO25",
-   "name": "Signature Federal Credit Union",
-   "count": 161,
-   "period": 2018
-  },
-  {
-   "lei": "549300SXISSKGPHW5702",
-   "name": "SOFI LENDING CORP.",
-   "count": 6775,
-   "period": 2018
-  },
-  {
-   "lei": "549300T3F9S1MKFKHC53",
-   "name": "Homestead Funding Corp.",
-   "count": 8786,
-   "period": 2018
-  },
-  {
-   "lei": "549300UFNWYY11NLMW19",
-   "name": "Hometown Lenders, Inc.",
-   "count": 4338,
-   "period": 2018
-  },
-  {
-   "lei": "549300V7S0JJB4LU5J82",
-   "name": "WINTERWOOD MORTGAGE GROUP, LLC",
-   "count": 89,
-   "period": 2018
-  },
-  {
-   "lei": "549300WYC8C6REMY4E38",
-   "name": "Minnwest Bank",
-   "count": 141,
-   "period": 2018
-  },
-  {
-   "lei": "549300XP5418ENGZVD49",
-   "name": "F&M Bank",
-   "count": 135,
-   "period": 2018
-  },
-  {
-   "lei": "549300XVCHXNN8R67U29",
-   "name": "Community Federal Savings Bank",
-   "count": 17,
-   "period": 2018
-  },
-  {
-   "lei": "2549001XVX1R2ITF6935",
-   "name": "Home Federal Bank Corporation",
-   "count": 333,
-   "period": 2019
-  },
-  {
-   "lei": "254900EZO02JGHXM3V19",
-   "name": "San Diego Funding",
-   "count": 728,
-   "period": 2019
-  },
-  {
-   "lei": "254900FK0S1L00V2UL14",
-   "name": "Elderton State Bank",
-   "count": 144,
-   "period": 2019
-  },
-  {
-   "lei": "254900XF62I1YBJP7H05",
-   "name": "Kalamazoo County State Bank",
-   "count": 32,
-   "period": 2019
-  },
-  {
-   "lei": "5493000JHK8ZOZKD8J96",
-   "name": "Beverly - Hanks Mortgage Services, Inc.",
-   "count": 126,
-   "period": 2019
-  },
-  {
-   "lei": "54930017CJWOENP0BZ82",
-   "name": "Sunmark Credit Union",
-   "count": 1500,
-   "period": 2019
-  },
-  {
-   "lei": "549300248R1MFWPWXA09",
-   "name": "STATE EMPLOYEES",
-   "count": 466,
-   "period": 2019
-  },
-  {
-   "lei": "5493002FQ43Q3BNXZW27",
-   "name": "Macon Bank and Trust Company",
-   "count": 142,
-   "period": 2019
-  },
-  {
-   "lei": "54930038YN5XV3SDVZ83",
-   "name": "BankIowa of Cedar Rapids",
-   "count": 537,
-   "period": 2019
-  },
-  {
-   "lei": "5493003ST36V2G6YFH54",
-   "name": "PIONEER WEST VIRGINIA",
-   "count": 100,
-   "period": 2019
-  },
-  {
-   "lei": "54930040HIIQWXRS6K39",
-   "name": "LO, INC.",
-   "count": 403,
-   "period": 2019
-  },
-  {
-   "lei": "54930065PWY9N8KCRQ96",
-   "name": "Baraboo State Bank",
-   "count": 322,
-   "period": 2019
-  },
-  {
-   "lei": "5493006VSECR4GWFB307",
-   "name": "Home Point Mortgage Acceptance Corporation",
-   "count": 2718,
-   "period": 2019
-  },
-  {
-   "lei": "54930076NULTCIRS5P09",
-   "name": "Harvest Bank",
-   "count": 37,
-   "period": 2019
-  },
-  {
-   "lei": "5493007WZXR2YE227I23",
-   "name": "Blue Ridge Bank, National Association",
-   "count": 1728,
-   "period": 2019
-  },
-  {
-   "lei": "5493007ZNQ6MSZ2J3966",
-   "name": "PEOPLE FIRST",
-   "count": 631,
-   "period": 2019
-  },
-  {
-   "lei": "5493009FTGT1RX4J7Y04",
-   "name": "Solidarity Community Federal Credit Union",
-   "count": 563,
-   "period": 2019
-  },
-  {
-   "lei": "5493009WLD1EC45QKX71",
-   "name": "Greenleaf Wayside Bank",
-   "count": 78,
-   "period": 2019
-  },
-  {
-   "lei": "549300AO417FCNJGKM49",
-   "name": "First State Bank and Trust",
-   "count": 216,
-   "period": 2019
-  },
-  {
-   "lei": "549300B4IYL7TZT8FA34",
-   "name": "PREMIER MORTGAGE RESOURCES, L.L.C.",
-   "count": 4011,
-   "period": 2019
-  },
-  {
-   "lei": "549300DUTN4RUBI81Z18",
-   "name": "Lakeside Bank",
-   "count": 181,
-   "period": 2019
-  },
-  {
-   "lei": "549300E8JTSHNU1K4K92",
-   "name": "The First National Bank and Trust Company of Okmulgee",
-   "count": 204,
-   "period": 2019
-  },
-  {
-   "lei": "549300FCKH37LHQEEV88",
-   "name": "SANBORN MORTGAGE CORPORATION",
-   "count": 98,
-   "period": 2019
-  },
-  {
-   "lei": "549300JY7AI2T0M8WT17",
-   "name": "LAND OF LINCOLN CREDIT UNION",
-   "count": 149,
-   "period": 2019
-  },
-  {
-   "lei": "549300K6K2IS7FRS7S09",
-   "name": "North American Savings Bank, F.S.B.",
-   "count": 15073,
-   "period": 2019
-  },
-  {
-   "lei": "549300KZVNU4UKZSWD59",
-   "name": "CANTON SCHOOL EMPLOYEES",
-   "count": 150,
-   "period": 2019
-  },
-  {
-   "lei": "549300M5DZ6P9KNT7H33",
-   "name": "The Bank of Elk River",
-   "count": 95,
-   "period": 2019
-  },
-  {
-   "lei": "549300OF721EQSY24237",
-   "name": "TRUSTLINE MORTGAGE, INC.",
-   "count": 42,
-   "period": 2019
-  },
-  {
-   "lei": "549300OO44FL6BHIUV48",
-   "name": "1ST PREFERENCE MORTGAGE CORP.",
-   "count": 623,
-   "period": 2019
-  },
-  {
-   "lei": "549300Q88XHYAWBJTS50",
-   "name": "Lakeview Bank",
-   "count": 76,
-   "period": 2019
-  },
-  {
-   "lei": "549300QZED00YTPAWQ69",
-   "name": "GREATER NEVADA LLC",
-   "count": 1188,
-   "period": 2019
-  },
-  {
-   "lei": "549300R1DB8186CV7Z17",
-   "name": "COMMUNITY CREDIT UNION OF LYNN",
-   "count": 140,
-   "period": 2019
-  },
-  {
-   "lei": "549300RV4T4YZCSHWF37",
-   "name": "First Savings and Loan Association",
-   "count": 48,
-   "period": 2019
-  },
-  {
-   "lei": "549300SQKZC6HESYGO25",
-   "name": "Signature Federal Credit Union",
-   "count": 188,
-   "period": 2019
-  },
-  {
-   "lei": "549300SXISSKGPHW5702",
-   "name": "SOFI LENDING CORP.",
-   "count": 7821,
-   "period": 2019
-  },
-  {
-   "lei": "549300T3F9S1MKFKHC53",
-   "name": "HOMESTEAD FUNDING CORP.",
-   "count": 10107,
-   "period": 2019
-  },
-  {
-   "lei": "549300UFNWYY11NLMW19",
-   "name": "Hometown Lenders, Inc.",
-   "count": 9017,
-   "period": 2019
-  },
-  {
-   "lei": "549300V7S0JJB4LU5J82",
-   "name": "WINTERWOOD MORTGAGE GROUP, LLC",
-   "count": 290,
-   "period": 2019
-  },
-  {
-   "lei": "549300WYC8C6REMY4E38",
-   "name": "Minnwest Bank",
-   "count": 108,
-   "period": 2019
-  },
-  {
-   "lei": "549300XP5418ENGZVD49",
-   "name": "F&M Bank",
-   "count": 120,
-   "period": 2019
-  },
-  {
-   "lei": "2549001XVX1R2ITF6935",
-   "name": "Home Federal Bank Corporation",
-   "count": 364,
-   "period": 2020
-  },
-  {
-   "lei": "254900AECSSNLT5FBU41",
-   "name": "The Union State Bank of Everest",
-   "count": 272,
-   "period": 2020
-  },
-  {
-   "lei": "254900EZO02JGHXM3V19",
-   "name": "San Diego Funding",
-   "count": 897,
-   "period": 2020
-  },
-  {
-   "lei": "254900FK0S1L00V2UL14",
-   "name": "Elderton State Bank",
-   "count": 132,
-   "period": 2020
-  },
-  {
-   "lei": "5493000JHK8ZOZKD8J96",
-   "name": "Beverly - Hanks Mortgage Services, Inc.",
-   "count": 193,
-   "period": 2020
-  },
-  {
-   "lei": "54930017CJWOENP0BZ82",
-   "name": "SUNMARK FEDERAL CREDIT UNION",
-   "count": 2440,
-   "period": 2020
-  },
-  {
-   "lei": "549300248R1MFWPWXA09",
-   "name": "STATE EMPLOYEES",
-   "count": 646,
-   "period": 2020
-  },
-  {
-   "lei": "5493002FQ43Q3BNXZW27",
-   "name": "Macon Bank and Trust Company",
-   "count": 150,
-   "period": 2020
-  },
-  {
-   "lei": "54930038YN5XV3SDVZ83",
-   "name": "BankIowa of Cedar Rapids",
-   "count": 930,
-   "period": 2020
-  },
-  {
-   "lei": "5493003ST36V2G6YFH54",
-   "name": "PIONEER WEST VIRGINIA",
-   "count": 224,
-   "period": 2020
-  },
-  {
-   "lei": "54930040HIIQWXRS6K39",
-   "name": "LO, INC.",
-   "count": 1732,
-   "period": 2020
-  },
-  {
-   "lei": "54930065PWY9N8KCRQ96",
-   "name": "Baraboo State Bank",
-   "count": 654,
-   "period": 2020
-  },
-  {
-   "lei": "5493006VSECR4GWFB307",
-   "name": "Home Point Mortgage Acceptance Corporation",
-   "count": 1,
-   "period": 2020
-  },
-  {
-   "lei": "54930071HHK4VYJ1SG61",
-   "name": "EASTERN CONNECTICUT SAVINGS BANK",
-   "count": 434,
-   "period": 2020
-  },
-  {
-   "lei": "5493007WZXR2YE227I23",
-   "name": "Blue Ridge Bank, National Association",
-   "count": 5575,
-   "period": 2020
-  },
-  {
-   "lei": "5493007ZNQ6MSZ2J3966",
-   "name": "PEOPLE FIRST",
-   "count": 390,
-   "period": 2020
-  },
-  {
-   "lei": "5493009FTGT1RX4J7Y04",
-   "name": "Solidarity Community Federal Credit Union",
-   "count": 710,
-   "period": 2020
-  },
-  {
-   "lei": "5493009KSPF2426CPQ08",
-   "name": "CROWN MORTGAGE COMPANY",
-   "count": 751,
-   "period": 2020
-  },
-  {
-   "lei": "549300AO417FCNJGKM49",
-   "name": "First State Bank and Trust",
-   "count": 326,
-   "period": 2020
-  },
-  {
-   "lei": "549300B4IYL7TZT8FA34",
-   "name": "PREMIER MORTGAGE RESOURCES, L.L.C.",
-   "count": 8375,
-   "period": 2020
-  },
-  {
-   "lei": "549300DUTN4RUBI81Z18",
-   "name": "Lakeside Bank",
-   "count": 110,
-   "period": 2020
-  },
-  {
-   "lei": "549300E8JTSHNU1K4K92",
-   "name": "The First National Bank and Trust Company of Okmulgee",
-   "count": 166,
-   "period": 2020
-  },
-  {
-   "lei": "549300IWSSP83SNIPE63",
-   "name": "PATRIOT",
-   "count": 1505,
-   "period": 2020
-  },
-  {
-   "lei": "549300JH0WD7YX0UUZ21",
-   "name": "WORCESTER",
-   "count": 70,
-   "period": 2020
-  },
-  {
-   "lei": "549300K6K2IS7FRS7S09",
-   "name": "North American Savings Bank, F.S.B.",
-   "count": 26298,
-   "period": 2020
-  },
-  {
-   "lei": "549300KZVNU4UKZSWD59",
-   "name": "CANTON SCHOOL EMPLOYEES",
-   "count": 253,
-   "period": 2020
-  },
-  {
-   "lei": "549300M5DZ6P9KNT7H33",
-   "name": "The Bank of Elk River",
-   "count": 19,
-   "period": 2020
-  },
-  {
-   "lei": "549300OF721EQSY24237",
-   "name": "TRUSTLINE MORTGAGE, INC.",
-   "count": 35,
-   "period": 2020
-  },
-  {
-   "lei": "549300OO44FL6BHIUV48",
-   "name": "1ST PREFERENCE MORTGAGE CORP.",
-   "count": 915,
-   "period": 2020
-  },
-  {
-   "lei": "549300QKL5FUBZ8LSF50",
-   "name": "NATIONS DIRECT MORTGAGE, LLC",
-   "count": 15838,
-   "period": 2020
-  },
-  {
-   "lei": "549300QZED00YTPAWQ69",
-   "name": "GREATER NEVADA LLC",
-   "count": 1760,
-   "period": 2020
-  },
-  {
-   "lei": "549300R1DB8186CV7Z17",
-   "name": "COMMUNITY CREDIT UNION OF LYNN",
-   "count": 144,
-   "period": 2020
-  },
-  {
-   "lei": "549300RV4T4YZCSHWF37",
-   "name": "First Savings and Loan Association",
-   "count": 61,
-   "period": 2020
-  },
-  {
-   "lei": "549300SQKZC6HESYGO25",
-   "name": "Signature Federal Credit Union",
-   "count": 131,
-   "period": 2020
-  },
-  {
-   "lei": "549300SXISSKGPHW5702",
-   "name": "SOFI LENDING CORP.",
-   "count": 25431,
-   "period": 2020
-  },
-  {
-   "lei": "549300T3F9S1MKFKHC53",
-   "name": "HOMESTEAD FUNDING CORP.",
-   "count": 18546,
-   "period": 2020
-  },
-  {
-   "lei": "549300UFNWYY11NLMW19",
-   "name": "Hometown Lenders, Inc.",
-   "count": 19274,
-   "period": 2020
-  },
-  {
-   "lei": "549300V7S0JJB4LU5J82",
-   "name": "WINTERWOOD MORTGAGE GROUP, LLC",
-   "count": 355,
-   "period": 2020
-  },
-  {
-   "lei": "549300WYC8C6REMY4E38",
-   "name": "Minnwest Bank",
-   "count": 139,
-   "period": 2020
-  },
-  {
-   "lei": "549300XP5418ENGZVD49",
-   "name": "F&M Bank",
-   "count": 186,
-   "period": 2020
-  },
-  {
-   "lei": "2549001XVX1R2ITF6935",
-   "name": "Home Federal Bank Corporation",
-   "count": 343,
-   "period": 2021
-  },
-  {
-   "lei": "254900AECSSNLT5FBU41",
-   "name": "The Union State Bank of Everest",
-   "count": 280,
-   "period": 2021
-  },
-  {
-   "lei": "254900EZO02JGHXM3V19",
-   "name": "San Diego Funding",
-   "count": 599,
-   "period": 2021
-  },
-  {
-   "lei": "254900FK0S1L00V2UL14",
-   "name": "Elderton State Bank",
-   "count": 138,
-   "period": 2021
-  },
-  {
-   "lei": "5493000JHK8ZOZKD8J96",
-   "name": "Beverly - Hanks Mortgage Services, Inc.",
-   "count": 149,
-   "period": 2021
-  },
-  {
-   "lei": "54930017CJWOENP0BZ82",
-   "name": "SUNMARK CREDIT UNION",
-   "count": 2215,
-   "period": 2021
-  },
-  {
-   "lei": "549300248R1MFWPWXA09",
-   "name": "STATE EMPLOYEES",
-   "count": 720,
-   "period": 2021
-  },
-  {
-   "lei": "5493002FQ43Q3BNXZW27",
-   "name": "Macon Bank and Trust Company",
-   "count": 135,
-   "period": 2021
-  },
-  {
-   "lei": "54930038YN5XV3SDVZ83",
-   "name": "BankIowa of Cedar Rapids",
-   "count": 678,
-   "period": 2021
-  },
-  {
-   "lei": "5493003ST36V2G6YFH54",
-   "name": "PIONEER APPALACHIA FEDERAL CREDIT UNION",
-   "count": 220,
-   "period": 2021
-  },
-  {
-   "lei": "54930040HIIQWXRS6K39",
-   "name": "LO, INC.",
-   "count": 1199,
-   "period": 2021
-  },
-  {
-   "lei": "5493005R34FLBMCPWB41",
-   "name": "TIDEWATER MORTGAGE SERVICES, INC.",
-   "count": 5776,
-   "period": 2021
-  },
-  {
-   "lei": "54930065PWY9N8KCRQ96",
-   "name": "Baraboo State Bank",
-   "count": 500,
-   "period": 2021
-  },
-  {
-   "lei": "54930071HHK4VYJ1SG61",
-   "name": "EASTERN CONNECTICUT SAVINGS BANK",
-   "count": 612,
-   "period": 2021
-  },
-  {
-   "lei": "5493007WZXR2YE227I23",
-   "name": "Blue Ridge Bank, National Association",
-   "count": 5906,
-   "period": 2021
-  },
-  {
-   "lei": "5493007ZNQ6MSZ2J3966",
-   "name": "PEOPLE FIRST",
-   "count": 704,
-   "period": 2021
-  },
-  {
-   "lei": "5493009FTGT1RX4J7Y04",
-   "name": "SOLIDARITY COMMUNITY Federal Credit Union",
-   "count": 740,
-   "period": 2021
-  },
-  {
-   "lei": "5493009KSPF2426CPQ08",
-   "name": "CROWN MORTGAGE COMPANY",
-   "count": 634,
-   "period": 2021
-  },
-  {
-   "lei": "549300AO417FCNJGKM49",
-   "name": "First State Bank and Trust",
-   "count": 334,
-   "period": 2021
-  },
-  {
-   "lei": "549300B4IYL7TZT8FA34",
-   "name": "PREMIER MORTGAGE RESOURCES, L.L.C.",
-   "count": 9775,
-   "period": 2021
-  },
-  {
-   "lei": "549300DUTN4RUBI81Z18",
-   "name": "Lakeside Bank",
-   "count": 85,
-   "period": 2021
-  },
-  {
-   "lei": "549300E8JTSHNU1K4K92",
-   "name": "The First National Bank and Trust Company of Okmulgee",
-   "count": 145,
-   "period": 2021
-  },
-  {
-   "lei": "549300FCKH37LHQEEV88",
-   "name": "SANBORN MORTGAGE CORPORATION",
-   "count": 154,
-   "period": 2021
-  },
-  {
-   "lei": "549300IWSSP83SNIPE63",
-   "name": "PATRIOT",
-   "count": 1387,
-   "period": 2021
-  },
-  {
-   "lei": "549300JY7AI2T0M8WT17",
-   "name": "LAND OF LINCOLN CREDIT UNION",
-   "count": 175,
-   "period": 2021
-  },
-  {
-   "lei": "549300K6K2IS7FRS7S09",
-   "name": "North American Savings Bank, F.S.B.",
-   "count": 26262,
-   "period": 2021
-  },
-  {
-   "lei": "549300KZVNU4UKZSWD59",
-   "name": "CANTON SCHOOL EMPLOYEES Federal Credit Union",
-   "count": 285,
-   "period": 2021
-  },
-  {
-   "lei": "549300OF721EQSY24237",
-   "name": "TRUSTLINE MORTGAGE, INC.",
-   "count": 55,
-   "period": 2021
-  },
-  {
-   "lei": "549300OO44FL6BHIUV48",
-   "name": "1ST PREFERENCE MORTGAGE CORP.",
-   "count": 771,
-   "period": 2021
-  },
-  {
-   "lei": "549300QKL5FUBZ8LSF50",
-   "name": "NATIONS DIRECT MORTGAGE, LLC",
-   "count": 13988,
-   "period": 2021
-  },
-  {
-   "lei": "549300QZED00YTPAWQ69",
-   "name": "GREATER NEVADA LLC",
-   "count": 1401,
-   "period": 2021
-  },
-  {
-   "lei": "549300R1DB8186CV7Z17",
-   "name": "COMMUNITY CREDIT UNION OF LYNN",
-   "count": 150,
-   "period": 2021
-  },
-  {
-   "lei": "549300SQKZC6HESYGO25",
-   "name": "Signature Federal Credit Union",
-   "count": 229,
-   "period": 2021
-  },
-  {
-   "lei": "549300SXISSKGPHW5702",
-   "name": "SOFI LENDING CORP.",
-   "count": 27936,
-   "period": 2021
-  },
-  {
-   "lei": "549300T3F9S1MKFKHC53",
-   "name": "HOMESTEAD FUNDING CORP.",
-   "count": 16900,
-   "period": 2021
-  },
-  {
-   "lei": "549300UFNWYY11NLMW19",
-   "name": "Hometown Lenders, Inc.",
-   "count": 27012,
-   "period": 2021
-  },
-  {
-   "lei": "549300V7S0JJB4LU5J82",
-   "name": "WINTERWOOD MORTGAGE GROUP, LLC",
-   "count": 877,
-   "period": 2021
-  },
-  {
-   "lei": "549300WYC8C6REMY4E38",
-   "name": "Minnwest Bank",
-   "count": 189,
-   "period": 2021
-  },
-  {
-   "lei": "549300XP5418ENGZVD49",
-   "name": "F&M Bank",
-   "count": 200,
-   "period": 2021
-  },
-  {
-   "lei": "549300ZIXM1VUXPG4D03",
-   "name": "Florida Capital Bank, National Association",
-   "count": 3474,
-   "period": 2021
-  },
-  {
-   "lei": "2549001XVX1R2ITF6935",
-   "name": "Hearthside Bank Corporation",
-   "count": 406,
-   "period": 2022
-  },
-  {
-   "lei": "254900AECSSNLT5FBU41",
-   "name": "The Union State Bank of Everest",
-   "count": 235,
-   "period": 2022
-  },
-  {
-   "lei": "254900EZO02JGHXM3V19",
-   "name": "San Diego Funding",
-   "count": 168,
-   "period": 2022
-  },
-  {
-   "lei": "254900FK0S1L00V2UL14",
-   "name": "Elderton State Bank",
-   "count": 160,
-   "period": 2022
-  },
-  {
-   "lei": "254900U0IGWRT4P7YI03",
-   "name": "Flagship Bank Minnesota",
-   "count": 131,
-   "period": 2022
-  },
-  {
-   "lei": "5493000JHK8ZOZKD8J96",
-   "name": "Beverly - Hanks Mortgage Services, Inc.",
-   "count": 116,
-   "period": 2022
-  },
-  {
-   "lei": "54930017CJWOENP0BZ82",
-   "name": "SUNMARK FEDERAL CREDIT UNION",
-   "count": 2502,
-   "period": 2022
-  },
-  {
-   "lei": "549300248R1MFWPWXA09",
-   "name": "STATE EMPLOYEES",
-   "count": 536,
-   "period": 2022
-  },
-  {
-   "lei": "5493002FQ43Q3BNXZW27",
-   "name": "Macon Bank and Trust Company",
-   "count": 177,
-   "period": 2022
-  },
-  {
-   "lei": "54930038YN5XV3SDVZ83",
-   "name": "BankIowa of Cedar Rapids",
-   "count": 370,
-   "period": 2022
-  },
-  {
-   "lei": "5493003ST36V2G6YFH54",
-   "name": "PIONEER WEST VIRGINIA",
-   "count": 239,
-   "period": 2022
-  },
-  {
-   "lei": "54930065PWY9N8KCRQ96",
-   "name": "Baraboo State Bank",
-   "count": 197,
-   "period": 2022
-  },
-  {
-   "lei": "54930071HHK4VYJ1SG61",
-   "name": "EASTERN CONNECTICUT SAVINGS BANK",
-   "count": 332,
-   "period": 2022
-  },
-  {
-   "lei": "5493007WZXR2YE227I23",
-   "name": "Blue Ridge Bank, National Association",
-   "count": 2453,
-   "period": 2022
-  },
-  {
-   "lei": "5493007ZNQ6MSZ2J3966",
-   "name": "PEOPLE FIRST",
-   "count": 845,
-   "period": 2022
-  },
-  {
-   "lei": "5493009FTGT1RX4J7Y04",
-   "name": "Solidarity Community Federal Credit Union",
-   "count": 544,
-   "period": 2022
-  },
-  {
-   "lei": "5493009KSPF2426CPQ08",
-   "name": "CROWN MORTGAGE COMPANY",
-   "count": 300,
-   "period": 2022
-  },
-  {
-   "lei": "5493009WLD1EC45QKX71",
-   "name": "Greenleaf Wayside Bank",
-   "count": 119,
-   "period": 2022
-  },
-  {
-   "lei": "549300AO417FCNJGKM49",
-   "name": "First State Bank and Trust",
-   "count": 211,
-   "period": 2022
-  },
-  {
-   "lei": "549300B4IYL7TZT8FA34",
-   "name": "PREMIER MORTGAGE RESOURCES, L.L.C.",
-   "count": 6630,
-   "period": 2022
-  },
-  {
-   "lei": "549300DUTN4RUBI81Z18",
-   "name": "Lakeside Bank",
-   "count": 114,
-   "period": 2022
-  },
-  {
-   "lei": "549300E8JTSHNU1K4K92",
-   "name": "The First National Bank and Trust Company of Okmulgee",
-   "count": 111,
-   "period": 2022
-  },
-  {
-   "lei": "549300FCKH37LHQEEV88",
-   "name": "SANBORN MORTGAGE CORPORATION",
-   "count": 69,
-   "period": 2022
-  },
-  {
-   "lei": "549300IWSSP83SNIPE63",
-   "name": "PATRIOT",
-   "count": 798,
-   "period": 2022
-  },
-  {
-   "lei": "549300JY7AI2T0M8WT17",
-   "name": "LAND OF LINCOLN CREDIT UNION",
-   "count": 113,
-   "period": 2022
-  },
-  {
-   "lei": "549300K6K2IS7FRS7S09",
-   "name": "North American Savings Bank, F.S.B.",
-   "count": 13912,
-   "period": 2022
-  },
-  {
-   "lei": "549300KZVNU4UKZSWD59",
-   "name": "CANTON SCHOOL EMPLOYEES",
-   "count": 552,
-   "period": 2022
-  },
-  {
-   "lei": "549300M5DZ6P9KNT7H33",
-   "name": "The Bank of Elk River",
-   "count": 128,
-   "period": 2022
-  },
-  {
-   "lei": "549300OF721EQSY24237",
-   "name": "TRUSTLINE MORTGAGE, INC.",
-   "count": 90,
-   "period": 2022
-  },
-  {
-   "lei": "549300OO44FL6BHIUV48",
-   "name": "1ST PREFERENCE MORTGAGE CORP.",
-   "count": 289,
-   "period": 2022
-  },
-  {
-   "lei": "549300QKL5FUBZ8LSF50",
-   "name": "NATIONS DIRECT MORTGAGE, LLC",
-   "count": 8911,
-   "period": 2022
-  },
-  {
-   "lei": "549300QZED00YTPAWQ69",
-   "name": "GREATER NEVADA LLC",
-   "count": 1178,
-   "period": 2022
-  },
-  {
-   "lei": "549300R1DB8186CV7Z17",
-   "name": "COMMUNITY CREDIT UNION OF LYNN",
-   "count": 67,
-   "period": 2022
-  },
-  {
-   "lei": "549300SQKZC6HESYGO25",
-   "name": "Signature Federal Credit Union",
-   "count": 247,
-   "period": 2022
-  },
-  {
-   "lei": "549300SXISSKGPHW5702",
-   "name": "SOFI LENDING CORP.",
-   "count": 7996,
-   "period": 2022
-  },
-  {
-   "lei": "549300T3F9S1MKFKHC53",
-   "name": "HOMESTEAD FUNDING CORP.",
-   "count": 9061,
-   "period": 2022
-  },
-  {
-   "lei": "549300UFNWYY11NLMW19",
-   "name": "Hometown Lenders, Inc.",
-   "count": 16887,
-   "period": 2022
-  },
-  {
-   "lei": "549300V7S0JJB4LU5J82",
-   "name": "WINTERWOOD MORTGAGE GROUP, LLC",
-   "count": 436,
-   "period": 2022
-  },
-  {
-   "lei": "549300WYC8C6REMY4E38",
-   "name": "Minnwest Bank",
-   "count": 506,
-   "period": 2022
-  },
-  {
-   "lei": "549300XP5418ENGZVD49",
-   "name": "F&M Bank",
-   "count": 133,
-   "period": 2022
-  },
-  {
-   "lei": "2549001XVX1R2ITF6935",
-   "name": "Hearthside Bank Corporation",
-   "count": 261,
-   "period": 2023
-  },
-  {
-   "lei": "254900AHEC0ZH6MGNX19",
-   "name": "RockPointBank, National Association",
-   "count": 90,
-   "period": 2023
-  },
-  {
-   "lei": "254900EZO02JGHXM3V19",
-   "name": "SAN DIEGO FUNDING",
-   "count": 79,
-   "period": 2023
-  },
-  {
-   "lei": "254900FK0S1L00V2UL14",
-   "name": "Elderton State Bank",
-   "count": 165,
-   "period": 2023
-  },
-  {
-   "lei": "254900R1W1FMZ4RIZ113",
-   "name": "Dakota Heritage Bank",
-   "count": 67,
-   "period": 2023
-  },
-  {
-   "lei": "54930017CJWOENP0BZ82",
-   "name": "SUNMARK CREDIT UNION",
-   "count": 1587,
-   "period": 2023
-  },
-  {
-   "lei": "549300248R1MFWPWXA09",
-   "name": "State Employees Credit Union",
-   "count": 428,
-   "period": 2023
-  },
-  {
-   "lei": "5493002FQ43Q3BNXZW27",
-   "name": "Macon Bank and Trust Company",
-   "count": 117,
-   "period": 2023
-  },
-  {
-   "lei": "54930038YN5XV3SDVZ83",
-   "name": "BankIowa of Cedar Rapids",
-   "count": 238,
-   "period": 2023
-  },
-  {
-   "lei": "5493003ST36V2G6YFH54",
-   "name": "PIONEER APPALACHIA FEDERAL CREDIT UNION",
-   "count": 118,
-   "period": 2023
-  },
-  {
-   "lei": "54930040HIIQWXRS6K39",
-   "name": "LO, INC.",
-   "count": 55,
-   "period": 2023
-  },
-  {
-   "lei": "54930065PWY9N8KCRQ96",
-   "name": "Baraboo State Bank",
-   "count": 157,
-   "period": 2023
-  },
-  {
-   "lei": "54930076NULTCIRS5P09",
-   "name": "Harvest Bank",
-   "count": 54,
-   "period": 2023
-  },
-  {
-   "lei": "5493007WZXR2YE227I23",
-   "name": "Blue Ridge Bank, National Association",
-   "count": 1339,
-   "period": 2023
-  },
-  {
-   "lei": "5493007ZNQ6MSZ2J3966",
-   "name": "PEOPLE FIRST FEDERAL CREDIT UNION",
-   "count": 863,
-   "period": 2023
-  },
-  {
-   "lei": "5493009FTGT1RX4J7Y04",
-   "name": "SOLIDARITY COMMUNITY Federal Credit Union",
-   "count": 307,
-   "period": 2023
-  },
-  {
-   "lei": "5493009KSPF2426CPQ08",
-   "name": "CROWN MORTGAGE COMPANY",
-   "count": 223,
-   "period": 2023
-  },
-  {
-   "lei": "5493009WLD1EC45QKX71",
-   "name": "GreenLeaf Bank",
-   "count": 29,
-   "period": 2023
-  },
-  {
-   "lei": "549300AO417FCNJGKM49",
-   "name": "First State Bank and Trust",
-   "count": 160,
-   "period": 2023
-  },
-  {
-   "lei": "549300B4IYL7TZT8FA34",
-   "name": "PREMIER MORTGAGE RESOURCES, L.L.C.",
-   "count": 4908,
-   "period": 2023
-  },
-  {
-   "lei": "549300DUTN4RUBI81Z18",
-   "name": "Lakeside Bank",
-   "count": 130,
-   "period": 2023
-  },
-  {
-   "lei": "549300E8JTSHNU1K4K92",
-   "name": "The First National Bank and Trust Company of Okmulgee",
-   "count": 129,
-   "period": 2023
-  },
-  {
-   "lei": "549300FCKH37LHQEEV88",
-   "name": "SANBORN MORTGAGE CORPORATION",
-   "count": 48,
-   "period": 2023
-  },
-  {
-   "lei": "549300JY7AI2T0M8WT17",
-   "name": "LAND OF LINCOLN CREDIT UNION",
-   "count": 119,
-   "period": 2023
-  },
-  {
-   "lei": "549300K6K2IS7FRS7S09",
-   "name": "North American Savings Bank, F.S.B.",
-   "count": 2060,
-   "period": 2023
-  },
-  {
-   "lei": "549300KZVNU4UKZSWD59",
-   "name": "CANTON SCHOOL EMPLOYEES Federal Credit Union",
-   "count": 448,
-   "period": 2023
-  },
-  {
-   "lei": "549300M5DZ6P9KNT7H33",
-   "name": "The Bank of Elk River",
-   "count": 89,
-   "period": 2023
-  },
-  {
-   "lei": "549300OF721EQSY24237",
-   "name": "TRUSTLINE MORTGAGE, INC.",
-   "count": 25,
-   "period": 2023
-  },
-  {
-   "lei": "549300Q88XHYAWBJTS50",
-   "name": "Lakeview Bank",
-   "count": 67,
-   "period": 2023
-  },
-  {
-   "lei": "549300QKL5FUBZ8LSF50",
-   "name": "NATIONS DIRECT MORTGAGE, LLC",
-   "count": 6308,
-   "period": 2023
-  },
-  {
-   "lei": "549300QZED00YTPAWQ69",
-   "name": "GREATER NEVADA LLC",
-   "count": 774,
-   "period": 2023
-  },
-  {
-   "lei": "549300R1DB8186CV7Z17",
-   "name": "COMMUNITY CREDIT UNION OF LYNN",
-   "count": 47,
-   "period": 2023
-  },
-  {
-   "lei": "549300RV4T4YZCSHWF37",
-   "name": "First Savings and Loan Association",
-   "count": 24,
-   "period": 2023
-  },
-  {
-   "lei": "549300SQKZC6HESYGO25",
-   "name": "Signature Federal Credit Union",
-   "count": 884,
-   "period": 2023
-  },
-  {
-   "lei": "549300SXISSKGPHW5702",
-   "name": "SOFI LENDING CORP.",
-   "count": 180,
-   "period": 2023
-  },
-  {
-   "lei": "549300T3F9S1MKFKHC53",
-   "name": "HOMESTEAD FUNDING CORP.",
-   "count": 6006,
-   "period": 2023
-  },
-  {
-   "lei": "549300V7S0JJB4LU5J82",
-   "name": "WINTERWOOD MORTGAGE GROUP, LLC",
-   "count": 107,
-   "period": 2023
-  },
-  {
-   "lei": "549300WYC8C6REMY4E38",
-   "name": "Minnwest Bank",
-   "count": 385,
-   "period": 2023
-  },
-  {
-   "lei": "549300XP5418ENGZVD49",
-   "name": "F&M Bank",
-   "count": 119,
-   "period": 2023
-  },
-  {
-   "lei": "549300XVCHXNN8R67U29",
-   "name": "Community Federal Savings Bank",
-   "count": 48,
-   "period": 2023
-  },
-  {
-   "lei": "2549001XVX1R2ITF6935",
-   "name": "Hearthside Bank Corporation",
-   "count": 221,
-   "period": 2024
-  },
-  {
-   "lei": "254900AECSSNLT5FBU41",
-   "name": "The Union State Bank of Everest",
-   "count": 193,
-   "period": 2024
-  },
-  {
-   "lei": "254900AHEC0ZH6MGNX19",
-   "name": "RockPointBank, National Association",
-   "count": 87,
-   "period": 2024
-  },
-  {
-   "lei": "254900EZO02JGHXM3V19",
-   "name": "SAN DIEGO FUNDING",
-   "count": 80,
-   "period": 2024
-  },
-  {
-   "lei": "254900FK0S1L00V2UL14",
-   "name": "Elderton State Bank",
-   "count": 170,
-   "period": 2024
-  },
-  {
-   "lei": "254900R1W1FMZ4RIZ113",
-   "name": "Dakota Heritage Bank",
-   "count": 50,
-   "period": 2024
-  },
-  {
-   "lei": "54930017CJWOENP0BZ82",
-   "name": "SUNMARK CREDIT UNION",
-   "count": 1265,
-   "period": 2024
-  },
-  {
-   "lei": "549300248R1MFWPWXA09",
-   "name": "State Employees Credit Union",
-   "count": 384,
-   "period": 2024
-  },
-  {
-   "lei": "5493002FQ43Q3BNXZW27",
-   "name": "Macon Bank and Trust Company",
-   "count": 120,
-   "period": 2024
-  },
-  {
-   "lei": "54930038YN5XV3SDVZ83",
-   "name": "BankIowa of Cedar Rapids",
-   "count": 228,
-   "period": 2024
-  },
-  {
-   "lei": "5493003ST36V2G6YFH54",
-   "name": "PIONEER APPALACHIA FEDERAL CREDIT UNION",
-   "count": 134,
-   "period": 2024
-  },
-  {
-   "lei": "54930065PWY9N8KCRQ96",
-   "name": "Baraboo State Bank",
-   "count": 156,
-   "period": 2024
-  },
-  {
-   "lei": "54930071HHK4VYJ1SG61",
-   "name": "EASTERN CONNECTICUT SAVINGS BANK",
-   "count": 67,
-   "period": 2024
-  },
-  {
-   "lei": "54930076NULTCIRS5P09",
-   "name": "Harvest Bank",
-   "count": 62,
-   "period": 2024
-  },
-  {
-   "lei": "5493007WZXR2YE227I23",
-   "name": "Blue Ridge Bank, National Association",
-   "count": 1182,
-   "period": 2024
-  },
-  {
-   "lei": "5493007ZNQ6MSZ2J3966",
-   "name": "PEOPLE FIRST FEDERAL CREDIT UNION",
-   "count": 898,
-   "period": 2024
-  },
-  {
-   "lei": "5493009FTGT1RX4J7Y04",
-   "name": "SOLIDARITY COMMUNITY Federal Credit Union",
-   "count": 246,
-   "period": 2024
-  },
-  {
-   "lei": "5493009KSPF2426CPQ08",
-   "name": "CROWN MORTGAGE COMPANY",
-   "count": 146,
-   "period": 2024
-  },
-  {
-   "lei": "5493009WLD1EC45QKX71",
-   "name": "GreenLeaf Bank",
-   "count": 39,
-   "period": 2024
-  },
-  {
-   "lei": "549300AO417FCNJGKM49",
-   "name": "First State Bank and Trust",
-   "count": 163,
-   "period": 2024
-  },
-  {
-   "lei": "549300B4IYL7TZT8FA34",
-   "name": "PREMIER MORTGAGE RESOURCES, L.L.C.",
-   "count": 6105,
-   "period": 2024
-  },
-  {
-   "lei": "549300DUTN4RUBI81Z18",
-   "name": "Lakeside Bank",
-   "count": 79,
-   "period": 2024
-  },
-  {
-   "lei": "549300E8JTSHNU1K4K92",
-   "name": "Patrons Bank, NA",
-   "count": 98,
-   "period": 2024
-  },
-  {
-   "lei": "549300FCKH37LHQEEV88",
-   "name": "SANBORN MORTGAGE CORPORATION",
-   "count": 46,
-   "period": 2024
-  },
-  {
-   "lei": "549300IWSSP83SNIPE63",
-   "name": "PATRIOT",
-   "count": 1165,
-   "period": 2024
-  },
-  {
-   "lei": "549300JY7AI2T0M8WT17",
-   "name": "LAND OF LINCOLN CREDIT UNION",
-   "count": 101,
-   "period": 2024
-  },
-  {
-   "lei": "549300K6K2IS7FRS7S09",
-   "name": "North American Savings Bank, F.S.B.",
-   "count": 1217,
-   "period": 2024
-  },
-  {
-   "lei": "549300KZVNU4UKZSWD59",
-   "name": "CANTON SCHOOL EMPLOYEES Federal Credit Union",
-   "count": 448,
-   "period": 2024
-  },
-  {
-   "lei": "549300M5DZ6P9KNT7H33",
-   "name": "The Bank of Elk River",
-   "count": 63,
-   "period": 2024
-  },
-  {
-   "lei": "549300Q88XHYAWBJTS50",
-   "name": "Lakeview Bank",
-   "count": 61,
-   "period": 2024
-  },
-  {
-   "lei": "549300QKL5FUBZ8LSF50",
-   "name": "NATIONS DIRECT MORTGAGE, LLC",
-   "count": 7894,
-   "period": 2024
-  },
-  {
-   "lei": "549300QZED00YTPAWQ69",
-   "name": "GREATER NEVADA LLC",
-   "count": 765,
-   "period": 2024
-  },
-  {
-   "lei": "549300R1DB8186CV7Z17",
-   "name": "COMMUNITY CREDIT UNION OF LYNN",
-   "count": 77,
-   "period": 2024
-  },
-  {
-   "lei": "549300RV4T4YZCSHWF37",
-   "name": "First Savings and Loan Association",
-   "count": 22,
-   "period": 2024
-  },
-  {
-   "lei": "549300SQKZC6HESYGO25",
-   "name": "Signature Federal Credit Union",
-   "count": 797,
-   "period": 2024
-  },
-  {
-   "lei": "549300T3F9S1MKFKHC53",
-   "name": "HOMESTEAD FUNDING CORP.",
-   "count": 6454,
-   "period": 2024
-  },
-  {
-   "lei": "549300V7S0JJB4LU5J82",
-   "name": "WINTERWOOD MORTGAGE GROUP, LLC",
-   "count": 60,
-   "period": 2024
-  },
-  {
-   "lei": "549300WYC8C6REMY4E38",
-   "name": "Minnwest Bank",
-   "count": 681,
-   "period": 2024
-  },
-  {
-   "lei": "549300XP5418ENGZVD49",
-   "name": "F&M Bank",
-   "count": 112,
-   "period": 2024
-  },
-  {
-   "lei": "549300XVCHXNN8R67U29",
-   "name": "Community Federal Savings Bank",
-   "count": 35,
-   "period": 2024
-  },
-  {
-   "lei": "2549001XVX1R2ITF6935",
-   "name": "Hearthside Bank Corporation",
-   "count": 252,
-   "period": 2025
-  },
-  {
-   "lei": "254900AECSSNLT5FBU41",
-   "name": "The Union State Bank of Everest",
-   "count": 202,
-   "period": 2025
-  },
-  {
-   "lei": "254900AHEC0ZH6MGNX19",
-   "name": "RockPointBank, National Association",
-   "count": 59,
-   "period": 2025
-  },
-  {
-   "lei": "254900EZO02JGHXM3V19",
-   "name": "SAN DIEGO FUNDING",
-   "count": 83,
-   "period": 2025
-  },
-  {
-   "lei": "254900FK0S1L00V2UL14",
-   "name": "Elderton State Bank",
-   "count": 188,
-   "period": 2025
-  },
-  {
-   "lei": "254900R1W1FMZ4RIZ113",
-   "name": "Dakota Heritage Bank",
-   "count": 66,
-   "period": 2025
-  },
-  {
-   "lei": "54930017CJWOENP0BZ82",
-   "name": "SUNMARK CREDIT UNION",
-   "count": 1376,
-   "period": 2025
-  },
-  {
-   "lei": "549300248R1MFWPWXA09",
-   "name": "State Employees Credit Union",
-   "count": 431,
-   "period": 2025
-  },
-  {
-   "lei": "5493002FQ43Q3BNXZW27",
-   "name": "Macon Bank and Trust Company",
-   "count": 144,
-   "period": 2025
-  },
-  {
-   "lei": "54930038YN5XV3SDVZ83",
-   "name": "BankIowa of Cedar Rapids",
-   "count": 236,
-   "period": 2025
-  },
-  {
-   "lei": "5493003ST36V2G6YFH54",
-   "name": "PIONEER APPALACHIA FEDERAL CREDIT UNION",
-   "count": 124,
-   "period": 2025
-  },
-  {
-   "lei": "54930065PWY9N8KCRQ96",
-   "name": "Baraboo State Bank",
-   "count": 175,
-   "period": 2025
-  },
-  {
-   "lei": "54930071HHK4VYJ1SG61",
-   "name": "EASTERN CONNECTICUT SAVINGS BANK",
-   "count": 38,
-   "period": 2025
-  },
-  {
-   "lei": "54930076NULTCIRS5P09",
-   "name": "Harvest Bank",
-   "count": 60,
-   "period": 2025
-  },
-  {
-   "lei": "5493007WZXR2YE227I23",
-   "name": "Blue Ridge Bank, National Association",
-   "count": 201,
-   "period": 2025
-  },
-  {
-   "lei": "5493007ZNQ6MSZ2J3966",
-   "name": "PEOPLE FIRST FEDERAL CREDIT UNION",
-   "count": 955,
-   "period": 2025
-  },
-  {
-   "lei": "5493009FTGT1RX4J7Y04",
-   "name": "SOLIDARITY COMMUNITY Federal Credit Union",
-   "count": 317,
-   "period": 2025
-  },
-  {
-   "lei": "5493009KSPF2426CPQ08",
-   "name": "CROWN MORTGAGE COMPANY",
-   "count": 122,
-   "period": 2025
-  },
-  {
-   "lei": "5493009WLD1EC45QKX71",
-   "name": "GreenLeaf Bank",
-   "count": 26,
-   "period": 2025
-  },
-  {
-   "lei": "549300AO417FCNJGKM49",
-   "name": "First State Bank and Trust",
-   "count": 192,
-   "period": 2025
-  },
-  {
-   "lei": "549300B4IYL7TZT8FA34",
-   "name": "PREMIER MORTGAGE RESOURCES, L.L.C.",
-   "count": 8799,
-   "period": 2025
-  },
-  {
-   "lei": "549300DUTN4RUBI81Z18",
-   "name": "Lakeside Bank",
-   "count": 103,
-   "period": 2025
-  },
-  {
-   "lei": "549300E8JTSHNU1K4K92",
-   "name": "Patrons Bank, NA",
-   "count": 100,
-   "period": 2025
-  },
-  {
-   "lei": "549300IWSSP83SNIPE63",
-   "name": "PATRIOT",
-   "count": 1109,
-   "period": 2025
-  },
-  {
-   "lei": "549300JH0WD7YX0UUZ21",
-   "name": "WORCESTER CREDIT UNION",
-   "count": 40,
-   "period": 2025
-  },
-  {
-   "lei": "549300JY7AI2T0M8WT17",
-   "name": "LAND OF LINCOLN CREDIT UNION",
-   "count": 109,
-   "period": 2025
-  },
-  {
-   "lei": "549300K6K2IS7FRS7S09",
-   "name": "North American Savings Bank, F.S.B.",
-   "count": 1026,
-   "period": 2025
-  },
-  {
-   "lei": "549300KZVNU4UKZSWD59",
-   "name": "CANTON SCHOOL EMPLOYEES Federal Credit Union",
-   "count": 506,
-   "period": 2025
-  },
-  {
-   "lei": "549300M5DZ6P9KNT7H33",
-   "name": "The Bank of Elk River",
-   "count": 117,
-   "period": 2025
-  },
-  {
-   "lei": "549300Q88XHYAWBJTS50",
-   "name": "Lakeview Bank",
-   "count": 65,
-   "period": 2025
-  },
-  {
-   "lei": "549300QKL5FUBZ8LSF50",
-   "name": "NATIONS DIRECT MORTGAGE, LLC",
-   "count": 8223,
-   "period": 2025
-  },
-  {
-   "lei": "549300QZED00YTPAWQ69",
-   "name": "GREATER NEVADA LLC",
-   "count": 808,
-   "period": 2025
-  },
-  {
-   "lei": "549300R1DB8186CV7Z17",
-   "name": "COMMUNITY CREDIT UNION OF LYNN",
-   "count": 58,
-   "period": 2025
-  },
-  {
-   "lei": "549300RV4T4YZCSHWF37",
-   "name": "First Savings and Loan Association",
-   "count": 33,
-   "period": 2025
-  },
-  {
-   "lei": "549300SQKZC6HESYGO25",
-   "name": "Signature Federal Credit Union",
-   "count": 736,
-   "period": 2025
-  },
-  {
-   "lei": "549300T3F9S1MKFKHC53",
-   "name": "HOMESTEAD FUNDING CORP.",
-   "count": 6917,
-   "period": 2025
-  },
-  {
-   "lei": "549300V7S0JJB4LU5J82",
-   "name": "WINTERWOOD MORTGAGE GROUP, LLC",
-   "count": 94,
-   "period": 2025
-  },
-  {
-   "lei": "549300WYC8C6REMY4E38",
-   "name": "Minnwest Bank",
-   "count": 777,
-   "period": 2025
-  },
-  {
-   "lei": "549300XP5418ENGZVD49",
-   "name": "F&M Bank",
-   "count": 107,
-   "period": 2025
-  },
-  {
-   "lei": "549300XVCHXNN8R67U29",
-   "name": "Community Federal Savings Bank",
-   "count": 34,
-   "period": 2025
-  }
- ]
+  "_comment": "Stratified sample of the HMDA filer list, 40 LEIs per year, deterministic md5 ordering, no RNG. Rebuilt by `just fixture`.",
+  "institutions": [
+    {
+      "count": "2440",
+      "lei": "2549008LUH7QKMXQ8N53",
+      "name": "Flanagan State Bank",
+      "period": "2018"
+    },
+    {
+      "count": "1016",
+      "lei": "254900AX2RRO2WMRP742",
+      "name": "Vermont Federal Credit Union",
+      "period": "2018"
+    },
+    {
+      "count": "76",
+      "lei": "254900BH50BFK66NHC96",
+      "name": "First Burke Banking Company",
+      "period": "2018"
+    },
+    {
+      "count": "65",
+      "lei": "254900FGJF0W42LS9S31",
+      "name": "Alliance Bank",
+      "period": "2018"
+    },
+    {
+      "count": "146",
+      "lei": "254900G3JF710WUIHN65",
+      "name": "DRUMMOND COMMUNITY BANK",
+      "period": "2018"
+    },
+    {
+      "count": "179",
+      "lei": "254900ICEZWRRYBRW481",
+      "name": "Kingston National Bank",
+      "period": "2018"
+    },
+    {
+      "count": "356",
+      "lei": "254900KD58MIT0K3NP70",
+      "name": "Los Angeles Federal Credit Union",
+      "period": "2018"
+    },
+    {
+      "count": "140",
+      "lei": "254900KKWIJLOTNP7667",
+      "name": "M&T Realty Capital Corporation",
+      "period": "2018"
+    },
+    {
+      "count": "98",
+      "lei": "254900VPLEP8CE1FD910",
+      "name": "O'Bannon Banking Company",
+      "period": "2018"
+    },
+    {
+      "count": "2700",
+      "lei": "254900X6OAHFW6BUT219",
+      "name": "WESTconsin Credit Union",
+      "period": "2018"
+    },
+    {
+      "count": "538",
+      "lei": "5493004F1BOBD3SG7P54",
+      "name": "The Croghan Colonial Bank",
+      "period": "2018"
+    },
+    {
+      "count": "1599",
+      "lei": "5493004NH61PL6YYNH25",
+      "name": "Provident Bank",
+      "period": "2018"
+    },
+    {
+      "count": "531",
+      "lei": "54930050YUB4R3ZKAI03",
+      "name": "E.M.I. EQUITY MORTGAGE, INC.",
+      "period": "2018"
+    },
+    {
+      "count": "81",
+      "lei": "5493007074TOVS4FJF21",
+      "name": "North Valley Bank",
+      "period": "2018"
+    },
+    {
+      "count": "53",
+      "lei": "5493009RGIG82YMK3D65",
+      "name": "Farmers & Merchants Bank",
+      "period": "2018"
+    },
+    {
+      "count": "150",
+      "lei": "549300B5Q1Q3J5NC8121",
+      "name": "Fairway Consumer Discount Company",
+      "period": "2018"
+    },
+    {
+      "count": "7",
+      "lei": "549300BK1DNLS1A2MZ43",
+      "name": "SUPERIOR FINANCIAL SERVICES, INC.",
+      "period": "2018"
+    },
+    {
+      "count": "1971",
+      "lei": "549300CUF3Q2PQGM9256",
+      "name": "COMMONWEALTH",
+      "period": "2018"
+    },
+    {
+      "count": "2581",
+      "lei": "549300D4ZYLSQ5LMTV35",
+      "name": "ABSOLUTE HOME MORTGAGE CORPORATION",
+      "period": "2018"
+    },
+    {
+      "count": "2966",
+      "lei": "549300DCGBXW5FJMV921",
+      "name": "NMSI, INC.",
+      "period": "2018"
+    },
+    {
+      "count": "10280",
+      "lei": "549300DMHEHNYZ2OLB41",
+      "name": "First United Bank and Trust Company",
+      "period": "2018"
+    },
+    {
+      "count": "684",
+      "lei": "549300F7S6KEMTKK0546",
+      "name": "Extraco Banks, National Association",
+      "period": "2018"
+    },
+    {
+      "count": "129",
+      "lei": "549300FK7ZHTO2G1RM11",
+      "name": "LANCO",
+      "period": "2018"
+    },
+    {
+      "count": "4719",
+      "lei": "549300G6RZM5T8NQJW74",
+      "name": "Redstone Federal Credit Union",
+      "period": "2018"
+    },
+    {
+      "count": "298",
+      "lei": "549300GJJ0PPDHQ8ZB37",
+      "name": "THE CARROLL MORTGAGE GROUP, INC.",
+      "period": "2018"
+    },
+    {
+      "count": "75",
+      "lei": "549300H0KQCD2P5IR560",
+      "name": "West View Savings Bank",
+      "period": "2018"
+    },
+    {
+      "count": "47",
+      "lei": "549300JRILZK0V54TR93",
+      "name": "First Community Bank of Tennessee",
+      "period": "2018"
+    },
+    {
+      "count": "309",
+      "lei": "549300L4Z4LTG4TJTM66",
+      "name": "First Community Bank",
+      "period": "2018"
+    },
+    {
+      "count": "65",
+      "lei": "549300MNZNDD5FZ2PF62",
+      "name": "Star Bank",
+      "period": "2018"
+    },
+    {
+      "count": "974",
+      "lei": "549300MQ4IB3OO2XR831",
+      "name": "MISSOURI",
+      "period": "2018"
+    },
+    {
+      "count": "341",
+      "lei": "549300RMUJVUQYCW8836",
+      "name": "Sanibel Captiva Community Bank",
+      "period": "2018"
+    },
+    {
+      "count": "868",
+      "lei": "549300RUKY2I2HQ2AI44",
+      "name": "POLISH & SLAVIC FEDERAL CREDIT UNION",
+      "period": "2018"
+    },
+    {
+      "count": "120",
+      "lei": "549300RWP6SKF6EZZP82",
+      "name": "Dime Community Bank",
+      "period": "2018"
+    },
+    {
+      "count": "181",
+      "lei": "549300S63J8KM7BY5617",
+      "name": "GENCO Federal Credit Union",
+      "period": "2018"
+    },
+    {
+      "count": "567",
+      "lei": "549300U8DCOOTG96YM89",
+      "name": "Sound Community Bank",
+      "period": "2018"
+    },
+    {
+      "count": "6",
+      "lei": "549300XELYQIOXKMPE32",
+      "name": "IMAGINE HOME LENDING, LLC",
+      "period": "2018"
+    },
+    {
+      "count": "694",
+      "lei": "549300XSS1CPK8G7B851",
+      "name": "ServisFirst Bank",
+      "period": "2018"
+    },
+    {
+      "count": "828",
+      "lei": "549300YPSRX7HBRJSR08",
+      "name": "1st United Services Credit Union",
+      "period": "2018"
+    },
+    {
+      "count": "438",
+      "lei": "549300YV7HFY5MTM2Z65",
+      "name": "Merrimack County Savings Bank",
+      "period": "2018"
+    },
+    {
+      "count": "9348",
+      "lei": "COOWI3L2W9TPYR3WJX37",
+      "name": "First Tennessee Bank, National Association",
+      "period": "2018"
+    },
+    {
+      "count": "153",
+      "lei": "254900DK1GHKA4PVWQ72",
+      "name": "SourceOne Financial, Inc.",
+      "period": "2019"
+    },
+    {
+      "count": "203",
+      "lei": "254900GRDRKSA8ZPAJ55",
+      "name": "Traditions Bank",
+      "period": "2019"
+    },
+    {
+      "count": "220",
+      "lei": "254900KX4PZDHAK8I871",
+      "name": "First Federal Savings Bank of Champaign-Urbana",
+      "period": "2019"
+    },
+    {
+      "count": "36",
+      "lei": "254900L72VHBMLKTDN80",
+      "name": "DOY Federal Credit Union",
+      "period": "2019"
+    },
+    {
+      "count": "489",
+      "lei": "254900PCEQAPPZS8KL59",
+      "name": "Guardian Credit Union",
+      "period": "2019"
+    },
+    {
+      "count": "349",
+      "lei": "254900R8P0FFNZJAW611",
+      "name": "Community West Credit Union",
+      "period": "2019"
+    },
+    {
+      "count": "146",
+      "lei": "254900XJUBW1WCO2J645",
+      "name": "Classic Bank, National Association",
+      "period": "2019"
+    },
+    {
+      "count": "936",
+      "lei": "5493000GQWJTTR0TEH83",
+      "name": "Chelsea Groton Bank",
+      "period": "2019"
+    },
+    {
+      "count": "702",
+      "lei": "5493000QYMPN362T6V61",
+      "name": "SHELTER LENDING SERVICES, L.L.C.",
+      "period": "2019"
+    },
+    {
+      "count": "108",
+      "lei": "5493004MTRF0ZV6FX998",
+      "name": "The Central National Bank of Poteau",
+      "period": "2019"
+    },
+    {
+      "count": "203",
+      "lei": "54930077O97ZNP1ECH16",
+      "name": "MORTGAGE SOLUTIONS LLC",
+      "period": "2019"
+    },
+    {
+      "count": "465",
+      "lei": "5493007IES1RWVUDDU23",
+      "name": "Springfield First Community Bank",
+      "period": "2019"
+    },
+    {
+      "count": "355",
+      "lei": "549300B8JQ9XD5FQQH32",
+      "name": "Citizens Bank & Trust Company of Vivian, Louisiana",
+      "period": "2019"
+    },
+    {
+      "count": "116",
+      "lei": "549300BJ6EOJ9EF6JB96",
+      "name": "Wells Bank",
+      "period": "2019"
+    },
+    {
+      "count": "3319",
+      "lei": "549300BTTR873E71L054",
+      "name": "Integrity Home Mortgage Corporation",
+      "period": "2019"
+    },
+    {
+      "count": "125",
+      "lei": "549300C1FRYGOIEXG035",
+      "name": "Kerndt Brothers Savings Bank",
+      "period": "2019"
+    },
+    {
+      "count": "491",
+      "lei": "549300CA0J0Z7OFQBG71",
+      "name": "CONNEX",
+      "period": "2019"
+    },
+    {
+      "count": "2836",
+      "lei": "549300CYYO0YQ3EVCV77",
+      "name": "SHELL FEDERAL CREDIT UNION",
+      "period": "2019"
+    },
+    {
+      "count": "104",
+      "lei": "549300DNP4W96HB6LV07",
+      "name": "Sterling Bank",
+      "period": "2019"
+    },
+    {
+      "count": "65",
+      "lei": "549300HSEF434P70U240",
+      "name": "The Kansas State Bank",
+      "period": "2019"
+    },
+    {
+      "count": "2493",
+      "lei": "549300JI0UWY4QIWDV89",
+      "name": "NORTHPOINT MORTGAGE, INC.",
+      "period": "2019"
+    },
+    {
+      "count": "1242",
+      "lei": "549300JMT2KAYN9PTX82",
+      "name": "Members Mortgage Services, L.L.C.",
+      "period": "2019"
+    },
+    {
+      "count": "1557",
+      "lei": "549300L0EV5UM3IRHJ33",
+      "name": "Town & Country Banc Mortgage Services, Inc.",
+      "period": "2019"
+    },
+    {
+      "count": "678",
+      "lei": "549300MKT4KNKP08CQ45",
+      "name": "Northway Bank",
+      "period": "2019"
+    },
+    {
+      "count": "45",
+      "lei": "549300N4Y8SZTX37AW62",
+      "name": "FIRESTONE",
+      "period": "2019"
+    },
+    {
+      "count": "52",
+      "lei": "549300P91NEG6HBBRJ26",
+      "name": "Mainstreet Bank",
+      "period": "2019"
+    },
+    {
+      "count": "1027",
+      "lei": "549300PJX0ZHPQ614C72",
+      "name": "Peoples Security Bank and Trust Company",
+      "period": "2019"
+    },
+    {
+      "count": "65",
+      "lei": "549300POCKENHFN8BN88",
+      "name": "Longview Bank",
+      "period": "2019"
+    },
+    {
+      "count": "226",
+      "lei": "549300QGO7S838JDBC47",
+      "name": "CORNERSTONE COMMUNITY FINANCIAL",
+      "period": "2019"
+    },
+    {
+      "count": "106",
+      "lei": "549300V1IRRYSYRSPU54",
+      "name": "CASTPARTS EMPLOYEES",
+      "period": "2019"
+    },
+    {
+      "count": "1178",
+      "lei": "549300WUGYTMN4HIT493",
+      "name": "DuPage Credit Union",
+      "period": "2019"
+    },
+    {
+      "count": "164",
+      "lei": "549300XOP6YO0UN0TY92",
+      "name": "S. C. TELCO",
+      "period": "2019"
+    },
+    {
+      "count": "68",
+      "lei": "549300XZNW8Y7BOTQ597",
+      "name": "Miami Savings Bank",
+      "period": "2019"
+    },
+    {
+      "count": "242",
+      "lei": "549300Y4GAAGXS20SL80",
+      "name": "MISSOURI ELECTRIC COOPERATIVES EMPL",
+      "period": "2019"
+    },
+    {
+      "count": "58",
+      "lei": "549300YBM0K5N6REP663",
+      "name": "Gilmer National Bank, Gilmer, Texas",
+      "period": "2019"
+    },
+    {
+      "count": "16",
+      "lei": "549300YDGOT72D8ZDV45",
+      "name": "Regal Bank",
+      "period": "2019"
+    },
+    {
+      "count": "134",
+      "lei": "549300YDTDBXLK67CF48",
+      "name": "ATLANTIS MORTGAGE CO., INC.",
+      "period": "2019"
+    },
+    {
+      "count": "341",
+      "lei": "549300YTDHBD4XHCIR35",
+      "name": "THE POLICE Credit Union",
+      "period": "2019"
+    },
+    {
+      "count": "568",
+      "lei": "549300Z78KW88BIQNR50",
+      "name": "First American Bank and Trust",
+      "period": "2019"
+    },
+    {
+      "count": "7535",
+      "lei": "CKVBED0S4DMLKJJ5XH28",
+      "name": "Stifel Bank and Trust",
+      "period": "2019"
+    },
+    {
+      "count": "206",
+      "lei": "254900EL4XB15QW2WI69",
+      "name": "First National Bank of Griffin",
+      "period": "2020"
+    },
+    {
+      "count": "1466",
+      "lei": "254900HJA1Y85EJCGB90",
+      "name": "Charter Oak Federal Credit Union",
+      "period": "2020"
+    },
+    {
+      "count": "227",
+      "lei": "254900OC69XWBZ2A8244",
+      "name": "Auburn Savings Bank, FSB",
+      "period": "2020"
+    },
+    {
+      "count": "68",
+      "lei": "254900RW4F62S7FHDV91",
+      "name": "United Community Credit Union",
+      "period": "2020"
+    },
+    {
+      "count": "1090",
+      "lei": "254900Y6EUNN0KGMJW67",
+      "name": "Commercial Lender LLC",
+      "period": "2020"
+    },
+    {
+      "count": "561",
+      "lei": "254900ZKF687G440AJ92",
+      "name": "America's Mortgage Resource, Inc.",
+      "period": "2020"
+    },
+    {
+      "count": "767",
+      "lei": "5493001WL16YUSR2TI47",
+      "name": "Cross Keys Bank",
+      "period": "2020"
+    },
+    {
+      "count": "1157",
+      "lei": "54930029L79O0A2ZXF27",
+      "name": "LAUNCH FEDERAL CREDIT UNION",
+      "period": "2020"
+    },
+    {
+      "count": "5657",
+      "lei": "54930030S6J5KOL5LJ73",
+      "name": "FAIRWINDS CREDIT UNION",
+      "period": "2020"
+    },
+    {
+      "count": "240",
+      "lei": "5493003P1OKUPLVJ7M37",
+      "name": "State Bank of Graymont",
+      "period": "2020"
+    },
+    {
+      "count": "650",
+      "lei": "54930045J8O98TUGTW86",
+      "name": "b1BANK",
+      "period": "2020"
+    },
+    {
+      "count": "1675",
+      "lei": "5493005CFFMKTUKLO381",
+      "name": "ACNB Bank",
+      "period": "2020"
+    },
+    {
+      "count": "4456",
+      "lei": "54930063578UDYE3JR69",
+      "name": "POLARIS HOME FUNDING CORP.",
+      "period": "2020"
+    },
+    {
+      "count": "148",
+      "lei": "5493007CNNPPB1T3TQ21",
+      "name": "BELLCO",
+      "period": "2020"
+    },
+    {
+      "count": "7034",
+      "lei": "5493007XAKU2Q6LGXD23",
+      "name": "UNIVERSITY Federal Credit Union",
+      "period": "2020"
+    },
+    {
+      "count": "3620",
+      "lei": "5493007XQ4LU452LQJ67",
+      "name": "COMMUNITY FINANCIAL CREDIT UNION",
+      "period": "2020"
+    },
+    {
+      "count": "1999",
+      "lei": "549300A76WI58XAFNF59",
+      "name": "ARIZONA CENTRAL",
+      "period": "2020"
+    },
+    {
+      "count": "18452",
+      "lei": "549300AT7EB9FJAF0E61",
+      "name": "Old National Bank",
+      "period": "2020"
+    },
+    {
+      "count": "1427",
+      "lei": "549300BPDFS1CLV7K329",
+      "name": "CAMPUS USA",
+      "period": "2020"
+    },
+    {
+      "count": "10937",
+      "lei": "549300DPRWSBUY619V27",
+      "name": "Simmons Bank",
+      "period": "2020"
+    },
+    {
+      "count": "344",
+      "lei": "549300E57105E8PDY082",
+      "name": "VALLEY FINANCIAL CREDIT UNION",
+      "period": "2020"
+    },
+    {
+      "count": "131",
+      "lei": "549300FOHR7SBPQ7WJ92",
+      "name": "MILLENNIUM BANK",
+      "period": "2020"
+    },
+    {
+      "count": "1050",
+      "lei": "549300G3FCPL48R4HU28",
+      "name": "IAPPROVE LENDING",
+      "period": "2020"
+    },
+    {
+      "count": "19",
+      "lei": "549300JD2HS86SAFVA88",
+      "name": "POWER",
+      "period": "2020"
+    },
+    {
+      "count": "377",
+      "lei": "549300KH5RQTNDNNHM28",
+      "name": "The First National Bank of Carmi",
+      "period": "2020"
+    },
+    {
+      "count": "3037",
+      "lei": "549300LR1ZETOWYE9Z89",
+      "name": "Berkshire Bank",
+      "period": "2020"
+    },
+    {
+      "count": "2847",
+      "lei": "549300O1ESL3X18LPG95",
+      "name": "California Coast Credit Union",
+      "period": "2020"
+    },
+    {
+      "count": "60",
+      "lei": "549300OZV7J05G72WS11",
+      "name": "IH CREDIT UNION, INC.",
+      "period": "2020"
+    },
+    {
+      "count": "1573",
+      "lei": "549300REHZOIYMHDPI61",
+      "name": "SIOUX FALLS",
+      "period": "2020"
+    },
+    {
+      "count": "2531",
+      "lei": "549300RUF3KS47ETXV22",
+      "name": "CAPITAL COMMUNICATIONS Federal Credit Union",
+      "period": "2020"
+    },
+    {
+      "count": "997",
+      "lei": "549300SIZ5KBISEZE503",
+      "name": "UniBank for Savings",
+      "period": "2020"
+    },
+    {
+      "count": "3278",
+      "lei": "549300SJLI7IC47X6H33",
+      "name": "Mortgages Unlimited Inc.",
+      "period": "2020"
+    },
+    {
+      "count": "523",
+      "lei": "549300SRKBH68TX76851",
+      "name": "S&S Financial",
+      "period": "2020"
+    },
+    {
+      "count": "208",
+      "lei": "549300TCR1BZRVOO2A49",
+      "name": "CENTRIC",
+      "period": "2020"
+    },
+    {
+      "count": "1401",
+      "lei": "549300TJF420N3F01V87",
+      "name": "Equity Bank",
+      "period": "2020"
+    },
+    {
+      "count": "40",
+      "lei": "549300UVFLI1W4O27J10",
+      "name": "COOPERATIVA DE AHORRO Y CREDITO DE LARES",
+      "period": "2020"
+    },
+    {
+      "count": "2495",
+      "lei": "549300XOTES5TCS8T794",
+      "name": "First Mid Bank & Trust, National Association",
+      "period": "2020"
+    },
+    {
+      "count": "787",
+      "lei": "549300Y6YKK2XPSFJO71",
+      "name": "SYNERGY HOME MORTGAGE, LLC",
+      "period": "2020"
+    },
+    {
+      "count": "371",
+      "lei": "549300YUVOQXC2XL4P90",
+      "name": "Community State Bank of Orbisonia",
+      "period": "2020"
+    },
+    {
+      "count": "3445",
+      "lei": "R6KJ2D7C3UT8OVTWHS39",
+      "name": "Union Bank and Trust Company",
+      "period": "2020"
+    },
+    {
+      "count": "2398",
+      "lei": "254900561K135J92VD38",
+      "name": "First Security Bank",
+      "period": "2021"
+    },
+    {
+      "count": "15704",
+      "lei": "2549008LK3474E9U2888",
+      "name": "OnPoint Community Credit Union",
+      "period": "2021"
+    },
+    {
+      "count": "278",
+      "lei": "2549008SGDIASSJGSR05",
+      "name": "Liberty Mortgage Corporation",
+      "period": "2021"
+    },
+    {
+      "count": "1348",
+      "lei": "254900BBEPZS8MDE1S61",
+      "name": "F&A Federal Credit Union",
+      "period": "2021"
+    },
+    {
+      "count": "177",
+      "lei": "254900BMXWPEHXG4LF21",
+      "name": "SmartFi Home Loans, LLC",
+      "period": "2021"
+    },
+    {
+      "count": "161",
+      "lei": "254900OYJ23M4J7IJI76",
+      "name": "ACIPCO Federal Credit Union",
+      "period": "2021"
+    },
+    {
+      "count": "255",
+      "lei": "254900R0GC9CW77VXE28",
+      "name": "Telco Community Credit Union",
+      "period": "2021"
+    },
+    {
+      "count": "317",
+      "lei": "254900TFS12PFBK5FD47",
+      "name": "TrueCore Federal Credit Union",
+      "period": "2021"
+    },
+    {
+      "count": "26",
+      "lei": "254900Z5MXY02EYXAM91",
+      "name": "North Alabama Educators Credit Union",
+      "period": "2021"
+    },
+    {
+      "count": "514",
+      "lei": "5493002Z2Z7DV758IU60",
+      "name": "Bank of Clarke County",
+      "period": "2021"
+    },
+    {
+      "count": "1400",
+      "lei": "5493003EAJYUK1F8B139",
+      "name": "Fortress Bank",
+      "period": "2021"
+    },
+    {
+      "count": "1845",
+      "lei": "5493003Q3L1PO9NBVK64",
+      "name": "WHATCOM EDUCATIONAL CREDIT UNION",
+      "period": "2021"
+    },
+    {
+      "count": "21",
+      "lei": "5493004PU0PDR2NUYN54",
+      "name": "COOPERATIVA DE AHORRO Y CREDITO DEL VALENCIANO",
+      "period": "2021"
+    },
+    {
+      "count": "1517",
+      "lei": "5493005WM8ZE8KHE1R85",
+      "name": "Allen Tate Mortgage Partners, LLC",
+      "period": "2021"
+    },
+    {
+      "count": "11441",
+      "lei": "54930072OCHTUJOZQB56",
+      "name": "EVANSVILLE TEACHERS",
+      "period": "2021"
+    },
+    {
+      "count": "824",
+      "lei": "5493008ICL5D7TS4CI35",
+      "name": "SUPERIOR FINANCIAL SOLUTIONS, LLC",
+      "period": "2021"
+    },
+    {
+      "count": "1169",
+      "lei": "549300AUFLERO59VGC71",
+      "name": "Home State Bank, National Association",
+      "period": "2021"
+    },
+    {
+      "count": "5647",
+      "lei": "549300BEFX6JRSCS5N78",
+      "name": "Centennial Bank",
+      "period": "2021"
+    },
+    {
+      "count": "467",
+      "lei": "549300BRSSSUNB0U6552",
+      "name": "American Bank, National Association",
+      "period": "2021"
+    },
+    {
+      "count": "2278",
+      "lei": "549300CHBB3GN7JFXU86",
+      "name": "MSA MORTGAGE, LLC",
+      "period": "2021"
+    },
+    {
+      "count": "740",
+      "lei": "549300DDRY04AJC3ZZ52",
+      "name": "Androscoggin Savings Bank",
+      "period": "2021"
+    },
+    {
+      "count": "1664",
+      "lei": "549300DQMFK1KT7KEB48",
+      "name": "NORTHEAST HOME LOAN, LLC",
+      "period": "2021"
+    },
+    {
+      "count": "549",
+      "lei": "549300H05YH2B8D1FY15",
+      "name": "Greenville Savings Bank",
+      "period": "2021"
+    },
+    {
+      "count": "5574",
+      "lei": "549300H8H31LPYGJEW50",
+      "name": "SALEM FIVE MORTGAGE COMPANY, LLC",
+      "period": "2021"
+    },
+    {
+      "count": "852",
+      "lei": "549300JBZ3MK7Z4FI764",
+      "name": "Thomaston Savings Bank",
+      "period": "2021"
+    },
+    {
+      "count": "431",
+      "lei": "549300JCUSJMRA75V483",
+      "name": "Wolf River Community Bank",
+      "period": "2021"
+    },
+    {
+      "count": "797",
+      "lei": "549300K80E72C24ZOJ37",
+      "name": "SRP Federal Credit Union",
+      "period": "2021"
+    },
+    {
+      "count": "683",
+      "lei": "549300O12EJ1HE3YIK24",
+      "name": "Eagle.bank",
+      "period": "2021"
+    },
+    {
+      "count": "1023",
+      "lei": "549300PX0B48R1TGUV89",
+      "name": "JFK FINANCIAL, INC.",
+      "period": "2021"
+    },
+    {
+      "count": "294",
+      "lei": "549300RMBMOU2J1VK478",
+      "name": "Woodlands Bank",
+      "period": "2021"
+    },
+    {
+      "count": "213",
+      "lei": "549300UBL8B7C63DKZ49",
+      "name": "Sycamore Bank",
+      "period": "2021"
+    },
+    {
+      "count": "119",
+      "lei": "549300UHLXT004ITEJ56",
+      "name": "First National Bank of Eastern Arkansas",
+      "period": "2021"
+    },
+    {
+      "count": "1198",
+      "lei": "549300VGMMXKSX821O69",
+      "name": "HARTFORD FUNDING, LTD.",
+      "period": "2021"
+    },
+    {
+      "count": "1463",
+      "lei": "549300WW4OBT30G5DK23",
+      "name": "THRIVENT Federal Credit Union",
+      "period": "2021"
+    },
+    {
+      "count": "5473",
+      "lei": "549300WWJ28EP3GZG107",
+      "name": "FIRSTBANK CORP",
+      "period": "2021"
+    },
+    {
+      "count": "1881",
+      "lei": "549300XRF9LCZ3RX3Q39",
+      "name": "Allied First Bank,sb",
+      "period": "2021"
+    },
+    {
+      "count": "273",
+      "lei": "549300XZEU2LB7FLWW04",
+      "name": "FOUR POINTS",
+      "period": "2021"
+    },
+    {
+      "count": "212",
+      "lei": "549300Y4GAAGXS20SL80",
+      "name": "MISSOURI ELECTRIC COOPERATIVES EMPL",
+      "period": "2021"
+    },
+    {
+      "count": "450",
+      "lei": "549300YHPEPV6KF30T16",
+      "name": "Rosedale Federal Savings and Loan Association",
+      "period": "2021"
+    },
+    {
+      "count": "11053",
+      "lei": "G5AHTAP80NWA3Q8RDC78",
+      "name": "Frost Bank",
+      "period": "2021"
+    },
+    {
+      "count": "85",
+      "lei": "25490030Z1TAY4VPEL47",
+      "name": "Kingsport Press Credit Union",
+      "period": "2022"
+    },
+    {
+      "count": "1005",
+      "lei": "2549007IU6SKFLLNKZ07",
+      "name": "Pacific Lending LLC",
+      "period": "2022"
+    },
+    {
+      "count": "1566",
+      "lei": "2549007W5PWUV8XG3V90",
+      "name": "RCB Bank",
+      "period": "2022"
+    },
+    {
+      "count": "39",
+      "lei": "254900EL5N0NK8M96118",
+      "name": "DADE COUNTY FEDERAL CREDIT UNION",
+      "period": "2022"
+    },
+    {
+      "count": "298",
+      "lei": "254900HGO0ML9XQH7267",
+      "name": "Oconee Federal Savings and Loan",
+      "period": "2022"
+    },
+    {
+      "count": "77",
+      "lei": "254900IHSG9OOX0DZH92",
+      "name": "NorthWest Plus Credit Union",
+      "period": "2022"
+    },
+    {
+      "count": "2855",
+      "lei": "254900VELJPWWT51WN03",
+      "name": "General Mortgage Capital Corporation",
+      "period": "2022"
+    },
+    {
+      "count": "105",
+      "lei": "5493001DKNDZW3UIWI38",
+      "name": "Cornerstone State Bank",
+      "period": "2022"
+    },
+    {
+      "count": "154",
+      "lei": "5493002R8QX1FQSB8Z06",
+      "name": "FIRST U.S. COMMUNITY CREDIT UNION",
+      "period": "2022"
+    },
+    {
+      "count": "851",
+      "lei": "5493003KBJMVUE7RQO90",
+      "name": "1ST ADVANTAGE FEDERAL CREDIT UNION",
+      "period": "2022"
+    },
+    {
+      "count": "569",
+      "lei": "5493004NKDOFN55L5X23",
+      "name": "HAWAIIAN FINANCIAL",
+      "period": "2022"
+    },
+    {
+      "count": "684",
+      "lei": "5493005H3NABV4GMAG85",
+      "name": "CONNECTICUT STATE EMPLOYEES",
+      "period": "2022"
+    },
+    {
+      "count": "607",
+      "lei": "5493005LKELKKRLTQA25",
+      "name": "Portage Community Bank",
+      "period": "2022"
+    },
+    {
+      "count": "1683",
+      "lei": "5493005WWQ2221ORBN75",
+      "name": "SHELTER HOME MORTGAGE, LLC",
+      "period": "2022"
+    },
+    {
+      "count": "566",
+      "lei": "5493008BSTI0PQR0IL08",
+      "name": "SUPERIOR CHOICE",
+      "period": "2022"
+    },
+    {
+      "count": "1073",
+      "lei": "5493008GTOZI3HQKE634",
+      "name": "Ulster Savings Bank",
+      "period": "2022"
+    },
+    {
+      "count": "715",
+      "lei": "5493008SV4X2EID9J711",
+      "name": "Cambria Financial Group, LLC",
+      "period": "2022"
+    },
+    {
+      "count": "416",
+      "lei": "549300BYPXU2L51NW896",
+      "name": "TEAM ONE CREDIT UNION",
+      "period": "2022"
+    },
+    {
+      "count": "97",
+      "lei": "549300BZ038VQFB4UY84",
+      "name": "First Community Bank",
+      "period": "2022"
+    },
+    {
+      "count": "947",
+      "lei": "549300D6BCLQFX6G1K95",
+      "name": "THE EQUITABLE MORTGAGE CORPORATION",
+      "period": "2022"
+    },
+    {
+      "count": "130",
+      "lei": "549300E02I9FR0A6YT35",
+      "name": "NORTHWESTERN MUTUAL",
+      "period": "2022"
+    },
+    {
+      "count": "361",
+      "lei": "549300EE39SNC5DXTC46",
+      "name": "Northern Bank & Trust Company",
+      "period": "2022"
+    },
+    {
+      "count": "1247",
+      "lei": "549300GS2JP8CQK0MD31",
+      "name": "MEMBERS COOPERATIVE",
+      "period": "2022"
+    },
+    {
+      "count": "713",
+      "lei": "549300IJO7NO6VDZPD35",
+      "name": "THE MORTGAGE LINK, INC.",
+      "period": "2022"
+    },
+    {
+      "count": "740",
+      "lei": "549300J5W91RLNLMTL86",
+      "name": "Adams Community Bank",
+      "period": "2022"
+    },
+    {
+      "count": "631",
+      "lei": "549300KR4ZW8KJC82O47",
+      "name": "Community First National Bank",
+      "period": "2022"
+    },
+    {
+      "count": "302",
+      "lei": "549300M4E3MK3F5GQW40",
+      "name": "The Bank",
+      "period": "2022"
+    },
+    {
+      "count": "10325",
+      "lei": "549300N1YEXP02MHBR47",
+      "name": "WRIGHT-PATT CREDIT UNION, INC.",
+      "period": "2022"
+    },
+    {
+      "count": "54",
+      "lei": "549300N53R53ZHSNZ234",
+      "name": "White Sands Federal Credit Union",
+      "period": "2022"
+    },
+    {
+      "count": "42",
+      "lei": "549300OP693UT023XG44",
+      "name": "Spirit Financial Credit Union",
+      "period": "2022"
+    },
+    {
+      "count": "825",
+      "lei": "549300OVA1LT74LITG21",
+      "name": "First Federal Savings and Loan Association of Greene Co",
+      "period": "2022"
+    },
+    {
+      "count": "759",
+      "lei": "549300P6J0MZZT4UMT05",
+      "name": "MEMBER HOME LOAN, L.L.C.",
+      "period": "2022"
+    },
+    {
+      "count": "3242",
+      "lei": "549300QVGK8WC4HQ3C28",
+      "name": "PRINCETON MORTGAGE CORPORATION",
+      "period": "2022"
+    },
+    {
+      "count": "182",
+      "lei": "549300RYQVJMZ3X21K04",
+      "name": "The City National Bank and Trust Company of Lawton",
+      "period": "2022"
+    },
+    {
+      "count": "203",
+      "lei": "549300XTGDMRB8FMR522",
+      "name": "TEXOMA COMMUNITY CREDIT UNION",
+      "period": "2022"
+    },
+    {
+      "count": "11",
+      "lei": "549300Y8MO6UUFA38I79",
+      "name": "NORTHERN STAR CREDIT UNION, INC.",
+      "period": "2022"
+    },
+    {
+      "count": "78",
+      "lei": "549300YOCINIK5RN6R57",
+      "name": "Gateway Metro Federal Credit Union",
+      "period": "2022"
+    },
+    {
+      "count": "573",
+      "lei": "549300ZDIZM7Y1MHKG98",
+      "name": "Maine Savings Federal Credit Union",
+      "period": "2022"
+    },
+    {
+      "count": "8206",
+      "lei": "D38AC76TAMYI50NBPX33",
+      "name": "Washington Federal Bank, National Association",
+      "period": "2022"
+    },
+    {
+      "count": "24881",
+      "lei": "N8T7HW55LK5D2ORCKP39",
+      "name": "First National Bank of Pennsylvania",
+      "period": "2022"
+    },
+    {
+      "count": "254",
+      "lei": "2549008684GZZI5B5H82",
+      "name": "encurage financial network",
+      "period": "2023"
+    },
+    {
+      "count": "287",
+      "lei": "2549008EFPQHWHJ5MO60",
+      "name": "The Conway National Bank",
+      "period": "2023"
+    },
+    {
+      "count": "222",
+      "lei": "254900GKRYTQSJG61D90",
+      "name": "Texas Regional Bank",
+      "period": "2023"
+    },
+    {
+      "count": "392",
+      "lei": "254900OVHD0ZZK65EQ86",
+      "name": "The People's Credit Union",
+      "period": "2023"
+    },
+    {
+      "count": "86",
+      "lei": "254900SRBPINTG8V7N66",
+      "name": "Pike Bancorp, Inc.",
+      "period": "2023"
+    },
+    {
+      "count": "49",
+      "lei": "254900SU3S0JP7BKS840",
+      "name": "University of Nebraska Federal Credit Union",
+      "period": "2023"
+    },
+    {
+      "count": "143",
+      "lei": "254900XA8J7Y4KR7AI02",
+      "name": "Cattle Bank & Trust",
+      "period": "2023"
+    },
+    {
+      "count": "3498",
+      "lei": "4LJGQ9KJ9S0CP4B1FY29",
+      "name": "Stock Yards Bank & Trust Company",
+      "period": "2023"
+    },
+    {
+      "count": "401",
+      "lei": "5493002G1DPDOKT55X37",
+      "name": "DESCO",
+      "period": "2023"
+    },
+    {
+      "count": "2037",
+      "lei": "5493004GPC7K826BKF31",
+      "name": "ARROWHEAD CENTRAL CREDIT UNION",
+      "period": "2023"
+    },
+    {
+      "count": "205",
+      "lei": "5493004R22HRZXTXSR64",
+      "name": "The National Bank of Middlebury",
+      "period": "2023"
+    },
+    {
+      "count": "2119",
+      "lei": "549300567BJCXPG9IV35",
+      "name": "Seven Seventeen Credit Union",
+      "period": "2023"
+    },
+    {
+      "count": "51",
+      "lei": "5493007ATUOSGE6PR745",
+      "name": "WEYCO COMMUNITY CREDIT UNION",
+      "period": "2023"
+    },
+    {
+      "count": "129",
+      "lei": "54930080KJR5G1HZVI89",
+      "name": "First National Bank and Trust Company of Ardmore",
+      "period": "2023"
+    },
+    {
+      "count": "306",
+      "lei": "54930083VRKEK3SXZJ31",
+      "name": "Skowhegan Savings Bank",
+      "period": "2023"
+    },
+    {
+      "count": "247",
+      "lei": "549300ANE43ZL0O8VZ13",
+      "name": "First State Bank of Blakely",
+      "period": "2023"
+    },
+    {
+      "count": "425",
+      "lei": "549300AWVW2ZYIVA5297",
+      "name": "THE OLD FORT BANKING COMPANY",
+      "period": "2023"
+    },
+    {
+      "count": "341",
+      "lei": "549300B3BEP9WW99IR76",
+      "name": "Citizens State Bank",
+      "period": "2023"
+    },
+    {
+      "count": "3272",
+      "lei": "549300C232ZWY1I57C16",
+      "name": "WESCOM CENTRAL CREDIT UNION",
+      "period": "2023"
+    },
+    {
+      "count": "829",
+      "lei": "549300C5JF1UNQK9KC45",
+      "name": "FIRST FINANCIAL OF MARYLAND FEDERAL CREDIT UNION",
+      "period": "2023"
+    },
+    {
+      "count": "81816",
+      "lei": "549300CB67L6KPJLHE19",
+      "name": "TRIAD FINANCIAL SERVICES, INC.",
+      "period": "2023"
+    },
+    {
+      "count": "5926",
+      "lei": "549300EKFFG3BU8DNX74",
+      "name": "NEXERA HOLDING LLC",
+      "period": "2023"
+    },
+    {
+      "count": "34",
+      "lei": "549300FDNZSDIZP9N063",
+      "name": "CENTRAL CREDIT UNION OF FLORIDA",
+      "period": "2023"
+    },
+    {
+      "count": "572",
+      "lei": "549300FZ8E0GLIFFYB55",
+      "name": "Volunteer State Bank",
+      "period": "2023"
+    },
+    {
+      "count": "844",
+      "lei": "549300G5ZQEXZC4Y5G44",
+      "name": "UNIVERSITY CREDIT UNION",
+      "period": "2023"
+    },
+    {
+      "count": "100",
+      "lei": "549300GPM8XFBE00Z637",
+      "name": "Bank of Central Florida",
+      "period": "2023"
+    },
+    {
+      "count": "13393",
+      "lei": "549300GS0W0TEUQS8571",
+      "name": "Morgan Stanley Private Bank, National Association",
+      "period": "2023"
+    },
+    {
+      "count": "40",
+      "lei": "549300GXIH93QAIAWV16",
+      "name": "COOPERATIVA DE AHORRO Y CREDITO MAUNABO",
+      "period": "2023"
+    },
+    {
+      "count": "2679",
+      "lei": "549300HRLROF7PLJ6735",
+      "name": "CLEAREDGE LENDING LLC",
+      "period": "2023"
+    },
+    {
+      "count": "633",
+      "lei": "549300IZ5GOBKOERL931",
+      "name": "Luana Savings Bank",
+      "period": "2023"
+    },
+    {
+      "count": "39",
+      "lei": "549300JD2HS86SAFVA88",
+      "name": "POWER",
+      "period": "2023"
+    },
+    {
+      "count": "43",
+      "lei": "549300LUOV7WW4BLH779",
+      "name": "The National Grand Bank of Marblehead",
+      "period": "2023"
+    },
+    {
+      "count": "20",
+      "lei": "549300MMUE4TVC24G357",
+      "name": "Commodore Perry Federal Credit Union",
+      "period": "2023"
+    },
+    {
+      "count": "58",
+      "lei": "549300U76XKUE05DV518",
+      "name": "Truxton Trust Company",
+      "period": "2023"
+    },
+    {
+      "count": "1169",
+      "lei": "549300VWURV8LBNGQ353",
+      "name": "Firstar Bank",
+      "period": "2023"
+    },
+    {
+      "count": "108",
+      "lei": "549300X72Q5WKCW2QQ95",
+      "name": "R M K FINANCIAL CORP.",
+      "period": "2023"
+    },
+    {
+      "count": "268",
+      "lei": "549300XRB0LTJL53XI04",
+      "name": "Unison Bank",
+      "period": "2023"
+    },
+    {
+      "count": "347",
+      "lei": "549300Z1CDO1XR2ZMQ19",
+      "name": "HUDSON RIVER COMMUNITY",
+      "period": "2023"
+    },
+    {
+      "count": "245494",
+      "lei": "7H6GLXDRUGQFU57RNE97",
+      "name": "JPMorgan Chase Bank, National Association",
+      "period": "2023"
+    },
+    {
+      "count": "63",
+      "lei": "894500SYP6ZV71JDZH10",
+      "name": "BARWICK BANKING COMPANY",
+      "period": "2023"
+    },
+    {
+      "count": "590",
+      "lei": "2549004ZRHLORHQ9LT73",
+      "name": "Exchange Bank",
+      "period": "2024"
+    },
+    {
+      "count": "4407",
+      "lei": "2549008TT6UNYR7AXF54",
+      "name": "Sunflower Bank, National Association",
+      "period": "2024"
+    },
+    {
+      "count": "53",
+      "lei": "254900A6XS8JBOVU9C33",
+      "name": "Peak Financial LLC",
+      "period": "2024"
+    },
+    {
+      "count": "48",
+      "lei": "254900F5ZZOQMXYF0M92",
+      "name": "BROKAW CREDIT UNION",
+      "period": "2024"
+    },
+    {
+      "count": "43",
+      "lei": "254900G9IPJDT4OZYN57",
+      "name": "Marshland Credit Union",
+      "period": "2024"
+    },
+    {
+      "count": "55",
+      "lei": "254900L3N47KFV5KSJ32",
+      "name": "Financial Trust",
+      "period": "2024"
+    },
+    {
+      "count": "42",
+      "lei": "254900TUS3PQY1ER5639",
+      "name": "Adrian Bank",
+      "period": "2024"
+    },
+    {
+      "count": "60",
+      "lei": "254900U65DCP595ABD45",
+      "name": "COMMERCIAL STATE BANK",
+      "period": "2024"
+    },
+    {
+      "count": "175",
+      "lei": "254900UAJ26M2YIF0822",
+      "name": "Better Banks",
+      "period": "2024"
+    },
+    {
+      "count": "17",
+      "lei": "254900ZC0S8OJM5CYU13",
+      "name": "Nebo Credit Union",
+      "period": "2024"
+    },
+    {
+      "count": "114",
+      "lei": "5493000GDQJIBPCUBG13",
+      "name": "Eagle Bank",
+      "period": "2024"
+    },
+    {
+      "count": "367",
+      "lei": "5493002Z2Z7DV758IU60",
+      "name": "Bank of Clarke",
+      "period": "2024"
+    },
+    {
+      "count": "583",
+      "lei": "54930038B7D8N5ZCSG62",
+      "name": "ATOMIC CREDIT UNION, INC.",
+      "period": "2024"
+    },
+    {
+      "count": "49",
+      "lei": "5493003F5IG7YZ4PQ253",
+      "name": "BankSouth",
+      "period": "2024"
+    },
+    {
+      "count": "410",
+      "lei": "5493006RLUL4IL56SC31",
+      "name": "The Guilford Savings Bank",
+      "period": "2024"
+    },
+    {
+      "count": "33",
+      "lei": "54930083CVF047DLXL67",
+      "name": "Stoughton Co-operative Bank",
+      "period": "2024"
+    },
+    {
+      "count": "14346",
+      "lei": "549300AT7EB9FJAF0E61",
+      "name": "Old National Bank",
+      "period": "2024"
+    },
+    {
+      "count": "23",
+      "lei": "549300B190GPYLAX3Y92",
+      "name": "American First National Bank",
+      "period": "2024"
+    },
+    {
+      "count": "51",
+      "lei": "549300BFJ8COFCPOMU05",
+      "name": "SOVEREIGN LENDING GROUP INCORPORATED",
+      "period": "2024"
+    },
+    {
+      "count": "968",
+      "lei": "549300CCELEPUO4TOE73",
+      "name": "West Community Credit Union",
+      "period": "2024"
+    },
+    {
+      "count": "90",
+      "lei": "549300DV8S0IJF2QWL30",
+      "name": "Stockmens Bank",
+      "period": "2024"
+    },
+    {
+      "count": "248",
+      "lei": "549300FJ9SHI3GDB7327",
+      "name": "Abbeville Building & Loan (A State-Chartered Savings Bank)",
+      "period": "2024"
+    },
+    {
+      "count": "158",
+      "lei": "549300HTKHBMJL4D9734",
+      "name": "CORNERSTONE FINANCIAL CREDIT UNION",
+      "period": "2024"
+    },
+    {
+      "count": "205",
+      "lei": "549300I6G5QEIEI78C93",
+      "name": "CASE Credit Union",
+      "period": "2024"
+    },
+    {
+      "count": "49",
+      "lei": "549300JL3TGNE3Y7PE33",
+      "name": "Texas Security Bank",
+      "period": "2024"
+    },
+    {
+      "count": "180",
+      "lei": "549300KGWK2C69R8ZN27",
+      "name": "NORTHWOODS",
+      "period": "2024"
+    },
+    {
+      "count": "476",
+      "lei": "549300KR4ZW8KJC82O47",
+      "name": "Community First National Bank",
+      "period": "2024"
+    },
+    {
+      "count": "1338",
+      "lei": "549300LP3GMTWS4OB353",
+      "name": "SENTE MORTGAGE, INC.",
+      "period": "2024"
+    },
+    {
+      "count": "87",
+      "lei": "549300LX1HMON836J004",
+      "name": "The First National Bank Of Milaca",
+      "period": "2024"
+    },
+    {
+      "count": "217",
+      "lei": "549300MJGHTLBSL8LJ59",
+      "name": "BankFirst",
+      "period": "2024"
+    },
+    {
+      "count": "710",
+      "lei": "549300N6U5XCH70TOK35",
+      "name": "Kearny Bank",
+      "period": "2024"
+    },
+    {
+      "count": "48",
+      "lei": "549300NPANOIK7XYK714",
+      "name": "N C P D Federal Credit Union",
+      "period": "2024"
+    },
+    {
+      "count": "1703",
+      "lei": "549300OHIEQGELZVJP60",
+      "name": "L & N Federal Credit Union",
+      "period": "2024"
+    },
+    {
+      "count": "334",
+      "lei": "549300OJTK0IPSNDA832",
+      "name": "Liberty Bank and Trust Company",
+      "period": "2024"
+    },
+    {
+      "count": "628",
+      "lei": "549300RBWA4J4QTPSY69",
+      "name": "Peoples State Bank",
+      "period": "2024"
+    },
+    {
+      "count": "576",
+      "lei": "549300RP3DLR09NF6157",
+      "name": "The First National Bank of Middle Tennessee",
+      "period": "2024"
+    },
+    {
+      "count": "1339",
+      "lei": "549300TDBTRK89DZRC13",
+      "name": "FIBRE",
+      "period": "2024"
+    },
+    {
+      "count": "214",
+      "lei": "549300UPB8ITF7B1GI03",
+      "name": "CATALYST MORTGAGE",
+      "period": "2024"
+    },
+    {
+      "count": "12756",
+      "lei": "C398JSK21YCXWM603F55",
+      "name": "Barrington Bank & Trust Company, National Association",
+      "period": "2024"
+    },
+    {
+      "count": "3994",
+      "lei": "MCXHCL35UUWDZK7NCQ61",
+      "name": "S&T Bank",
+      "period": "2024"
+    },
+    {
+      "count": "212",
+      "lei": "213800XA5M2HOWATHG59",
+      "name": "LNB COMMUNITY BANK",
+      "period": "2025"
+    },
+    {
+      "count": "71",
+      "lei": "25490052LT8QG1RXJ172",
+      "name": "Ultima Bank Minnesota",
+      "period": "2025"
+    },
+    {
+      "count": "146",
+      "lei": "254900756YRTYX32I428",
+      "name": "Family Trust Federal Credit Union",
+      "period": "2025"
+    },
+    {
+      "count": "209",
+      "lei": "254900CX4A85W20A2X77",
+      "name": "Azuza LLC dba Z Loans Funding",
+      "period": "2025"
+    },
+    {
+      "count": "836",
+      "lei": "254900E9QYJ6OX8QXL76",
+      "name": "SouthPoint Bank",
+      "period": "2025"
+    },
+    {
+      "count": "84",
+      "lei": "254900GACVFC2JIZYT69",
+      "name": "First National Bank of Coffee County",
+      "period": "2025"
+    },
+    {
+      "count": "3885",
+      "lei": "254900LTD432L5CHIZ48",
+      "name": "Home Mortgage Alliance Corporation (HMAC)",
+      "period": "2025"
+    },
+    {
+      "count": "368",
+      "lei": "254900OPB6J0NM26JY33",
+      "name": "Oconee State Bank",
+      "period": "2025"
+    },
+    {
+      "count": "144",
+      "lei": "254900TO7P4MVLV70225",
+      "name": "First National Bank of Brookfield",
+      "period": "2025"
+    },
+    {
+      "count": "1155",
+      "lei": "254900VECGAWC5CPU773",
+      "name": "Tyndall Federal Credit Union",
+      "period": "2025"
+    },
+    {
+      "count": "1838",
+      "lei": "254900YPPMV9UM5FUW09",
+      "name": "Loansteady LLC",
+      "period": "2025"
+    },
+    {
+      "count": "17",
+      "lei": "254900YV0O58MHFPZV28",
+      "name": "Generations Bank",
+      "period": "2025"
+    },
+    {
+      "count": "533",
+      "lei": "5493000FE7FNF0BV8N77",
+      "name": "The North Side Bank & Trust Company",
+      "period": "2025"
+    },
+    {
+      "count": "509",
+      "lei": "5493001141Z7CINOSB62",
+      "name": "LOANFLIGHT LENDING, LLC",
+      "period": "2025"
+    },
+    {
+      "count": "34",
+      "lei": "5493002W52M3SYLFEX32",
+      "name": "GREYSTONE FUNDING COMPANY LLC",
+      "period": "2025"
+    },
+    {
+      "count": "49",
+      "lei": "5493004J0RTXMDKIYB74",
+      "name": "IDEAL HOME LOANS LLC",
+      "period": "2025"
+    },
+    {
+      "count": "62",
+      "lei": "549300838ZAWQIH9V751",
+      "name": "R T P Federal Credit Union",
+      "period": "2025"
+    },
+    {
+      "count": "103",
+      "lei": "5493008HZMBEJQEY0J72",
+      "name": "First Federal Savings and Loan Bank",
+      "period": "2025"
+    },
+    {
+      "count": "25603",
+      "lei": "54930091JQKCU3Z6IP44",
+      "name": "LENDINGONE, LLC",
+      "period": "2025"
+    },
+    {
+      "count": "1149",
+      "lei": "5493009D2COWW65B8673",
+      "name": "NORTHROP GRUMMAN Federal Credit Union",
+      "period": "2025"
+    },
+    {
+      "count": "340",
+      "lei": "549300AWVW2ZYIVA5297",
+      "name": "THE OLD FORT BANKING COMPANY",
+      "period": "2025"
+    },
+    {
+      "count": "241",
+      "lei": "549300BK51FTOVBDMC15",
+      "name": "The Bradford National Bank of Greenville",
+      "period": "2025"
+    },
+    {
+      "count": "60",
+      "lei": "549300BUVM9AXNUI6G83",
+      "name": "CITY EMPLOYEES CREDIT UNION",
+      "period": "2025"
+    },
+    {
+      "count": "3845",
+      "lei": "549300E8HNQO52YYHI82",
+      "name": "American Security Mortgage Corp.",
+      "period": "2025"
+    },
+    {
+      "count": "308",
+      "lei": "549300ELLMUEKP1JHB70",
+      "name": "INSTAMORTGAGE INC.",
+      "period": "2025"
+    },
+    {
+      "count": "357",
+      "lei": "549300FX3J95NB1UTP88",
+      "name": "Alliance Community Bank",
+      "period": "2025"
+    },
+    {
+      "count": "198",
+      "lei": "549300HCWCQYV87S4729",
+      "name": "The First National Bank and Trust Co.",
+      "period": "2025"
+    },
+    {
+      "count": "1084",
+      "lei": "549300JLXD89NGKXMS84",
+      "name": "NextMortgage, LLC",
+      "period": "2025"
+    },
+    {
+      "count": "1345",
+      "lei": "549300LR1ZETOWYE9Z89",
+      "name": "Berkshire Bank",
+      "period": "2025"
+    },
+    {
+      "count": "3467",
+      "lei": "549300M8WGW2D17CZD19",
+      "name": "GARDNER FINANCIAL SERVICES, LTD.",
+      "period": "2025"
+    },
+    {
+      "count": "116",
+      "lei": "549300MPDN3KQZW68M43",
+      "name": "Chippewa Valley Bank",
+      "period": "2025"
+    },
+    {
+      "count": "50",
+      "lei": "549300MRIPL0USI69Q40",
+      "name": "ROME TEACHERS FEDERAL CREDIT UNION",
+      "period": "2025"
+    },
+    {
+      "count": "44",
+      "lei": "549300RQ21ZFLCALGC21",
+      "name": "St. Johns Bank and Trust Company",
+      "period": "2025"
+    },
+    {
+      "count": "34",
+      "lei": "549300SOZES6XPZ50475",
+      "name": "Texas Partners Bank",
+      "period": "2025"
+    },
+    {
+      "count": "1568",
+      "lei": "549300U2B1ZNGX3H8U54",
+      "name": "Texas Tech Federal Credit Union",
+      "period": "2025"
+    },
+    {
+      "count": "237",
+      "lei": "549300VHSPIDK7A5D559",
+      "name": "CU MORTGAGE DIRECT, LLC",
+      "period": "2025"
+    },
+    {
+      "count": "590",
+      "lei": "549300WLIZIEVZY2IG91",
+      "name": "METRO ISLAND MORTGAGE, INC.",
+      "period": "2025"
+    },
+    {
+      "count": "1153",
+      "lei": "549300XUKQ6W1CY6QK47",
+      "name": "First Federal Savings Bank",
+      "period": "2025"
+    },
+    {
+      "count": "20270",
+      "lei": "549300Y5Y88FQLI7VE83",
+      "name": "DEEPHAVEN MORTGAGE LLC",
+      "period": "2025"
+    },
+    {
+      "count": "7595",
+      "lei": "VN1JLT1F3FLLVN3FZG89",
+      "name": "First Commonwealth Bank",
+      "period": "2025"
+    }
+  ]
 }

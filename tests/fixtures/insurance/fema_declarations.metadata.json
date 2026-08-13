@@ -1,10 +1,10 @@
 {
-  "_comment": "Stratified sample of DisasterDeclarationsSummaries, built by just fixture. Reservoir seed 20260811. Anchor declarations [3525, 4547, 4607] are included in full so fixture mode runs the same anchor assertions as the live pull.",
+  "_comment": "Stratified sample of raw.ins_fema_declarations, rebuilt by `just fixture` from local raw. Deterministic md5 ordering, no RNG. Strata: ['anchors', 'michigan', 'national_spread', 'statewide']. Not a live publisher response.",
   "hash": "fixture-not-a-real-publisher-hash",
   "identifier": "openfema-fixture",
   "lastDataSetRefresh": "1970-01-01T00:00:00.000Z",
   "lastRefresh": "1970-01-01T00:00:00.000Z",
   "name": "DisasterDeclarationsSummaries",
-  "recordCount": 807,
+  "recordCount": 654,
   "version": 2
 }

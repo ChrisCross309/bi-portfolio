@@ -70,8 +70,12 @@ ci:
     uv run python -m reconcile.l1_integrity --mode fixture
 
 # regenerate committed fixtures from local raw — deliberate, never automatic
-fixture:
-    uv run python -m reconcile.make_fixtures
+fixture source="":
+    uv run python -m reconcile.make_fixtures {{ if source == "" { "" } else { "--source " + source } }}
+
+# what each stratum would contribute, without writing anything
+fixture-plan:
+    uv run python -m reconcile.make_fixtures --dry-run
 
 # ── housekeeping ───────────────────────────────────────────
 
