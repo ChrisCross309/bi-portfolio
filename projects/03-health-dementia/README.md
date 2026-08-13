@@ -1,6 +1,6 @@
 # Project 3 — Health / Alzheimer's & Dementia
 
-**Cognitive-health indicators and Medicare dementia prevalence and spend.**
+**Cognitive-health indicators, and the Medicare care burden that surrounds them.**
 
 No insurance or fintech data appears anywhere in this track. Build with `just health`.
 
@@ -10,45 +10,94 @@ No insurance or fintech data appears anywhere in this track. Build with `just he
 |---|---|---|---|
 | CDC Alzheimer's Disease & Healthy Aging (`hfr9-rurv`) | Full dataset, 284,142 cells, 2015–2022 | `data/raw/health/cdc_healthy_aging/locationabbr=XX/` | Socrata resource API, paged by `:id`; dataset id resolved from the catalogue |
 | CMS Medicare Geographic Variation | National / state / county, 36,994 rows × 246 cols, 2014–2024 | `data/raw/health/cms_geographic_variation/BENE_GEO_LVL=…/` | Discovered from `data.cms.gov/data.json`, bulk CSV |
-| CMS Medicare Chronic Conditions — prevalence / spending | **not ingested — see below** | — | Absent from CMS's catalogue |
+| CMS Medicare Chronic Conditions — prevalence / spending | **retired by the publisher — see below** | — | Retired effective 2026-06-15 |
 
-**The chronic-conditions gap.** The CMS Medicare chronic-conditions public files are not retrievable
-from any discoverable route. Checked on 2026-08-11:
+## The retired dataset, and what it cost this track
 
-| Route | Result |
+CMS's Medicare chronic-conditions statistics — the only public file that carried **dementia
+prevalence and dementia-attributable spending for Medicare beneficiaries at county grain** — were
+**retired effective 2026-06-15**, roughly two months before this repo's health track was built. CMS
+directs users to `data.cms.gov`, which does not carry a replacement.
+
+This is a publisher decision, not a discovery failure, which matters for how it is handled: there is
+nothing to keep looking for.
+
+| Route | Result, checked 2026-08-11 and re-checked 2026-08-13 |
 |---|---|
-| `data.cms.gov/data.json` (CMS's own DCAT catalogue) | 159 datasets, no chronic-conditions entry |
-| `healthdata.gov/data.json` (HHS-wide catalogue) | 777 CMS-published datasets, zero matching chronic condition / dementia / prevalence |
+| `www2.ccwdata.org` chronic-condition tables and charts | **404** — retired effective 2026-06-15 |
+| `data.cms.gov/data.json` (CMS's own DCAT catalogue, and its stated replacement) | 159 datasets; zero matching `dementia`, `alzheim`, `chronic`, `prevalence`, `multiple chronic` or `mcc` |
+| `healthdata.gov/data.json` (HHS-wide) | 777 CMS-published datasets, zero matching |
 | `cms.gov/.../chronic-conditions` and the legacy `CC_Main` page | **404**; the legacy URL redirects to a dead page |
 | CMS metastore, search, and the Mapping Medicare Disparities tool | client-rendered shells, no machine-readable index and no file links |
-| Medicare Geographic Variation (ingested above) | no condition-level detail at all — only PQI admission rates for diabetes, COPD, hypertension, CHF, pneumonia, UTI, asthma and amputation |
+| Medicare Geographic Variation (ingested above) | **zero** condition-level columns out of 246 — the closest are PQI admission rates for diabetes, COPD, hypertension, CHF, pneumonia, UTI, asthma and amputation |
 
-So **HLT-E2 (dementia prevalence among MI Medicare beneficiaries) has no source**, and the decision on
-it is open. What remains would be a guessed static URL (CLAUDE.md rule 3 forbids it), the Chronic
-Conditions Data Warehouse under a data-use agreement (beneficiary-level restricted data — the ethics
-rule forbids it), or a different measure entirely. The `slow` tripwire test in `tests/test_cms.py`
-fails the day CMS republishes the dataset, so the gap cannot be quietly forgotten.
+**It cost two questions, not one.** HLT-E2 asked for dementia prevalence; HLT-E3 asked what a
+beneficiary *with* dementia costs against one without. Both need the same condition dimension, and
+nothing public still publishes it.
+
+**Alternatives considered and rejected**, each against what the questions actually require —
+dementia-specific, Medicare, Michigan county grain, a valid five-year direction, and current:
+
+| Candidate | Why not |
+|---|---|
+| CDC PLACES `COGNITION` | Cognitive *disability* among adults 18+, not dementia and not Medicare. Model-based BRFSS estimates, and CDC advises against comparing releases across years — which invalidates the five-year direction. It also duplicates HLT-E1. |
+| CDC Alzheimer's mortality (`alzheimer_disease_g30`, Socrata) | Genuinely dementia-specific and genuinely trended, but measures **mortality, not prevalence**, is published by state with no county grain, and the series ends in 2023. |
+| Chronic Conditions Data Warehouse | Beneficiary-level restricted data under a data-use agreement — barred by this track's ethics rule. |
+| A guessed or archived static URL | Barred by CLAUDE.md rule 3, and archived data is stale by construction. |
+
+**Resolution: HLT-E2 and HLT-E3 were re-scoped onto the Medicare Geographic Variation data already
+ingested here.** The IDs are unchanged, per CLAUDE.md section 2. Both keep every structural property
+the originals had — Medicare, Michigan county grain, a national benchmark, five-year direction and
+constant dollars — and lose only condition specificity. The track's genuinely cognitive content
+lives in HLT-E1 and HLT-E4, both from the CDC source.
+
+> **Read this before quoting either measure.** Skilled-nursing and home-health use are a *proxy* for
+> long-term-care burden. Dementia is the leading driver of that burden, but it is not the only one,
+> and **nothing in the re-scoped HLT-E2 or HLT-E3 measures dementia.** Neither can support a claim
+> about dementia prevalence, dementia cost, or a change in either. Describing them as anything more
+> than Medicare care-burden and cost measures would be the kind of conclusion CLAUDE.md section 8
+> forbids.
+
+The `slow` tripwire test in `tests/test_cms.py` still asserts that no chronic-conditions dataset
+appears in CMS's catalogue. It now watches a retired dataset for republication rather than
+confirming a failed search, and it fails the day CMS brings it back — which is the signal to revisit
+this decision.
 
 ## Executive questions
 
 - **HLT-E1** — What share of MI adults 45+ report subjective cognitive decline, and is MI
   significantly better or worse than national — CI-aware, not ranked noise?
-- **HLT-E2** — What is dementia prevalence among MI Medicare beneficiaries and which direction has it
-  moved over five years vs. national?
-- **HLT-E3** — What does a MI beneficiary with dementia cost vs. without (constant dollars), and is
-  that gap wider or narrower than national and than prior years?
+- **HLT-E2** — Are MI Medicare beneficiaries using skilled-nursing and home-health care at rates
+  above or below national, and which direction over five years? *(Re-scoped — see the retired
+  dataset above. A long-term-care burden measure, not a dementia measure.)*
+- **HLT-E3** — What does a MI Medicare beneficiary aged 65+ cost against national in constant
+  dollars, and is the gap widening or narrowing? *(Re-scoped — see above.)*
 - **HLT-E4** — Are MI caregiver-burden indicators improving or deteriorating?
 - **HLT-E5** — Given 65+ population projections, is MI's need growing faster than its screening and
   care indicators?
+
+What answers the two re-scoped questions, so the claim is checkable rather than asserted:
+
+| Question | Table | Columns | Filter |
+|---|---|---|---|
+| HLT-E2 | `raw.hlt_cms_geographic_variation` | `SNF_MDCR_STDZD_PYMT_PC`, `BENES_SNF_PCT`, `HH_MDCR_STDZD_PYMT_PC`, `BENES_HH_PCT` | `BENE_GEO_LVL='County'`, `BENE_GEO_CD LIKE '26%'` |
+| HLT-E3 | `raw.hlt_cms_geographic_variation` + `raw.ref_cpi_u` | `TOT_MDCR_STDZD_PYMT_PC`, deflated by `CUUR0000SA0` period `M13` | `BENE_AGE_LVL='>=65'`, MI vs `National` |
+
+Standardized payments are used throughout: CMS's `_STDZD_` columns remove geographic wage and
+payment-policy differences, which is what makes a Michigan-vs-national comparison mean anything.
+The CPI-U deflator was ingested for exactly this — see `data/raw/shared/cpi_u/`.
 
 ## Drill bank
 
 Latest-cycle indicator values with confidence intervals · per-beneficiary and per-capita spend ·
 county spend variation · survey-cycle/annual grain only · multi-cycle trend vs. stated baseline ·
 indicator→stratification (age band, sex, race/ethnicity; age-adjusted vs. crude) · MI vs. Great
-Lakes neighbors vs. national · condition combinations (dementia + diabetes, + CHF) · service
-category (inpatient, SNF, home health) · CI-aware comparisons that return *"no significant
-difference"* when intervals overlap.
+Lakes neighbors vs. national · service category (inpatient, SNF, home health, hospice) ·
+age band (`<65`, `>=65`, `All`) · standardized vs. unstandardized payment · CI-aware comparisons
+that return *"no significant difference"* when intervals overlap.
+
+Condition-level drills — dementia combined with diabetes or CHF — are **not** in the bank. Nothing
+ingested carries a condition dimension; see the retired dataset above.
 
 ## Three warnings that gate every model in this track
 

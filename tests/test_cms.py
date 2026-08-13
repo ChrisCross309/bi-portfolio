@@ -277,12 +277,24 @@ def test_live_catalogue_still_offers_this_dataset_with_a_csv() -> None:
 
 @pytest.mark.slow
 def test_live_chronic_conditions_is_still_absent_from_the_catalogue() -> None:
-    """The planned second CMS source is not in CMS's machine-readable catalogue. This test
-    is the tripwire: if CMS republishes it, this fails and the source can be added."""
+    """Watch a retired dataset for republication.
+
+    CMS retired its Medicare chronic-conditions statistics effective 2026-06-15 and points
+    users at data.cms.gov, which carries no replacement. That file was the only public
+    source of dementia prevalence and dementia-attributable spending for Medicare
+    beneficiaries at county grain, and losing it cost HLT-E2 and HLT-E3 their original
+    wording -- both were re-scoped onto Geographic Variation, which has no condition
+    dimension at all.
+
+    So this is not a search that failed and might succeed on a retry. It is a tripwire on a
+    publisher decision: the day CMS brings the dataset back, this fails, and the re-scope
+    recorded in the health README is worth revisiting.
+    """
     with httpx.Client(
         timeout=120, headers={"User-Agent": USER_AGENT}, follow_redirects=True
     ) as client:
         titles = [(d.get("title") or "").lower() for d in fetch_catalog(client)]
     assert not [t for t in titles if "chronic condition" in t], (
-        "CMS now publishes a chronic-conditions dataset; HLT-E2 can be sourced from it"
+        "CMS has republished a chronic-conditions dataset; HLT-E2 and HLT-E3 can go back to "
+        "asking about dementia directly"
     )
