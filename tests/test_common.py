@@ -307,6 +307,68 @@ def test_write_baseline_names_files_per_source_and_kind(
     assert fields.read_bytes().endswith(b"\n")
 
 
+def test_a_baseline_is_left_alone_when_only_the_timestamp_would_change(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """Six baselines carry a `retrieved_at`, so writing unconditionally left them modified
+    after every ingest -- and made a real schema change indistinguishable from a no-op run.
+    """
+    monkeypatch.setattr(common, "BASELINE_DIR", tmp_path / "baselines")
+    first = write_baseline(
+        "shared", "cpi_u", {"files_landed": ["cu.series"], "retrieved_at": "2026-08-11T00:00:00Z"}
+    )
+    original = first.read_bytes()
+
+    again = write_baseline(
+        "shared", "cpi_u", {"files_landed": ["cu.series"], "retrieved_at": "2026-08-13T09:99:99Z"}
+    )
+
+    assert again == first
+    # Byte-identical, so the recorded timestamp is when the schema last *moved*.
+    assert first.read_bytes() == original
+    assert "2026-08-11" in first.read_text(encoding="utf-8")
+
+
+def test_a_baseline_is_rewritten_when_the_publisher_changed(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """The half of the bargain that matters: real drift must still land on disk."""
+    monkeypatch.setattr(common, "BASELINE_DIR", tmp_path / "baselines")
+    write_baseline("shared", "cpi_u", {"files_landed": ["cu.series"], "retrieved_at": "A"})
+    path = write_baseline(
+        "shared", "cpi_u", {"files_landed": ["cu.series", "cu.item"], "retrieved_at": "B"}
+    )
+
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    assert payload["files_landed"] == ["cu.series", "cu.item"]
+    assert payload["retrieved_at"] == "B"
+
+
+def test_a_field_list_baseline_compares_by_content_too(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """OpenFEMA and CDC snapshot a bare list with no timestamp in it at all."""
+    monkeypatch.setattr(common, "BASELINE_DIR", tmp_path / "baselines")
+    fields = [{"name": "state"}, {"name": "censusGeoid"}]
+    path = write_baseline("insurance", "nfip_claims", fields)
+    unchanged = path.read_bytes()
+
+    assert write_baseline("insurance", "nfip_claims", list(fields)).read_bytes() == unchanged
+    write_baseline("insurance", "nfip_claims", [*fields, {"name": "newColumn"}])
+    assert json.loads(path.read_text(encoding="utf-8"))[-1] == {"name": "newColumn"}
+
+
+def test_a_corrupt_baseline_is_replaced_rather_than_preserved(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monkeypatch.setattr(common, "BASELINE_DIR", tmp_path / "baselines")
+    (tmp_path / "baselines").mkdir(parents=True)
+    (tmp_path / "baselines" / "shared__cpi_u__pointer.json").write_text("{ not json", "utf-8")
+
+    path = write_baseline("shared", "cpi_u", {"files_landed": ["cu.series"]}, kind="pointer")
+    assert json.loads(path.read_text(encoding="utf-8"))["files_landed"] == ["cu.series"]
+
+
 def _manifest(partition_rows: dict[str, int], nonstandard: dict[str, int]):
     return base_manifest(
         track="insurance",
