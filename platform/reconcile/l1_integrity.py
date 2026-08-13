@@ -45,6 +45,7 @@ from ingest.registry import SOURCES as RAW_SOURCES
 from ingest.registry import RawSource
 from ingest.shared import bls, census
 from reconcile.michigan import check_michigan_geography, gate_for
+from reconcile.questions import check_question_coverage, questions_for
 from reconcile.results import FAIL, PASS, SKIP, WARN, Result
 
 USER_AGENT = "bi-portfolio-pipeline/0.1 (chris.hall309@gmail.com)"
@@ -881,6 +882,22 @@ def check_source(spec: SourceSpec, mode: str) -> list[Result]:
         con.close()
 
 
+def check_questions(track: str, mode: str) -> list[Result]:
+    """Session 1's finish line: every executive question answerable from raw.
+
+    Per track rather than per source, because a question reaches across sources -- INS-E4
+    needs NFIP policies and ACS housing units, HLT-E3 needs CMS and the CPI-U deflator.
+    """
+    data_root, db_path = paths_for(mode)
+    if not questions_for(track):
+        return []
+    con = duckdb.connect(str(db_path), read_only=True)
+    try:
+        return check_question_coverage(con, track, data_root, mode)
+    finally:
+        con.close()
+
+
 def report(results: list[Result]) -> int:
     icons = {PASS: "PASS", FAIL: "FAIL", WARN: "WARN", SKIP: "SKIP"}
     tracks: dict[str, list[Result]] = {}
@@ -935,6 +952,7 @@ def main(argv: list[str] | None = None) -> int:
     results: list[Result] = []
     for spec in selected:
         results += check_source(spec, args.mode)
+    results += check_questions(args.track, args.mode)
     return report(results)
 
 
