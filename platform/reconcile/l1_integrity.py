@@ -44,20 +44,11 @@ from ingest.insurance import nfip_claims, nfip_policies
 from ingest.registry import SOURCES as RAW_SOURCES
 from ingest.registry import RawSource
 from ingest.shared import bls, census
-
-PASS, FAIL, WARN, SKIP = "PASS", "FAIL", "WARN", "SKIP"
+from reconcile.michigan import check_michigan_geography, gate_for
+from reconcile.results import FAIL, PASS, SKIP, WARN, Result
 
 USER_AGENT = "bi-portfolio-pipeline/0.1 (chris.hall309@gmail.com)"
 NFIP_API = "https://www.fema.gov/api/open/v3/NfipClaims"
-
-
-@dataclass(frozen=True)
-class Result:
-    track: str
-    source: str
-    check: str
-    status: str
-    detail: str
 
 
 @dataclass
@@ -878,6 +869,11 @@ def check_source(spec: SourceSpec, mode: str) -> list[Result]:
 
         results += check_count_chain(spec, manifest, landing, raw, table_rows)
         results += spec.partition_check(spec, raw, table_rows, mode)
+        # The Michigan gate reads the loaded table rather than a profile: it asks about
+        # column contents, not partition keys, and only eight of the twelve sources carry
+        # a Michigan geography at all.
+        if gate := gate_for(spec.source):
+            results += check_michigan_geography(con, spec.track, gate, mode)
         if spec.source == "nfip_claims":
             results += check_nfip_api_spot_counts(spec, raw, mode)
         return results
