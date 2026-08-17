@@ -21,7 +21,7 @@ def fixture_warehouse():
     from ingest.fintech import cfpb, hmda
     from ingest.health import cdc, cms
     from ingest.insurance import fema_declarations, nfip_claims, nfip_policies
-    from ingest.shared import bls, census
+    from ingest.shared import bls, census, hud_crosswalk
 
     for module in (
         nfip_claims,
@@ -33,6 +33,7 @@ def fixture_warehouse():
         cms,
         bls,
         census,
+        hud_crosswalk,
     ):
         assert module.main(["--mode", "fixture"]) == 0, module.__name__
     assert reload.main(["--mode", "fixture"]) == 0
@@ -59,7 +60,7 @@ def test_every_partition_column_is_varchar(fixture_warehouse) -> None:
 
     retyped = {name: kind for name, kind in observed.items() if kind.split("(")[0] in numeric}
     assert retyped == {}, f"partition keys re-typed on read: {retyped}"
-    assert len(observed) == 12
+    assert len(observed) == 13
 
 
 @pytest.mark.filterwarnings("ignore")

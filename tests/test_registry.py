@@ -10,7 +10,7 @@ from ingest.fintech import cfpb, hmda
 from ingest.health import cdc, cms
 from ingest.insurance import fema_declarations, nfip_claims, nfip_policies
 from ingest.registry import SOURCES, TRACKS, sources_for
-from ingest.shared import bls, census
+from ingest.shared import bls, census, hud_crosswalk
 
 # Assembled from the fetchers' own constants, never from the registry.
 FROM_FETCHERS = {
@@ -39,6 +39,12 @@ FROM_FETCHERS = {
     (cms.TRACK, cms.SOURCE, cms.TABLE, cms.PARTITION_COLUMN),
     (bls.TRACK, bls.OBSERVATIONS_SOURCE, bls.OBSERVATIONS_TABLE, bls.OBSERVATIONS_PARTITION_COLUMN),
     (bls.TRACK, bls.SERIES_SOURCE, bls.SERIES_TABLE, bls.SERIES_PARTITION_COLUMN),
+    (
+        hud_crosswalk.TRACK,
+        hud_crosswalk.SOURCE,
+        hud_crosswalk.TABLE,
+        hud_crosswalk.PARTITION_COLUMN,
+    ),
     *(
         (census.TRACK, spec["source"], spec["table"], census.PARTITION_COLUMN)
         for spec in census.DATASETS.values()
@@ -52,10 +58,10 @@ def test_registry_matches_the_fetchers_exactly() -> None:
     assert registered == FROM_FETCHERS
 
 
-def test_registry_holds_twelve_sources_with_unique_names_and_tables() -> None:
-    assert len(SOURCES) == 12
-    assert len({(s.track, s.source) for s in SOURCES}) == 12
-    assert len({s.table for s in SOURCES}) == 12
+def test_registry_holds_thirteen_sources_with_unique_names_and_tables() -> None:
+    assert len(SOURCES) == 13
+    assert len({(s.track, s.source) for s in SOURCES}) == 13
+    assert len({s.table for s in SOURCES}) == 13
 
 
 def test_every_table_is_track_prefixed_in_the_raw_schema() -> None:
@@ -69,5 +75,5 @@ def test_every_table_is_track_prefixed_in_the_raw_schema() -> None:
 def test_sources_for_filters_by_track_and_answers_all() -> None:
     assert sources_for("all") == SOURCES
     assert {s.track for s in sources_for("health")} == {"health"}
-    assert len(sources_for("shared")) == 4
+    assert len(sources_for("shared")) == 5
     assert sources_for("nonexistent") == ()

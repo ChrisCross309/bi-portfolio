@@ -2,6 +2,8 @@
 # Fetchers create these directories on demand; a fresh clone has none.
 data/
 *.duckdb
+# DuckDB spills here when a query exceeds memory_limit; blocks reach tens of GB.
+.tmp/
 *.duckdb.wal
 platform/duckdb/
 

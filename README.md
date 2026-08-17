@@ -33,15 +33,25 @@ now measures dementia**. The evidence table and the blunt version of that caveat
 
 What they share is **platform, not data**: DuckDB, the ingestion utilities, the integrity harness,
 and a small set of domain-neutral reference series — CPI-U, Census population and housing
-denominators, state codes — that every analytics project needs the way every warehouse needs a date
-table. Those live under `data/raw/shared/` and build with `just shared`.
+denominators, a ZIP-to-county crosswalk, state codes — that every analytics project needs the way
+every warehouse needs a date table. Those live under `data/raw/shared/` and build with
+`just shared`.
 
 The story is *one platform, three regulated domains*. The separation between domains is the point.
 
-### The shared series, and the two traps in them
+### The shared series, and the traps in them
 
-Both shared sources exist to serve questions in more than one track, and both carry a caveat that
+Each shared source exists to serve questions in more than one track, and each carries a caveat that
 would quietly corrupt a measure if it were missed.
+
+**A ZIP is not a county, and 34.6% of Michigan's cross a line.** The HUD USPS crosswalk is the
+bridge from a ZIP to a county, and it publishes weights rather than a mapping — the share of a ZIP's
+residential, business and other addresses in each county, rebuilt quarterly. Any ZIP-to-county
+figure is therefore an allocation under a stated rule. The trap is `res_ratio`: it sums to **zero**
+for 3,571 ZIPs, the PO-box and business-only ones, so a rule that weights by residential share alone
+silently drops every row behind them. `tot_ratio` covers all of them. HUD reports its own vintage in
+every response and it is recorded per run, because the same figure allocated with two vintages is
+not the same number.
 
 **ACS 5-year estimates are not a time series.** Consecutive vintages share four years of sample —
 the 2020 vintage covers 2016–2020, the 2021 covers 2017–2021 — so plotting them as a trend shows
@@ -105,7 +115,9 @@ whole thing still builds on a fresh clone with no network.
 `platform/reconcile/l1_integrity.py` runs after every ingestion and exits non-zero on any failure.
 Output is grouped by project track.
 
-**All 12 raw sources are registered.** A live run reports 104 passed, 3 warned, 18 skipped, 0 failed.
+**All 13 raw sources are registered.** The thirteenth is the HUD ZIP-to-county crosswalk,
+added in session 2 because FIN-E1 needs a county grain CFPB does not publish; it is held to the same
+standard as the first twelve.
 
 - **Count chain** — source-reported total → landing rows → raw parquet rows → DuckDB table rows,
   with differences itemized. A gap between a publisher's own count and the bulk file it serves is
@@ -157,7 +169,7 @@ a publisher.
 | `just insurance` | Track 1 → raw → load → L1 |
 | `just fintech` | Track 2 → raw → load → L1 |
 | `just health` | Track 3 → raw → load → L1 |
-| `just shared` | Reference denominators and deflator → raw → load → L1 |
+| `just shared` | Reference denominators, deflator and ZIP-to-county crosswalk → raw → load → L1 |
 | `just ingest-all` | All four, in any order |
 | `just reload` | Rebuild every `raw` table from local parquet — no network |
 | `just dbt build` | The semantic layer against the live warehouse (any dbt command works) |

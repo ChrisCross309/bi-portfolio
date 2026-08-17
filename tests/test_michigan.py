@@ -204,6 +204,7 @@ def test_only_sources_with_michigan_geography_are_gated() -> None:
         "cms_geographic_variation",
         "acs5_detailed",
         "acs5_subject",
+        "zip_county_crosswalk",
     }
     for source in ("hmda_institutions", "cdc_healthy_aging", "cpi_u", "cpi_u_series"):
         assert gate_for(source) is None

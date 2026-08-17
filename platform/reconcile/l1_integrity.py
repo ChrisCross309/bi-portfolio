@@ -43,7 +43,7 @@ from ingest.health import cdc, cms
 from ingest.insurance import nfip_claims, nfip_policies
 from ingest.registry import SOURCES as RAW_SOURCES
 from ingest.registry import RawSource
-from ingest.shared import bls, census
+from ingest.shared import bls, census, hud_crosswalk
 from reconcile.michigan import check_michigan_geography, gate_for
 from reconcile.questions import check_question_coverage, questions_for
 from reconcile.results import FAIL, PASS, SKIP, WARN, Result
@@ -435,21 +435,39 @@ def check_year_partitions(
 
 
 def check_expected_keys(
-    spec: SourceSpec, raw: Profile, table_rows: int, mode: str = "live", expected: frozenset = None
+    spec: SourceSpec,
+    raw: Profile,
+    table_rows: int,
+    mode: str = "live",
+    expected: frozenset = None,
+    allow_extra: frozenset = frozenset(),
 ) -> list[Result]:
     """A partition column whose whole domain is small, fixed and known in advance.
 
-    Three sources qualify, for three different reasons. NFIP policies is MI-only by a
+    Four sources qualify, for four different reasons. NFIP policies is MI-only by a
     scope decision, so any other state is the leak CLAUDE.md section 4 warns about, not a
     coverage gap. CMS ships National/State/County grains stacked in one file. The CPI-U
     series file partitions on seasonal adjustment, which is two values and always will be.
+    The ZIP-to-county crosswalk should carry every state and territory the reference file
+    names, because anything less is not a national crosswalk.
 
     A missing key and an unexpected key are different failures and are reported that way:
     the first means something did not land, the second means the publisher's domain grew
     and every downstream filter written against it is now incomplete.
+
+    `allow_extra` names keys a publisher legitimately serves that our own reference set does
+    not contain, so they can be reported as an observation rather than a failure. HUD is the
+    case it exists for: it serves FM, MH and PW -- Micronesia, the Marshall Islands and
+    Palau, sovereign nations with US postal service. Those rows are real and are kept; what
+    would be wrong is either failing the run over them or letting them pass unmentioned.
     """
     present = set(raw.by_partition)
     results: list[Result] = []
+
+    def listing(keys: list[str], limit: int = 8) -> str:
+        """Name every key while the domain is small; count them once it is not."""
+        shown = ", ".join(f"{key}={raw.by_partition[key]:,}" for key in keys[:limit])
+        return shown if len(keys) <= limit else f"{shown}, +{len(keys) - limit} more"
 
     missing = sorted(expected - present)
     results.append(
@@ -460,24 +478,26 @@ def check_expected_keys(
             FAIL if missing else PASS,
             f"missing {missing}"
             if missing
-            else f"all {len(expected)} present: "
-            + ", ".join(f"{key}={raw.by_partition[key]:,}" for key in sorted(expected)),
+            else f"all {len(expected)} present: {listing(sorted(expected))}",
         )
     )
 
-    unexpected = sorted(present - expected)
-    results.append(
-        Result(
-            spec.track,
-            spec.source,
-            "no unexpected keys",
-            FAIL if unexpected else PASS,
-            f"keys outside the known domain {sorted(expected)}: "
-            + ", ".join(f"{key}={raw.by_partition[key]:,}" for key in unexpected)
-            if unexpected
-            else f"domain is exactly {sorted(expected)}",
+    unexpected = sorted(present - expected - allow_extra)
+    tolerated = sorted(present & allow_extra)
+    if unexpected:
+        detail = f"keys outside the known domain: {listing(unexpected)}"
+        status = FAIL
+    elif tolerated:
+        # WARN, not PASS: a real observation about the publisher that is not ours to fix.
+        detail = (
+            f"{listing(tolerated)} -- served by the publisher but absent from "
+            "state_codes.csv, kept as published"
         )
-    )
+        status = WARN
+    else:
+        detail = f"domain is exactly the {len(expected)} expected keys"
+        status = PASS
+    results.append(Result(spec.track, spec.source, "no unexpected keys", status, detail))
     results.append(_partition_sum_result(spec, raw, table_rows))
     return results
 
@@ -781,6 +801,24 @@ SOURCES: tuple[SourceSpec, ...] = (
         landing_glob=bls.SERIES_FILE,
         fixture_glob="cpi_u_series.tsv",
         landing_subdir="cpi_u",
+        control_sum_columns=(),
+    ),
+    SourceSpec(
+        raw=raw_source("zip_county_crosswalk"),
+        landing_relation=hud_crosswalk.crosswalk_relation,
+        landing_partition_expr=lambda manifest: '"state"',
+        # Every key should be a code the state reference knows, plus the three Freely
+        # Associated States HUD serves that no US code list contains.
+        partition_check=functools.partial(
+            check_expected_keys,
+            expected=load_state_codes(),
+            allow_extra=frozenset({"FM", "MH", "PW"}),
+        ),
+        landing_glob=hud_crosswalk.LANDING_GLOB,
+        fixture_glob="zip_county_crosswalk.json",
+        # The ratios are allocation weights, not amounts: summing them across every ZIP in
+        # the country produces the ZIP count and nothing else. Per-partition counts carry
+        # the lossless proof instead.
         control_sum_columns=(),
     ),
 )

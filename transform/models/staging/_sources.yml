@@ -93,3 +93,8 @@ sources:
         description: >
           Raw `raw.ref_cpi_u_series`, partitioned on `seasonal`.
           Untyped -- see the staging model that reads it.
+      - name: zip_county_crosswalk
+        identifier: ref_zip_county_crosswalk
+        description: >
+          Raw `raw.ref_zip_county_crosswalk`, partitioned on `state`.
+          Untyped -- see the staging model that reads it.

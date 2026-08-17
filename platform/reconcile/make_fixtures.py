@@ -35,9 +35,17 @@ import json
 import sys
 from dataclasses import dataclass
 from pathlib import Path
+from typing import Any
 
 import duckdb
-from ingest.common import REPO_ROOT, make_logger, paths_for, sql_literal, write_json
+from ingest.common import (
+    REPO_ROOT,
+    make_logger,
+    paths_for,
+    read_existing_manifest,
+    sql_literal,
+    write_json,
+)
 from ingest.shared import census
 
 FIXTURE_ROOT = REPO_ROOT / "tests" / "fixtures"
@@ -259,6 +267,50 @@ SPECS: tuple[FixtureSpec, ...] = (
             ),
         ),
     ),
+    FixtureSpec(
+        source="zip_county_crosswalk",
+        track="shared",
+        table="raw.ref_zip_county_crosswalk",
+        path="shared/zip_county_crosswalk.json",
+        # HUD answers a query rather than serving a file, so the sample is written back
+        # inside its response envelope. See `write_envelope_fixture`.
+        writer="json_envelope",
+        strata=(
+            # All of Michigan, deliberately, and it is only ~1,600 tiny rows. The fetcher
+            # asserts all 83 counties are present on every run including fixture runs,
+            # because this source is a county denominator -- so a sampled Michigan would
+            # make the fixture fail a check the live data passes.
+            Stratum("michigan_complete", "state = 'MI'", 2_000),
+            # `state_coverage_failures` requires every code in state_codes.csv, so the
+            # sample needs at least one row behind each. Three per state, deterministically.
+            Stratum(
+                "every_state",
+                "(zip, geoid) IN (SELECT zip, geoid FROM (SELECT zip, geoid, row_number() "
+                "OVER (PARTITION BY state ORDER BY zip, geoid) AS rn "
+                "FROM raw.ref_zip_county_crosswalk) WHERE rn <= 3)",
+                300,
+            ),
+            # The reason this source exists: a ZIP that lands in more than one county.
+            Stratum(
+                "zips_crossing_county_lines",
+                "zip IN (SELECT zip FROM raw.ref_zip_county_crosswalk GROUP BY zip "
+                "HAVING count(*) > 1)",
+                200,
+            ),
+            # PO-box and business-only ZIPs, where res_ratio sums to zero and an allocation
+            # rule that uses it alone drops the row. Losing this stratum would hide the bug.
+            Stratum(
+                "no_residential_addresses",
+                "zip IN (SELECT zip FROM raw.ref_zip_county_crosswalk GROUP BY zip "
+                "HAVING sum(CAST(res_ratio AS DOUBLE)) = 0)",
+                100,
+            ),
+            # Territory codes with no county component, and the three Freely Associated
+            # States that no US code list contains.
+            Stratum("short_geoid", "length(geoid) <> 5", 20),
+            Stratum("freely_associated_states", "state IN ('FM', 'MH', 'PW')", 20),
+        ),
+    ),
 )
 
 
@@ -305,8 +357,42 @@ COPY_OPTIONS = {
 }
 
 
+def write_envelope_fixture(con: duckdb.DuckDBPyConnection, spec: FixtureSpec, target: Path) -> int:
+    """Write a sample back inside the publisher's own JSON envelope.
+
+    HUD does not serve a file; it answers a query with `{"data": {..., "results": [...]}}`,
+    and the fetcher reads that shape. A bare array of the sampled rows would be a fixture of
+    a response HUD never sends, so fixture mode would exercise a reader the live path does
+    not use -- which is the one thing a fixture must not do. The envelope's `year` and
+    `quarter` are copied from the manifest of the raw the sample came from, so the fixture
+    reports the vintage it was actually built from rather than a made-up one.
+    """
+    manifest = read_existing_manifest(paths_for("live")[0] / "raw" / spec.track / spec.source) or {}
+    vintage = str(manifest.get("vintage", ""))
+    year, _, quarter = vintage.partition("Q")
+    result = con.execute(sample_sql(spec))
+    columns = [description[0] for description in result.description]
+    rows = result.fetchall()
+    target.parent.mkdir(parents=True, exist_ok=True)
+    write_json(
+        target,
+        {
+            "data": {
+                "year": int(year) if year.isdigit() else None,
+                "quarter": int(quarter) if quarter.isdigit() else None,
+                "input": "All",
+                "crosswalk_type": "zip-county",
+                "results": [dict(zip(columns, row, strict=True)) for row in rows],
+            }
+        },
+    )
+    return len(rows)
+
+
 def write_fixture(con: duckdb.DuckDBPyConnection, spec: FixtureSpec, target: Path) -> int:
     target.parent.mkdir(parents=True, exist_ok=True)
+    if spec.writer == "json_envelope":
+        return write_envelope_fixture(con, spec, target)
     con.execute(f"COPY ({sample_sql(spec)}) TO {sql_literal(target)} ({COPY_OPTIONS[spec.writer]})")
     return int(con.execute(f"SELECT count(*) FROM ({sample_sql(spec)})").fetchone()[0])
 
@@ -339,6 +425,38 @@ def update_metadata(spec: FixtureSpec, rows: int, counts: dict[str, int]) -> Pat
     )
     write_json(path, payload)
     return path
+
+
+def update_hud_metadata(con: duckdb.DuckDBPyConnection) -> dict[str, Any]:
+    """The crosswalk fixture's metadata is what fixture mode checks itself against.
+
+    Two numbers the fetcher asserts on every run: the vintage it reports, and the Michigan
+    row count its spot check compares the national pull against. Live, that second number
+    comes from asking HUD for Michigan on its own. Offline there is no publisher to ask, so
+    the metadata file plays that part -- and it has to be recomputed from the sample, or the
+    fixture disagrees with itself the moment the sample changes.
+    """
+    path = FIXTURE_ROOT / "shared" / "zip_county_crosswalk.metadata.json"
+    spec = next(spec for spec in SPECS if spec.source == "zip_county_crosswalk")
+    manifest = read_existing_manifest(paths_for("live")[0] / "raw" / spec.track / spec.source) or {}
+    michigan = int(
+        con.execute(f"SELECT count(*) FROM ({sample_sql(spec)}) WHERE state = 'MI'").fetchone()[0]
+    )
+    payload = {
+        "_comment": (
+            "Stratified sample of raw.ref_zip_county_crosswalk, rebuilt by `just fixture` "
+            "from local raw and wrapped in HUD's own response envelope. Not a live "
+            "publisher response."
+        ),
+        "vintage": manifest.get("vintage"),
+        "spot_check_rows": michigan,
+        "spot_check_note": (
+            "Michigan rows in this sample. Live, the fetcher gets this by asking HUD for "
+            "Michigan alone; offline this file is the publisher."
+        ),
+    }
+    write_json(path, payload)
+    return {"vintage": payload["vintage"], "spot_check_rows": michigan}
 
 
 def stratum_counts(con: duckdb.DuckDBPyConnection, spec: FixtureSpec) -> dict[str, int]:
@@ -540,6 +658,8 @@ def main(argv: list[str] | None = None) -> int:
                 log(f"    michigan slice recorded: {update_cfpb_michigan(con):,}")
             if spec.source == "hmda_lar":
                 log(f"    per-year totals: {update_hmda_metadata(con, HMDA_FILERS_PER_YEAR)}")
+            if spec.source == "zip_county_crosswalk":
+                log(f"    vintage and spot check recorded: {update_hud_metadata(con)}")
 
         if args.source in (None, "hmda_institutions"):
             rows, target = write_hmda_institutions(con)
