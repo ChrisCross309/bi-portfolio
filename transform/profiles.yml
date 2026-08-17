@@ -1,0 +1,38 @@
+# Checked into the repo rather than left in `~/.dbt/`, so a fresh clone can build.
+# `just` exports DBT_PROFILES_DIR=transform; nothing here holds a secret.
+#
+# Two targets, and which one runs is the whole offline story:
+#
+#   dev  the live warehouse at platform/duckdb/bi_portfolio.duckdb -- 24.8M rows
+#   ci   the fixture warehouse at platform/duckdb/fixture.duckdb, built by `just ci`
+#        from the committed samples in tests/fixtures/
+#
+# Both files carry the same `raw` schema with the same table names, so every model
+# resolves against either. That is what lets CI build the entire project without
+# downloading a bulk file or calling a publisher -- the rule in CLAUDE.md section 6 that
+# the whole repo is arranged around.
+#
+# `data/` and `platform/duckdb/` are gitignored: the warehouse is local-only and cannot
+# exist in CI until `just ci` builds the fixture copy.
+
+bi_portfolio:
+  target: "{{ env_var('DBT_TARGET', 'dev') }}"
+  outputs:
+    dev: &duckdb_defaults
+      type: duckdb
+      # `just` exports an absolute DBT_WAREHOUSE_DIR so dbt works from any directory; the
+      # default is repo-root-relative, which is where a bare `dbt` call is run from.
+      path: "{{ env_var('DBT_WAREHOUSE_DIR', 'platform/duckdb') }}/bi_portfolio.duckdb"
+      schema: main
+      threads: 4
+      settings:
+        # Matches ingest.reload.DUCKDB_MEMORY_LIMIT. The largest source is 17M rows of
+        # CFPB narrative; let DuckDB spill rather than exhaust RAM.
+        memory_limit: 4GB
+        # Spill beside the data on the same drive. The default is the system temp
+        # directory, which here is the C: drive that `data/` was moved off in the first
+        # place.
+        temp_directory: "{{ env_var('DBT_TEMP_DIR', 'data/.duckdb_tmp') }}"
+    ci:
+      <<: *duckdb_defaults
+      path: "{{ env_var('DBT_WAREHOUSE_DIR', 'platform/duckdb') }}/fixture.duckdb"

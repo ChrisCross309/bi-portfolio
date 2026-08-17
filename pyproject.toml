@@ -5,6 +5,7 @@ description = "One shared BI platform, three separate regulated-domain projects:
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
+    "dbt-duckdb>=1.11",
     "duckdb>=1.1",
     "httpx>=0.27",
     "pyarrow>=17",
@@ -12,6 +13,12 @@ dependencies = [
 ]
 # `openpyxl` was here for an expected CMS Excel distribution that never materialised --
 # every source that landed is CSV, TSV, JSON or parquet. Add it back the day one is not.
+#
+# `dbt-duckdb` is session 2's one addition and it is not a small one: it pulls dbt-core and
+# roughly forty transitive packages. That is the cost of a semantic layer with contracts,
+# tests and generated docs, and it is paid once. Note that dbt *packages* -- `dbt_utils`
+# and friends, installed by `dbt deps` rather than by uv -- are dependencies under the same
+# rule and are not in use; the handful of macros `transform/macros/` needs are written here.
 
 [dependency-groups]
 dev = [

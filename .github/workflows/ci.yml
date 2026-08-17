@@ -3,7 +3,12 @@ name: ci
 # CI NEVER downloads bulk files and NEVER calls an external API.
 # `just ci` runs entirely against the committed fixtures in tests/fixtures/, and
 # DATA_MODE=fixture is set job-wide as a second guard: if a recipe ever forgot its
-# --mode flag, the loaders still refuse to reach a publisher.
+# --mode flag, the loaders still refuse to reach a publisher. DBT_TARGET=ci is the
+# same guard for the semantic layer: it points dbt at the fixture warehouse, so a
+# `dbt build` that lost its --target flag still cannot reach the live one -- which in
+# CI does not exist anyway, because data/ and platform/duckdb/ are gitignored.
+# dbt's own anonymous usage telemetry is off in transform/dbt_project.yml; a POST to
+# dbt's endpoint would be an external API call like any other.
 
 on:
   pull_request:
@@ -23,6 +28,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       DATA_MODE: fixture
+      DBT_TARGET: ci
     steps:
       - uses: actions/checkout@v4
 

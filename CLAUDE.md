@@ -104,9 +104,18 @@ data/{landing,raw}/{insurance,fintech,health,shared}/   gitignored
 platform/ingest/<track>/<source>.py                     fetchers
 platform/reconcile/l1_integrity.py                      the integrity harness
 platform/reconcile/baselines/                           committed schema snapshots
+transform/                                              the dbt semantic layer
 projects/0N-<track>/README.md                           questions verbatim + scope/caveats
 tests/fixtures/                                         committed per-source samples
 ```
+
+`transform/` sits beside `platform/`, not inside it. `platform/` ingests and proves; `transform/`
+models; `projects/` documents and delivers. Inside it, track separation is the directory tree —
+`models/staging/<track>/`, `models/marts/<track>/` — and conformed dimensions used by all three live
+in `models/conformed/`. `transform/profiles.yml` is committed (it holds no secret) and points at
+`platform/duckdb/`, which is gitignored: the warehouse is local-only. **`transform/` holds no Python
+and must never become importable** — it is deliberately outside the one directory this repo puts on
+`sys.path`.
 
 **`platform/` must never contain an `__init__.py` at its root.** `platform` is a Python standard
 library module name, and a regular package there would shadow it for every dependency that imports
@@ -135,9 +144,12 @@ Fixture mode is first-class:
 
 - Every source gets a committed sample in `tests/fixtures/` — well under 2 MB, deterministic seed,
   stratified to include Michigan rows, edge cases, and null/sentinel values.
-- A `DATA_MODE=fixture` switch is honored by every loader and by `l1_integrity.py`.
+- A `DATA_MODE=fixture` switch is honored by every loader and by `l1_integrity.py`. `DBT_TARGET=ci`
+  is its counterpart for the semantic layer, pointing dbt at the fixture warehouse `just ci` builds.
 - Network-dependent checks report **`SKIPPED (offline)`** — never silently passed.
 - Real-endpoint tests are marked `@pytest.mark.slow` and are excluded from CI.
+- dbt's anonymous usage telemetry is off in `transform/dbt_project.yml`. A POST to dbt's own endpoint
+  is an external API call like any other, and this rule has no exceptions.
 
 This offline/full split is what lets a scheduled-refresh cron drop in later without rework.
 
@@ -181,9 +193,11 @@ This offline/full split is what lets a scheduled-refresh cron drop in later with
 
 | Session | Scope |
 |---|---|
-| **1 (current)** | Every raw pipeline, all three tracks: fetch → land → parquet → DuckDB `raw` → L1 integrity → schema baselines. **No dbt, no staging models, no marts, no Power BI.** |
-| 2 | Semantic layer: dbt staging/intermediate/marts per project, seeds, contracts, tests, conformed dimensions, deeper reconciliation. |
+| 1 | Every raw pipeline, all three tracks: fetch → land → parquet → DuckDB `raw` → L1 integrity → schema baselines. **Complete** — 12 sources, 24.8M rows. |
+| **2 (current)** | Semantic layer: dbt staging/intermediate/marts per project, seeds, contracts, tests, conformed dimensions, deeper reconciliation. **No Power BI.** |
 | 3 | Power BI: one `.pbip` semantic model and report per project — executive summary drilling to detail. |
 
 Toolchain: `uv`, `just`, `ruff`, `pre-commit`, `gh`. Runtime deps: `duckdb`, `httpx`, `pyarrow`,
-`tenacity`, `openpyxl` (CMS Excel case only). **No dbt this session.**
+`tenacity`, `dbt-duckdb`. **Ask before adding another** — and that includes dbt *packages*
+(`dbt_utils` and friends), which are dependencies like any other. `openpyxl` was dropped in session
+1: the CMS Excel distribution it was added for never materialised.
