@@ -9,6 +9,14 @@ set windows-shell := ["powershell.exe", "-NoLogo", "-NoProfile", "-Command"]
 # still resolves to the standard library. See CLAUDE.md section 5.
 export PYTHONPATH := "platform"
 
+# dbt reads its profile from the repo rather than `~/.dbt/`, so a fresh clone can build.
+# Nothing in it is a secret. The two path variables are absolute so dbt resolves the
+# warehouse the same way whatever directory it is invoked from; `transform/profiles.yml`
+# falls back to repo-root-relative defaults for a bare `dbt` call outside `just`.
+export DBT_PROFILES_DIR := "transform"
+export DBT_WAREHOUSE_DIR := justfile_directory() / "platform" / "duckdb"
+export DBT_TEMP_DIR := justfile_directory() / "data" / ".duckdb_tmp"
+
 _default:
     @just --list --unsorted
 
@@ -47,6 +55,16 @@ ingest-all: insurance fintech health shared
 reload track="all":
     uv run python -m ingest.reload --track {{track}}
 
+# ── semantic layer ─────────────────────────────────────────
+
+# any dbt command against the live warehouse: `just dbt build`, `just dbt test`
+dbt *ARGS:
+    uv run dbt {{ARGS}} --project-dir transform
+
+# regenerate dbt's source declarations from ingest.registry — run after adding a source
+dbt-sources:
+    uv run python -m ingest.dbt_sources
+
 # ── verification ───────────────────────────────────────────
 
 # ruff + pytest; live-endpoint tests are marked `slow` and excluded
@@ -68,6 +86,7 @@ ci:
     uv run python -m ingest.shared.census --mode fixture
     uv run python -m ingest.reload --mode fixture
     uv run python -m reconcile.l1_integrity --mode fixture
+    uv run dbt build --project-dir transform --target ci
 
 # regenerate committed fixtures from local raw — deliberate, never automatic
 fixture source="":

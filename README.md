@@ -23,9 +23,13 @@ build command, and its own deliverables. **Nothing from one project's domain app
 | 2 | [Fintech / Consumer Lending](projects/02-fintech-lending/README.md) | Complaints + mortgage lending | CFPB Consumer Complaints, HMDA LAR + institutions | `just fintech` |
 | 3 | [Health / Alzheimer's & Dementia](projects/03-health-dementia/README.md) | Cognitive-health & Medicare | CDC Alzheimer's & Healthy Aging, CMS Medicare Geographic Variation | `just health` |
 
-CMS Medicare Chronic Conditions was planned for track 3 and is **not ingested**: it is absent from
-CMS's own catalogue and from every other discoverable route. That leaves HLT-E2 without a source,
-which is recorded with its evidence in the [health README](projects/03-health-dementia/README.md).
+CMS Medicare Chronic Conditions was planned for track 3 and is **not ingested**: the publisher
+retired it effective 2026-06-15, and it is absent from CMS's own catalogue and from every other
+discoverable route. It cost two questions, not one — HLT-E2 and HLT-E3 both needed a condition
+dimension. Both were re-scoped onto the Medicare Geographic Variation data that *is* ingested,
+keeping their IDs and their structure and losing only condition specificity, which means **neither
+now measures dementia**. The evidence table and the blunt version of that caveat are in the
+[health README](projects/03-health-dementia/README.md).
 
 What they share is **platform, not data**: DuckDB, the ingestion utilities, the integrity harness,
 and a small set of domain-neutral reference series — CPI-U, Census population and housing
@@ -67,7 +71,7 @@ Every metric answers three questions:
 - **Benchmark** — compared to what? (prior period, trailing average, national, peer)
 - **Direction** — better or worse, and is the change real?
 
-Each project has five executive questions with stable IDs (`INS-E1`, `FIN-D3`, `HLT-E2`, …) listed
+Each project has five executive questions with stable IDs (`INS-E1`, `FIN-E3`, `HLT-E2`, …) listed
 verbatim in its README. Those IDs travel with the work: into mart documentation in session 2, into
 Power BI measure descriptions in session 3. Every executive report is one summary page showing its
 five headline questions as KPIs — with vs-prior and vs-benchmark deltas and a reconciliation
@@ -83,13 +87,16 @@ compared against. National sources are never filtered to Michigan in raw.
 
 | Session | Scope | Status |
 |---|---|---|
-| **1** | Every raw pipeline, all three tracks: discover → download → land → parquet → DuckDB `raw` → L1 integrity → schema baselines | **complete** — 12 sources, 24.8M rows |
-| 2 | Semantic layer: dbt staging/intermediate/marts per project, seeds, contracts, tests, conformed dimensions, deeper reconciliation | planned |
+| 1 | Every raw pipeline, all three tracks: discover → download → land → parquet → DuckDB `raw` → L1 integrity → schema baselines | **complete** — 12 sources, 24.8M rows |
+| **2** | Semantic layer: dbt staging/intermediate/marts per project, seeds, contracts, tests, conformed dimensions, deeper reconciliation | **in progress** |
 | 3 | Power BI: one `.pbip` semantic model and report per project, executive summary drilling to detail | planned |
 
-Session 1 lands no dbt models, no marts, and no Power BI artifacts. Its finish line is that every
+Session 1 landed no dbt models, no marts, and no Power BI artifacts. Its finish line was that every
 executive question is *answerable from raw* — proven by the per-track question-coverage checks in
-the L1 harness, not asserted.
+the L1 harness, not asserted. Session 2 answers them: the dbt project lives in
+[`transform/`](transform/), types every column raw deliberately left as text, and builds one mart
+per track. It reads the live warehouse locally and the committed fixtures in CI, which is why the
+whole thing still builds on a fresh clone with no network.
 
 ---
 
@@ -153,9 +160,11 @@ a publisher.
 | `just shared` | Reference denominators and deflator → raw → load → L1 |
 | `just ingest-all` | All four, in any order |
 | `just reload` | Rebuild every `raw` table from local parquet — no network |
+| `just dbt build` | The semantic layer against the live warehouse (any dbt command works) |
+| `just dbt-sources` | Regenerate dbt's source declarations from `ingest.registry` |
 | `just fixture` | Rebuild the committed test fixtures from local raw, deterministically |
 | `just check` | ruff + pytest (live-endpoint tests excluded) |
-| `just ci` | Fixture mode: load committed samples, run L1 logic offline |
+| `just ci` | Fixture mode: load committed samples, run L1, then build the semantic layer — all offline |
 | `just clean-landing` | Reclaim disk once L1 has passed |
 
 **Cost: $0.** All sources are free public APIs or bulk files. One key is required —

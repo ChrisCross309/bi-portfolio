@@ -19,10 +19,13 @@ __pycache__/
 .ruff_cache/
 *.egg-info/
 
-# ── session 2+ (dbt) ───────────────────────────────────────
-target/
-dbt_packages/
-logs/
+# ── dbt build artifacts ────────────────────────────────────
+# Scoped to the project rather than bare `target/`, so the pattern says where it applies.
+transform/target/
+transform/dbt_packages/
+transform/logs/
+# A random per-machine id dbt writes on first run. Not repo state.
+transform/.user.yml
 
 # ── os / editor ────────────────────────────────────────────
 .DS_Store

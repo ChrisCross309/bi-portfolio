@@ -1,0 +1,95 @@
+# GENERATED FILE -- do not edit by hand.
+#
+# Written by `python -m ingest.dbt_sources` (recipe: `just dbt-sources`) from
+# `ingest.registry.SOURCES`, the one list of what the `raw` schema holds.
+# `tests/test_dbt_sources.py` regenerates this and fails if the committed copy differs,
+# so a source added to the registry cannot silently go missing from dbt.
+#
+# `database` is deliberately unset: it resolves to the target's own database, which is
+# `bi_portfolio` on the live warehouse and `fixture` in CI. Both carry the same `raw`
+# schema and the same table names, so every model below resolves in either target and
+# `just ci` can build the whole project offline against the committed samples.
+#
+# Nothing here is typed. Raw is all-varchar by rule (CLAUDE.md rule 2) except where a
+# publisher shipped parquet with its schema embedded; typing happens in staging, column
+# by column, deliberately.
+
+version: 2
+
+sources:
+  - name: raw_insurance
+    schema: raw
+    description: FEMA National Flood Insurance Program and disaster declarations.
+    tables:
+      - name: nfip_claims
+        identifier: ins_nfip_claims
+        description: >
+          Raw `raw.ins_nfip_claims`, partitioned on `state`.
+          Untyped -- see the staging model that reads it.
+      - name: nfip_policies
+        identifier: ins_nfip_policies
+        description: >
+          Raw `raw.ins_nfip_policies`, partitioned on `propertyState`.
+          Untyped -- see the staging model that reads it.
+      - name: fema_declarations
+        identifier: ins_fema_declarations
+        description: >
+          Raw `raw.ins_fema_declarations`, partitioned on `state`.
+          Untyped -- see the staging model that reads it.
+  - name: raw_fintech
+    schema: raw
+    description: CFPB consumer complaints and HMDA mortgage lending.
+    tables:
+      - name: cfpb_complaints
+        identifier: fin_cfpb_complaints
+        description: >
+          Raw `raw.fin_cfpb_complaints`, partitioned on `year`.
+          Untyped -- see the staging model that reads it.
+      - name: hmda_lar
+        identifier: fin_hmda_lar
+        description: >
+          Raw `raw.fin_hmda_lar`, partitioned on `activity_year`.
+          Untyped -- see the staging model that reads it.
+      - name: hmda_institutions
+        identifier: fin_hmda_institutions
+        description: >
+          Raw `raw.fin_hmda_institutions`, partitioned on `period`.
+          Untyped -- see the staging model that reads it.
+  - name: raw_health
+    schema: raw
+    description: CDC healthy-aging indicators and CMS Medicare geographic variation.
+    tables:
+      - name: cdc_healthy_aging
+        identifier: hlt_cdc_healthy_aging
+        description: >
+          Raw `raw.hlt_cdc_healthy_aging`, partitioned on `locationabbr`.
+          Untyped -- see the staging model that reads it.
+      - name: cms_geographic_variation
+        identifier: hlt_cms_geographic_variation
+        description: >
+          Raw `raw.hlt_cms_geographic_variation`, partitioned on `BENE_GEO_LVL`.
+          Untyped -- see the staging model that reads it.
+  - name: raw_shared
+    schema: raw
+    description: Domain-neutral reference series every track may use.
+    tables:
+      - name: acs5_detailed
+        identifier: ref_acs5_detailed
+        description: >
+          Raw `raw.ref_acs5_detailed`, partitioned on `vintage`.
+          Untyped -- see the staging model that reads it.
+      - name: acs5_subject
+        identifier: ref_acs5_subject
+        description: >
+          Raw `raw.ref_acs5_subject`, partitioned on `vintage`.
+          Untyped -- see the staging model that reads it.
+      - name: cpi_u
+        identifier: ref_cpi_u
+        description: >
+          Raw `raw.ref_cpi_u`, partitioned on `year`.
+          Untyped -- see the staging model that reads it.
+      - name: cpi_u_series
+        identifier: ref_cpi_u_series
+        description: >
+          Raw `raw.ref_cpi_u_series`, partitioned on `seasonal`.
+          Untyped -- see the staging model that reads it.

@@ -1,0 +1,35 @@
+# The semantic layer. One dbt project, three separate domains.
+#
+# `platform/` ingests and proves; `transform/` models; `projects/` documents and (session 3)
+# delivers. Track separation lives in the directory tree -- `models/staging/<track>/`,
+# `models/marts/<track>/` -- and is enforced by a test rather than by convention. See
+# CLAUDE.md section 1: the separation is the point.
+#
+# It sits beside `platform/` rather than inside it for one concrete reason as well as the
+# tidy one: `platform/` is on `sys.path` (CLAUDE.md section 5), and nothing about a dbt
+# project should be importable.
+#
+# There is no `models:` block yet, and that is deliberate. dbt warns about configuration
+# paths that match no resource, so each layer's config arrives in the PR that adds that
+# layer's first model -- which is also where a reader needs the reasoning for it.
+
+name: bi_portfolio
+version: "1.0.0"
+config-version: 2
+profile: bi_portfolio
+
+model-paths: ["models"]
+macro-paths: ["macros"]
+seed-paths: ["seeds"]
+test-paths: ["tests"]
+analysis-paths: ["analyses"]
+snapshot-paths: ["snapshots"]
+
+clean-targets: ["target", "dbt_packages"]
+
+flags:
+  # dbt posts an anonymous usage event to its own endpoint on every invocation. CI never
+  # calls an external API -- CLAUDE.md section 6 states that without an exception, and a
+  # telemetry POST is an external API call whatever it carries. Off everywhere, not just
+  # in CI, so the local and CI runs are the same run.
+  send_anonymous_usage_stats: false
