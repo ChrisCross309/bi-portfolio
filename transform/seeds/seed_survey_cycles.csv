@@ -1,0 +1,11 @@
+cycle_key,year_start,year_end,cycle_label,spans_multiple_years,source_doc
+2015,2015,2015,2015,false,https://data.cdc.gov/d/hfr9-rurv
+2016,2016,2016,2016,false,https://data.cdc.gov/d/hfr9-rurv
+2017,2017,2017,2017,false,https://data.cdc.gov/d/hfr9-rurv
+2018,2018,2018,2018,false,https://data.cdc.gov/d/hfr9-rurv
+2019,2019,2019,2019,false,https://data.cdc.gov/d/hfr9-rurv
+2019-2022,2019,2022,2019-2022,true,https://data.cdc.gov/d/hfr9-rurv
+2020,2020,2020,2020,false,https://data.cdc.gov/d/hfr9-rurv
+2021,2021,2021,2021,false,https://data.cdc.gov/d/hfr9-rurv
+2021-2022,2021,2022,2021-2022,true,https://data.cdc.gov/d/hfr9-rurv
+2022,2022,2022,2022,false,https://data.cdc.gov/d/hfr9-rurv

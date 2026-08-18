@@ -9,9 +9,9 @@
 # tidy one: `platform/` is on `sys.path` (CLAUDE.md section 5), and nothing about a dbt
 # project should be importable.
 #
-# There is no `models:` block yet, and that is deliberate. dbt warns about configuration
-# paths that match no resource, so each layer's config arrives in the PR that adds that
-# layer's first model -- which is also where a reader needs the reasoning for it.
+# Each layer's config arrives in the PR that adds that layer's first model, because dbt
+# warns about configuration paths matching no resource -- and because that is where the
+# reasoning for it is worth reading.
 
 name: bi_portfolio
 version: "1.0.0"
@@ -20,7 +20,11 @@ profile: bi_portfolio
 
 model-paths: ["models"]
 macro-paths: ["macros"]
-seed-paths: ["seeds"]
+# `platform/reference/state_codes.csv` is seeded where it already lives rather than copied
+# into `seeds/`. It is the single state reference in the repo -- `ingest.common.load_state_codes`
+# reads the same file, and every partition check in L1 rests on it -- so a second copy here
+# would be a second thing to keep in step.
+seed-paths: ["seeds", "../platform/reference"]
 test-paths: ["tests"]
 analysis-paths: ["analyses"]
 snapshot-paths: ["snapshots"]
@@ -33,3 +37,43 @@ flags:
   # telemetry POST is an external API call whatever it carries. Off everywhere, not just
   # in CI, so the local and CI runs are the same run.
   send_anonymous_usage_stats: false
+
+models:
+  bi_portfolio:
+    +persist_docs:
+      relation: true
+      columns: true
+    # Conformed dimensions are tables: every mart joins them, and they are small enough
+    # that recomputing them on each query would cost more than storing them.
+    #
+    # Which layers get to be tables is a disk decision rather than a taste one. DuckDB does
+    # not reclaim freed blocks in place -- repeated CREATE OR REPLACE grew this warehouse to
+    # 15 GB in session 1 before a rebuild brought it back to 7.5 -- so every layer
+    # materialised as a table grows the file on each `dbt build`. Staging is a rename-and-cast
+    # over raw and costs nothing to recompute, so it will be a view when it lands in PR 4;
+    # marts are tables because Power BI reads them, and nothing else needs to be.
+    conformed:
+      +materialized: table
+      +schema: conformed
+
+seeds:
+  bi_portfolio:
+    +schema: seeds
+    # Codes stay text, per seed rather than project-wide -- a `+column_types` naming a column
+    # a seed does not have is a warning on every run. The reason is leading zeros: Alaska is
+    # `02`, and a FIPS dbt helpfully typed as an integer silently stops joining raw, where
+    # every key is a string by rule.
+    seed_areas:
+      +column_types:
+        state_fips: varchar
+    seed_county_exceptions:
+      +column_types:
+        county_fips: varchar
+    seed_survey_cycles:
+      +column_types:
+        cycle_key: varchar
+    state_codes:
+      +column_types:
+        state_fips: varchar
+        census_region: varchar
+        census_division: varchar
