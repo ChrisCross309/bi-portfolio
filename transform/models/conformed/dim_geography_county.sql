@@ -60,13 +60,13 @@ WITH acs_counties AS (
 
     -- All fifteen vintages, not only the newest. See the Connecticut note above.
     SELECT
-        state || county                     AS county_fips,
-        state                               AS state_fips,
-        county                              AS county_fips_3,
+        county_fips,
+        state_fips,
+        county_fips_3,
         MIN(vintage)                        AS first_vintage,
         MAX(vintage)                        AS last_vintage,
-        arg_max(NAME, vintage)              AS county_name_full
-    FROM {{ source('raw_shared', 'acs5_detailed') }}
+        arg_max(geography_name, vintage)    AS county_name_full
+    FROM {{ ref('stg_ref__acs5_detailed') }}
     WHERE geo_level = 'county'
     GROUP BY 1, 2, 3
 
@@ -75,7 +75,7 @@ WITH acs_counties AS (
 latest_vintage AS (
 
     SELECT MAX(vintage) AS vintage
-    FROM {{ source('raw_shared', 'acs5_detailed') }}
+    FROM {{ ref('stg_ref__acs5_detailed') }}
 
 ),
 
@@ -113,6 +113,16 @@ referenced AS (
 
     SELECT DISTINCT geoid
     FROM {{ source('raw_shared', 'zip_county_crosswalk') }}
+
+    UNION
+
+    -- The subject tables carry counties the detailed tables do not: nineteen Guam election
+    -- districts appear in the 2011 vintage alone, with every estimate null. Placeholder rows
+    -- the publisher emitted once, and real keys either way -- so they belong in the roster
+    -- rather than failing a join from a model that reads them.
+    SELECT DISTINCT county_fips
+    FROM {{ ref('stg_ref__acs5_subject') }}
+    WHERE geo_level = 'county'
 
 ),
 

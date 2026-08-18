@@ -1,0 +1,128 @@
+version: 2
+
+# Domain-neutral reference. Nothing here belongs to one track, which is why more than one may
+# read it -- and why `dim_geography_county` is allowed to depend on `stg_ref__acs5_detailed`
+# while it may never depend on a domain track's models.
+
+models:
+  - name: stg_ref__acs5_detailed
+    description: >
+      ACS 5-year total population and total housing units, fifteen vintages. The denominator
+      under every per-capita rate in the repo, and the roster
+      `dim_geography_county` is built from.
+    columns:
+      - name: vintage
+        data_tests: [not_null]
+      - name: vintage_label
+        description: >
+          **A 5-year estimate describes its whole window, not its final year.** Calling the
+          2024 vintage "2024 population" overstates it, so the window is spelled out.
+          Consecutive vintages share four years of sample and are **not a time series** --
+          only every fifth is independent, and the Census Bureau advises against comparing
+          overlapping ones. Each is the right denominator for its own window; a line drawn
+          through them is not a trend.
+      - name: county_fips
+        description: Populated for county rows; NULL at state and national geography.
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('dim_geography_county')
+                field: county_fips
+      - name: total_population
+        description: "`B01003_001E`, as published."
+      - name: population_is_controlled_estimate
+        description: >
+          The margin was `-555555555`, which is an **annotation** meaning "controlled
+          estimate, no margin applies" -- 47,301 occurrences in the population margin alone.
+          Not a measurement, and catastrophic if averaged as one, so the margin is NULL here
+          and this says why. Only the margin columns carry it; the estimates are clean.
+
+  - name: stg_ref__acs5_subject
+    description: >
+      ACS 5-year population aged 65 and over. HLT-E5's denominator. The figure is the
+      publisher's own `S0101_C01_030E` and is deliberately **not** summed from the twelve
+      `B01001` age components -- that would be aggregation, and it would disagree with the
+      number the Census Bureau publishes. Every caveat on `stg_ref__acs5_detailed` applies
+      here identically.
+    columns:
+      - name: vintage
+        data_tests: [not_null]
+      - name: population_65_plus
+        description: "`S0101_C01_030E`, as published."
+      - name: county_fips
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('dim_geography_county')
+                field: county_fips
+
+  - name: stg_ref__cpi_u
+    description: >
+      CPI-U observations, unpadded. The deflator INS-E2 and HLT-E3 both rest on.
+    columns:
+      - name: series_id
+        description: >
+          Trimmed. BLS pads this to 17 characters in both its files, so a filter on
+          `'CUUR0000SA0'` against raw **matches nothing at all** rather than erroring. The
+          padding comes off here, once.
+        data_tests: [not_null]
+      - name: period_kind
+        description: >
+          `month` · `annual_average` · `semiannual`. BLS files the annual average as a
+          thirteenth month, `M13`, in the same column as the twelve real months and the
+          semiannual averages, **so averaging across period double counts**. Constant-dollar
+          work uses `annual_average`.
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ['month', 'annual_average', 'semiannual']
+      - name: is_deflator_series
+        description: >
+          `CUUR0000SA0` -- all items, US city average, **not seasonally adjusted**. Deflating
+          a yearly figure uses the unadjusted annual average; the seasonally adjusted twin
+          `CUSR0000SA0` exists for month-over-month movement and is the wrong series here.
+      - name: index_value
+        description: NULL on the 62 observations BLS marks unavailable with a padded dash.
+      - name: is_unavailable
+        description: 62 observations, footnote code `X`.
+
+  - name: stg_ref__cpi_u_series
+    description: >
+      CPI series definitions, unpadded. 8,104 series, of which only the 201 in the All-items
+      data file have observations landed. Definitions without observations are expected --
+      they describe series in the other `cu.data.*` files, which no question here needs.
+    columns:
+      - name: series_id
+        data_tests: [unique, not_null]
+
+  - name: stg_ref__zip_county_crosswalk
+    description: >
+      HUD's ZIP-to-county crosswalk, typed. The bridge that gives CFPB complaints a county.
+      **34.6% of Michigan's ZIPs cross a county line**, so any figure built through this is an
+      allocation under a stated rule and never a lookup.
+    columns:
+      - name: zip5
+        data_tests: [not_null]
+      - name: county_fips
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_geography_county')
+                field: county_fips
+      - name: allocation_weight
+        description: >
+          **The rule, in one column, so no mart restates it.** Residential address share
+          where the ZIP has residential addresses; every address type where it has none.
+        data_tests: [not_null]
+      - name: allocation_weight_source
+        description: Which of the two the weight came from, so the fallback is auditable.
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ['res_ratio', 'tot_ratio']
+      - name: zip_has_no_residential_addresses
+        description: >
+          3,571 ZIPs nationally -- the PO-box and business-only ones -- where `res_ratio`
+          sums to exactly zero across their counties. **67 Michigan complaints sit in one**,
+          and weighting by residential share alone would send every one of them nowhere.

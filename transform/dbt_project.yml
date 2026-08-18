@@ -58,6 +58,9 @@ models:
     staging:
       +materialized: view
       +schema: stg
+    intermediate:
+      +materialized: view
+      +schema: int
 
 seeds:
   bi_portfolio:

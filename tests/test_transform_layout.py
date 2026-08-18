@@ -9,9 +9,12 @@ traces it.
 **Conformed models are deliberately exempt from the cross-track rule, and that is the point
 of them.** `dim_geography_county` reads NFIP, CMS, HMDA and HUD, because its whole job is to
 be the one place three domains resolve geography the same way. What it takes is a key column
-and never a measure. The rule that does apply to conformed is the opposite direction, and it
-is tested below: a conformed model must sit *beneath* the tracks, depending only on sources
-and seeds, never on a track's staging or mart models.
+and never a measure. The rule that does apply to conformed runs the other way, and is tested
+below: a conformed model may depend on sources, seeds and the **shared** staging models --
+`stg_ref__*`, which are domain-neutral reference by definition -- but never on a *domain*
+track's models. Depending on `stg_ins__`, `stg_fin__` or `stg_hlt__` would put the shared
+dimension downstream of one domain's modelling choices, so a change there could silently move
+geography or dates for the other two.
 
 These read the SQL rather than dbt's manifest so they run in `just check` without a built
 warehouse, which is what lets CI catch a leak before `dbt build` ever runs.
@@ -84,15 +87,18 @@ def test_no_staging_model_reads_another_tracks_source() -> None:
                 )
 
 
-def test_conformed_models_depend_only_on_sources_and_seeds() -> None:
-    """A conformed dimension sits beneath the tracks, so nothing track-shaped may be above it.
+def test_conformed_models_never_depend_on_a_domain_tracks_models() -> None:
+    """A conformed dimension sits beneath the three domains, so nothing domain-shaped may be
+    above it.
 
-    Reading every track's *sources* is what a conformed dimension is for. Depending on a
-    track's staging or mart model would invert that -- the shared dimension would then be
-    downstream of one domain's modelling choices, and a change in that track could silently
-    move geography or dates for the other two.
+    Reading every track's *sources* is what a conformed dimension is for, and reading the
+    shared staging models is fine too -- `stg_ref__*` is domain-neutral reference, the same
+    category as the seeds. What would invert the layering is depending on `stg_ins__`,
+    `stg_fin__` or `stg_hlt__`: the shared dimension would then be downstream of one domain's
+    modelling choices, and a change in that track could silently move geography or dates for
+    the other two.
     """
-    allowed_prefixes = ("dim_", "seed_", "state_codes")
+    allowed_prefixes = ("dim_", "seed_", "stg_ref__", "state_codes")
     for model in sql_models("conformed"):
         sql = model.read_text(encoding="utf-8")
         for name in referenced_models(sql):
