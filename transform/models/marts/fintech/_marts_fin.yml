@@ -9,42 +9,97 @@ models:
     columns:
       - name: year_month
         data_type: varchar
+        description: >
+          `YYYY-MM`. Joins `dim_period` at month grain.
       - name: received_year
         data_type: smallint
+        description: >
+          Calendar year the complaint was received by the CFPB.
       - name: state_code
         data_type: varchar
+        description: >
+          Two-letter postal code. Joins `dim_state`.
       - name: county_fips
         data_type: varchar
+        description: >
+          Five-digit state+county FIPS. Joins `dim_geography_county`. NULL where the publisher
+          reported no county, which is a real category and not a load failure.
       - name: county_name
         data_type: varchar
+        description: >
+          County name without the state suffix, for a chart axis. The unassigned bucket reads
+          `XX-UNKNOWN` rather than blank.
       - name: is_michigan
         data_type: boolean
+        description: >
+          The Michigan lens, applied at the point of use rather than baked into the grain.
+          National rows are retained so Michigan has a benchmark.
       - name: geography_kind
         data_type: varchar
+        description: >
+          `county` · `unknown_county` (the XX000 bucket) · `island_area` (ACS county files omit
+          these) · `retired` (a code no longer published). Only `county` is a reportable county.
       - name: product_family
         data_type: varchar
+        description: >
+          Grouped CFPB product, from `seed_cfpb_product_family`. CFPB renamed its product taxonomy
+          mid-archive, so the raw label is not stable across the whole series and this is.
       - name: allocation_method
         data_type: varchar
+        description: >
+          How this row's ZIP was resolved to a county: `full_zip` exact crosswalk match ·
+          `zip3_prefix` allocated across the counties a 3-digit prefix touches ·
+          `zip_not_in_crosswalk` · `state_unassigned` no usable ZIP at all. The first is precise;
+          the second is an estimate and says so.
       - name: allocated_complaints
         data_type: double
+        description: >
+          Complaints allocated to this county. **Fractional by design** -- a ZIP spanning four
+          counties contributes a weighted share to each. Rounding would break the property that
+          these re-sum exactly to the state totals.
       - name: allocated_timely
         data_type: double
+        description: >
+          Allocated complaints the company answered on time. Fractional, same as the count.
       - name: allocated_relief
         data_type: double
+        description: >
+          Allocated complaints closed with relief of any kind.
       - name: allocated_pending
         data_type: double
+        description: >
+          Allocated complaints still awaiting a company response.
       - name: allocated_older_american
         data_type: double
+        description: >
+          Allocated complaints tagged `Older American` by the CFPB. The tag is the consumer's own,
+          not an age field.
       - name: county_population
         data_type: bigint
+        description: >
+          ACS county population for the vintage whose five-year window contains the complaint
+          year. The denominator behind the per-capita rate.
       - name: population_vintage_window
         data_type: varchar
+        description: >
+          Which ACS five-year window the population came from. A 5-year estimate describes its
+          whole window, not its final year.
       - name: population_is_extrapolated
         data_type: boolean
+        description: >
+          The complaint year is past the newest ACS vintage, so the newest was used instead.
+          Marked rather than assumed -- 529,950 rows would otherwise simply have had no rate.
       - name: complaints_per_100k
         data_type: double
+        description: >
+          Complaints per 100,000 residents. **Recompute from `allocated_complaints` and
+          `county_population` before aggregating** -- a rate column cannot be summed or averaged
+          across counties.
       - name: is_small_cell
         data_type: boolean
+        description: >
+          Fewer than ten underlying records. A rate built on this many swings wildly; show the
+          count beside it or grey it out rather than publishing a number that looks precise.
 
   - name: fct_fin_complaints_monthly_company
     description: >
@@ -52,46 +107,97 @@ models:
     columns:
       - name: year_month
         data_type: varchar
+        description: >
+          `YYYY-MM`. Joins `dim_period` at month grain.
       - name: received_year
         data_type: smallint
+        description: >
+          Calendar year the complaint was received by the CFPB.
       - name: state_code
         data_type: varchar
+        description: >
+          Two-letter postal code. Joins `dim_state`.
       - name: is_michigan
         data_type: boolean
+        description: >
+          The Michigan lens, applied at the point of use rather than baked into the grain.
+          National rows are retained so Michigan has a benchmark.
       - name: company_name
         data_type: varchar
+        description: >
+          Company as the CFPB publishes it, normalised for matching. The same firm can appear
+          under several legal names across the archive.
       - name: product_family
         data_type: varchar
+        description: >
+          Grouped CFPB product, from `seed_cfpb_product_family`. CFPB renamed its product taxonomy
+          mid-archive, so the raw label is not stable across the whole series and this is.
       - name: complaint_count
         data_type: bigint
+        description: >
+          Complaints received. A count of complaints, never of consumers or of problems.
       - name: closed_complaints
         data_type: bigint
+        description: >
+          Complaints the company has closed. **The denominator for every rate here** -- 592,496
+          are still in progress, and counting those would understate every rate by more in a
+          recent window than an old one.
       - name: pending_complaints
         data_type: bigint
+        description: >
+          Complaints still marked in progress. Deliberately outside the rate denominators.
       - name: timely_count
         data_type: bigint
+        description: >
+          Closed complaints the company answered within the CFPB's window.
       - name: relief_count
         data_type: bigint
+        description: >
+          Closed complaints resolved with relief of any kind, monetary or not.
       - name: monetary_relief_count
         data_type: bigint
+        description: >
+          Closed with monetary relief.
       - name: non_monetary_relief_count
         data_type: bigint
+        description: >
+          Closed with non-monetary relief.
       - name: relief_unspecified_count
         data_type: bigint
+        description: >
+          Closed with relief whose kind the CFPB did not record.
       - name: untimely_count
         data_type: bigint
+        description: >
+          Closed complaints answered outside the window.
       - name: older_american_count
         data_type: bigint
+        description: >
+          Complaints carrying the CFPB's `Older American` tag.
       - name: servicemember_count
         data_type: bigint
+        description: >
+          Complaints carrying the CFPB's `Servicemember` tag.
       - name: narrative_count
         data_type: bigint
+        description: >
+          Complaints where the consumer published a narrative. Consent-dependent, so this measures
+          willingness to publish rather than severity.
       - name: timely_rate_pct
         data_type: double
+        description: >
+          Timely responses as a percentage of closed complaints. **Recompute from `timely_count`
+          and `closed_complaints`** before aggregating.
       - name: relief_rate_pct
         data_type: double
+        description: >
+          Relief as a percentage of closed complaints. Recompute from the components before
+          aggregating.
       - name: is_small_cell
         data_type: boolean
+        description: >
+          Fewer than ten underlying records. A rate built on this many swings wildly; show the
+          count beside it or grey it out rather than publishing a number that looks precise.
 
   - name: fct_fin_hmda_annual
     description: >
@@ -99,70 +205,154 @@ models:
     columns:
       - name: activity_year
         data_type: smallint
+        description: >
+          HMDA reporting year. Annual is the only cadence this source has.
       - name: county_fips
         data_type: varchar
+        description: >
+          Five-digit state+county FIPS. Joins `dim_geography_county`. NULL where the publisher
+          reported no county, which is a real category and not a load failure.
       - name: county_name
         data_type: varchar
+        description: >
+          County name without the state suffix, for a chart axis. The unassigned bucket reads
+          `XX-UNKNOWN` rather than blank.
       - name: is_michigan
         data_type: boolean
+        description: >
+          The Michigan lens, applied at the point of use rather than baked into the grain.
+          National rows are retained so Michigan has a benchmark.
       - name: has_no_reported_county
         data_type: boolean
+        description: >
+          The lender reported no county for these applications.
       - name: lei
         data_type: varchar
+        description: >
+          Legal Entity Identifier -- the lender's global key, and what makes a lender comparable
+          across years.
       - name: institution_name
         data_type: varchar
+        description: >
+          Lender name from the HMDA filer list for that year. A lender can rename between years
+          while keeping its LEI.
       - name: loan_purpose_label
         data_type: varchar
+        description: >
+          Home purchase, refinancing, home improvement and so on, decoded from
+          `seed_hmda_code_lists`.
       - name: loan_type_label
         data_type: varchar
+        description: >
+          Conventional, FHA, VA or USDA/RHS.
       - name: lien_status_label
         data_type: varchar
+        description: >
+          First or subordinate lien.
       - name: occupancy_type_label
         data_type: varchar
+        description: >
+          Principal residence, second residence or investment property.
       - name: construction_method_label
         data_type: varchar
+        description: >
+          Site-built or manufactured home.
       - name: applicant_age_band
         data_type: varchar
+        description: >
+          Applicant age band as HMDA publishes it. `8888` is HMDA's code for not applicable, not
+          an age.
       - name: applicant_race_label
         data_type: varchar
+        description: >
+          Applicant race as reported. **Descriptive only** -- see the denial-rate caveat.
       - name: applicant_ethnicity_label
         data_type: varchar
+        description: >
+          Applicant ethnicity as reported. Descriptive only.
       - name: applicant_sex_label
         data_type: varchar
+        description: >
+          Applicant sex as reported. Descriptive only.
       - name: dti_band
         data_type: varchar
+        description: >
+          Debt-to-income band as published. HMDA bands this rather than publishing the ratio,
+          which is one reason a denial-rate gap here cannot be a finding.
       - name: application_count
         data_type: bigint
+        description: >
+          Applications in this group, whatever the outcome.
       - name: decided_applications
         data_type: bigint
+        description: >
+          Originated, approved-but-not-accepted and denied together. **The denial-rate
+          denominator**: withdrawn, closed-for-incompleteness and purchased loans are not
+          decisions this lender made on an application brought to it.
       - name: originated_count
         data_type: bigint
+        description: >
+          Applications that became loans.
       - name: approved_not_accepted_count
         data_type: bigint
+        description: >
+          Approved by the lender, not taken up by the applicant.
       - name: denied_count
         data_type: bigint
+        description: >
+          Applications the lender denied.
       - name: withdrawn_count
         data_type: bigint
+        description: >
+          Withdrawn by the applicant. Not a decision, and outside the denominator.
       - name: closed_incomplete_count
         data_type: bigint
+        description: >
+          Closed for incompleteness. Not a decision, and outside the denominator.
       - name: purchased_count
         data_type: bigint
+        description: >
+          Loans purchased from another originator. Counting these as decisions would count someone
+          else's underwriting as this lender's.
       - name: preapproval_count
         data_type: bigint
+        description: >
+          Preapproval requests, approved or denied.
       - name: originated_amount
         data_type: double
+        description: >
+          Total amount of originated loans, dollars.
       - name: application_amount
         data_type: double
+        description: >
+          Total amount applied for, dollars, whatever the outcome.
       - name: median_originated_amount
         data_type: double
+        description: >
+          Median originated loan amount. **A median cannot be re-aggregated** -- it is valid only
+          at this row's grain.
       - name: median_applicant_income
         data_type: double
+        description: >
+          Median applicant income on originated loans, in thousands as HMDA publishes it. Not
+          re-aggregatable.
       - name: partially_exempt_count
         data_type: bigint
+        description: >
+          Applications from lenders using HMDA's partial exemption, which lets them leave fields
+          blank. Their absence is a filing status, not missing data.
       - name: denial_rate_pct
         data_type: double
+        description: >
+          Denials over decisions. **Descriptive, never a finding**: HMDA carries no credit score
+          and no underwriting-level debt-to-income detail, so a difference here is a gap
+          warranting review and never evidence of discrimination. Recompute from `denied_count`
+          and `decided_applications` before aggregating.
       - name: is_small_cell
         data_type: boolean
+        description: >
+          Fewer than ten underlying records. A rate built on this many swings wildly; show the
+          count beside it or grey it out rather than publishing a number that looks precise.
 
   - name: rpt_fin_entity_match_rate
     description: >
@@ -170,14 +360,27 @@ models:
     columns:
       - name: coverage_basis
         data_type: varchar
+        description: >
+          Which population the rate is measured over: distinct company names, national complaints,
+          Michigan complaints, or names that matched more than one LEI.
       - name: matched
         data_type: hugeint
+        description: >
+          How many of that population matched an HMDA lender.
       - name: total
         data_type: hugeint
+        description: >
+          The size of that population.
       - name: coverage_pct
         data_type: double
+        description: >
+          Matched over total. The four bases disagree, which is the point: a name-weighted rate
+          and a complaint-weighted rate answer different questions and each is misleading alone.
       - name: interpretation
         data_type: varchar
+        description: >
+          A sentence stating how to read this row, carried in the data so a figure cannot be
+          quoted without its caveat.
 
   - name: rpt_fin_publication_window
     description: >
@@ -185,21 +388,47 @@ models:
     columns:
       - name: year_month
         data_type: varchar
+        description: >
+          `YYYY-MM`. Joins `dim_period` at month grain.
       - name: first_received
         data_type: date
+        description: >
+          Earliest complaint date in the month.
       - name: last_received
         data_type: date
+        description: >
+          Latest complaint date in the month.
       - name: complaint_count
         data_type: bigint
+        description: >
+          Complaints received. A count of complaints, never of consumers or of problems.
       - name: pending_count
         data_type: bigint
+        description: >
+          Complaints from this month still awaiting a company response.
       - name: pending_pct
         data_type: double
+        description: >
+          Pending as a percentage of the month's complaints. This is the measured signal the
+          completeness boundary is drawn from, rather than a fixed assumed lag.
       - name: is_calendar_month_over
         data_type: boolean
+        description: >
+          The calendar month has ended. Necessary for completeness but not sufficient --
+          publication lags the month.
       - name: is_publication_complete
         data_type: boolean
+        description: >
+          **Filter on this before trending.** A complaint publishes only after the company
+          responds or fifteen days elapse, so the newest month always shows a fall that is a
+          publication artifact rather than a decline.
       - name: pending_threshold_pct
         data_type: decimal(2,1)
+        description: >
+          The pending share below which a month counts as complete. A variable, so the boundary
+          moves on its own as the archive refreshes.
       - name: is_latest_complete_month
         data_type: boolean
+        description: >
+          The most recent month that passes the completeness test -- the right default 'as of' for
+          an executive page.

@@ -144,3 +144,83 @@ def test_mart_documentation_carries_only_its_own_tracks_question_ids() -> None:
                     f"{doc.relative_to(REPO_ROOT)} documents a {track} mart but cites "
                     f"{sorted(set(found))}, which belong to {other_track}"
                 )
+
+
+# ── documentation coverage ────────────────────────────────────────────────────
+
+# `      - name: <column>` and the block that follows it, in the schema files. The structure
+# is uniform across all four -- `data_type` first where present, then `description`, then
+# `data_tests` -- which is what lets this be read without a YAML parser, the same way the
+# checks above read SQL without dbt's manifest.
+COLUMN_ENTRY = re.compile(r"^      - name: (\S+)", re.MULTILINE)
+
+
+def documented_schema_files() -> list[Path]:
+    """The schema files whose columns must every one carry a description."""
+    files = sorted((MODELS / "marts").rglob("_marts_*.yml"))
+    files.append(MODELS / "conformed" / "_conformed.yml")
+    return files
+
+
+def columns_missing_a_description(path: Path) -> list[str]:
+    lines = path.read_text(encoding="utf-8").split("\n")
+    missing: list[str] = []
+    model = ""
+    index = 0
+    while index < len(lines):
+        model_match = re.match(r"^  - name: (\S+)", lines[index])
+        if model_match:
+            model = model_match.group(1)
+            index += 1
+            continue
+        column_match = re.match(r"^      - name: (\S+)", lines[index])
+        if not column_match:
+            index += 1
+            continue
+        cursor = index + 1
+        has_description = False
+        while cursor < len(lines) and not re.match(
+            r"^      - name: |^  - name: |^\S", lines[cursor]
+        ):
+            if re.match(r"^        description:", lines[cursor]):
+                has_description = True
+            cursor += 1
+        if not has_description:
+            missing.append(f"{model}.{column_match.group(1)}")
+        index = cursor
+    return missing
+
+
+def test_every_mart_and_conformed_column_is_documented() -> None:
+    """The check that makes a self-describing warehouse structural rather than a good week.
+
+    `+persist_docs` is on, so a description here becomes a COMMENT in DuckDB and shows up in
+    whatever SQL client or BI tool reads the schema. The audit that prompted this found 34 of
+    432 columns documented -- `mart_fin` had none at all -- and the cost was not untidiness,
+    it was someone opening the warehouse and having to ask what a column meant. Coverage is
+    only worth reaching if it cannot silently fall again, which is what this is for.
+    """
+    undocumented: list[str] = []
+    for path in documented_schema_files():
+        undocumented += [
+            f"{path.relative_to(REPO_ROOT)}: {name}" for name in columns_missing_a_description(path)
+        ]
+    assert not undocumented, "columns with no description:\n  " + "\n  ".join(undocumented)
+
+
+def test_the_documentation_check_can_actually_fail(tmp_path: Path) -> None:
+    """A coverage test that cannot fail is worse than none: it reports green forever."""
+    sample = tmp_path / "_marts_x.yml"
+    sample.write_text(
+        "models:\n"
+        "  - name: fct_x\n"
+        "    columns:\n"
+        "      - name: documented\n"
+        "        data_type: varchar\n"
+        "        description: >\n"
+        "          It says what it is.\n"
+        "      - name: bare\n"
+        "        data_type: varchar\n",
+        encoding="utf-8",
+    )
+    assert columns_missing_a_description(sample) == ["fct_x.bare"]

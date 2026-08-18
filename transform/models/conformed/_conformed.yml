@@ -24,9 +24,13 @@ models:
         data_tests: [unique]
       - name: calendar_year
         data_type: smallint
+        description: >
+          Four-digit calendar year.
         constraints: [{type: not_null}]
       - name: calendar_quarter
         data_type: tinyint
+        description: >
+          Quarter of the year, 1-4.
         data_tests:
           - accepted_values:
               arguments:
@@ -34,33 +38,61 @@ models:
                 quote: false
       - name: calendar_month
         data_type: tinyint
+        description: >
+          Month of the year, 1-12.
       - name: month_name
         data_type: varchar
+        description: >
+          Full month name, for a chart axis.
       - name: year_month
         data_type: varchar
         description: "`YYYY-MM`, matching `dim_period.period_key` at month grain."
       - name: year_quarter
         data_type: varchar
+        description: >
+          `YYYY-Qn`.
       - name: month_start
         data_type: date
+        description: >
+          First day of this date's month.
       - name: month_end
         data_type: date
+        description: >
+          Last calendar day of the month, the date the month-end snapshot is taken on.
       - name: quarter_start
         data_type: date
+        description: >
+          First day of this date's quarter.
       - name: year_start
         data_type: date
+        description: >
+          First year of the reporting window.
       - name: day_of_year
         data_type: smallint
+        description: >
+          Ordinal day within the year, 1-366.
       - name: iso_day_of_week
         data_type: tinyint
+        description: >
+          ISO weekday, Monday = 1 through Sunday = 7.
       - name: day_name
         data_type: varchar
+        description: >
+          Full weekday name.
       - name: iso_week
         data_type: tinyint
+        description: >
+          ISO week number. ISO rather than calendar, so week 1 is the week containing the first
+          Thursday and no year has a stray part-week.
       - name: is_weekend
         data_type: boolean
+        description: >
+          Saturday or Sunday.
       - name: is_month_end
         data_type: boolean
+        description: >
+          Last calendar day of the month. This is the flag the policy in-force snapshot spine is
+          built from.
 
   - name: dim_period
     description: >
@@ -91,6 +123,8 @@ models:
         constraints: [{type: not_null}]
       - name: period_start
         data_type: date
+        description: >
+          First day of the period.
         constraints: [{type: not_null}]
       - name: period_end
         data_type: date
@@ -98,6 +132,8 @@ models:
         constraints: [{type: not_null}]
       - name: period_label
         data_type: varchar
+        description: >
+          How this period should be written on a chart.
       - name: calendar_year
         data_type: smallint
         description: >
@@ -131,21 +167,35 @@ models:
         data_tests: [unique]
       - name: state_name
         data_type: varchar
+        description: >
+          Full state name as published.
         constraints: [{type: not_null}]
       - name: entity_type
         data_type: varchar
+        description: >
+          `state` · `district` · `territory` · `military_post` · `freely_associated_state` ·
+          `unknown`. Publishers mix these into one column as peers; this is what separates them.
         data_tests:
           - accepted_values:
               arguments:
                 values: ['state', 'district', 'territory', 'freely_associated_state', 'military_post', 'unknown']
       - name: census_region
         data_type: varchar
+        description: >
+          Census region code, 1-4.
       - name: census_region_name
         data_type: varchar
+        description: >
+          `Northeast` · `Midwest` · `South` · `West`.
       - name: census_division
         data_type: varchar
+        description: >
+          Census division code, 1-9. Finer than region.
       - name: census_division_name
         data_type: varchar
+        description: >
+          Census division name. Michigan is `East North Central`, which is the Great Lakes peer
+          group the drill bank compares against.
       - name: is_us_jurisdiction
         data_type: boolean
         description: >
@@ -155,6 +205,9 @@ models:
           the `UN` member, where the question has no answer.
       - name: is_michigan
         data_type: boolean
+        description: >
+          The Michigan lens, applied at the point of use rather than baked into the grain.
+          National rows are retained so Michigan has a benchmark.
 
   - name: dim_geography_county
     description: >
@@ -178,6 +231,9 @@ models:
         data_tests: [unique]
       - name: state_fips
         data_type: varchar
+        description: >
+          Two-digit state FIPS, as text. Alaska is `02`; typed as a number it silently stops
+          joining.
         constraints: [{type: not_null}]
         data_tests:
           - relationships:
@@ -189,8 +245,12 @@ models:
         description: The county half alone, which is how ACS stores it.
       - name: state_code
         data_type: varchar
+        description: >
+          Two-letter postal code. Joins `dim_state`.
       - name: state_name
         data_type: varchar
+        description: >
+          Full state name as published.
       - name: county_name
         data_type: varchar
         description: >
@@ -201,6 +261,9 @@ models:
         description: As ACS published it, e.g. "Alcona County, Michigan". NULL outside the ACS roster.
       - name: geography_kind
         data_type: varchar
+        description: >
+          `county` · `unknown_county` (the XX000 bucket) · `island_area` (ACS county files omit
+          these) · `retired` (a code no longer published). Only `county` is a reportable county.
         constraints: [{type: not_null}]
         data_tests:
           - accepted_values:
@@ -217,6 +280,8 @@ models:
         description: 84 rows -- Michigan's 83 counties plus its `26000` unassigned bucket.
       - name: first_vintage
         data_type: varchar
+        description: >
+          Earliest ACS vintage this county appears in.
       - name: last_vintage
         data_type: varchar
         description: The most recent ACS vintage naming this FIPS. 2021 for Connecticut's old counties.
@@ -227,6 +292,8 @@ models:
           census areas read False, and that is a boundary change rather than a data error.
       - name: geography_note
         data_type: varchar
+        description: >
+          Why a non-county key exists, where a seed records it.
 
 seeds:
   - name: seed_survey_cycles
@@ -237,6 +304,9 @@ seeds:
       publishes.
     columns:
       - name: cycle_key
+        description: >
+          CDC survey cycle. Eight of the ten are single years; `2019-2022` and `2021-2022` are
+          not.
         data_tests: [unique, not_null]
 
   - name: seed_areas
@@ -249,8 +319,13 @@ seeds:
       post codes (AA, AE, AP) that CFPB files 4,267 complaints under.
     columns:
       - name: state_fips
+        description: >
+          Two-digit state FIPS, as text. Alaska is `02`; typed as a number it silently stops
+          joining.
         data_tests: [unique, not_null]
       - name: state_code
+        description: >
+          Two-letter postal code. Joins `dim_state`.
         data_tests: [unique, not_null]
 
   - name: seed_county_exceptions
@@ -260,4 +335,7 @@ seeds:
       CMS Geographic Variation. Everything else unnamed stays NULL rather than being invented.
     columns:
       - name: county_fips
+        description: >
+          Five-digit state+county FIPS. Joins `dim_geography_county`. NULL where the publisher
+          reported no county, which is a real category and not a load failure.
         data_tests: [unique, not_null]
