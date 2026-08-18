@@ -41,6 +41,7 @@ from ingest.shared.census import (
     state_failures,
     vintage_failures,
 )
+from reconcile.make_fixtures import FIXTURE_VINTAGES
 
 FIXTURE_DIR = Path("tests/fixtures/shared/acs5")
 # Deliberately not shaped like a real key. A Census key is 40 lowercase hex, which the
@@ -169,7 +170,7 @@ def test_michigan_roster_must_be_complete_in_every_vintage() -> None:
     assert "every per-capita denominator would be wrong" in problems[0]
 
 
-def test_the_fixture_carries_michigans_whole_roster_in_both_vintages() -> None:
+def test_the_fixture_carries_michigans_whole_roster_in_every_vintage() -> None:
     con = duckdb.connect()
     for dataset, spec in DATASETS.items():
         relation = dataset_relation(FIXTURE_DIR, dataset, spec["variables"])
@@ -180,7 +181,7 @@ def test_the_fixture_carries_michigans_whole_roster_in_both_vintages() -> None:
             ).fetchall()
         )
         assert michigan_failures(counts) == [], dataset
-        assert len(counts) == 2
+        assert len(counts) == len(FIXTURE_VINTAGES)
     con.close()
 
 

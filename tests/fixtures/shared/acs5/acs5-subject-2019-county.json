@@ -1,0 +1,870 @@
+[
+  [
+    "NAME",
+    "S0101_C01_030E",
+    "S0101_C01_030M",
+    "state",
+    "county"
+  ],
+  [
+    "Alcona County, Michigan",
+    "3711",
+    "23",
+    "26",
+    "001"
+  ],
+  [
+    "Alger County, Michigan",
+    "2257",
+    "33",
+    "26",
+    "003"
+  ],
+  [
+    "Allegan County, Michigan",
+    "18642",
+    "87",
+    "26",
+    "005"
+  ],
+  [
+    "Alpena County, Michigan",
+    "6488",
+    "39",
+    "26",
+    "007"
+  ],
+  [
+    "Antrim County, Michigan",
+    "6189",
+    "58",
+    "26",
+    "009"
+  ],
+  [
+    "Arenac County, Michigan",
+    "3662",
+    "22",
+    "26",
+    "011"
+  ],
+  [
+    "Baraga County, Michigan",
+    "1827",
+    "24",
+    "26",
+    "013"
+  ],
+  [
+    "Barry County, Michigan",
+    "10917",
+    "78",
+    "26",
+    "015"
+  ],
+  [
+    "Bay County, Michigan",
+    "20411",
+    "91",
+    "26",
+    "017"
+  ],
+  [
+    "Benzie County, Michigan",
+    "4545",
+    "56",
+    "26",
+    "019"
+  ],
+  [
+    "Berrien County, Michigan",
+    "29744",
+    "-555555555",
+    "26",
+    "021"
+  ],
+  [
+    "Branch County, Michigan",
+    "7900",
+    "94",
+    "26",
+    "023"
+  ],
+  [
+    "Calhoun County, Michigan",
+    "23230",
+    "122",
+    "26",
+    "025"
+  ],
+  [
+    "Cass County, Michigan",
+    "10455",
+    "71",
+    "26",
+    "027"
+  ],
+  [
+    "Charlevoix County, Michigan",
+    "6204",
+    "30",
+    "26",
+    "029"
+  ],
+  [
+    "Cheboygan County, Michigan",
+    "6802",
+    "37",
+    "26",
+    "031"
+  ],
+  [
+    "Chippewa County, Michigan",
+    "6651",
+    "59",
+    "26",
+    "033"
+  ],
+  [
+    "Clare County, Michigan",
+    "7121",
+    "57",
+    "26",
+    "035"
+  ],
+  [
+    "Clinton County, Michigan",
+    "12897",
+    "89",
+    "26",
+    "037"
+  ],
+  [
+    "Crawford County, Michigan",
+    "3461",
+    "40",
+    "26",
+    "039"
+  ],
+  [
+    "Delta County, Michigan",
+    "8417",
+    "20",
+    "26",
+    "041"
+  ],
+  [
+    "Dickinson County, Michigan",
+    "5591",
+    "67",
+    "26",
+    "043"
+  ],
+  [
+    "Eaton County, Michigan",
+    "19600",
+    "98",
+    "26",
+    "045"
+  ],
+  [
+    "Emmet County, Michigan",
+    "7192",
+    "34",
+    "26",
+    "047"
+  ],
+  [
+    "Genesee County, Michigan",
+    "69337",
+    "-555555555",
+    "26",
+    "049"
+  ],
+  [
+    "Gladwin County, Michigan",
+    "6655",
+    "39",
+    "26",
+    "051"
+  ],
+  [
+    "Gogebic County, Michigan",
+    "3852",
+    "47",
+    "26",
+    "053"
+  ],
+  [
+    "Grand Traverse County, Michigan",
+    "17690",
+    "84",
+    "26",
+    "055"
+  ],
+  [
+    "Gratiot County, Michigan",
+    "7037",
+    "85",
+    "26",
+    "057"
+  ],
+  [
+    "Hillsdale County, Michigan",
+    "8719",
+    "59",
+    "26",
+    "059"
+  ],
+  [
+    "Houghton County, Michigan",
+    "6123",
+    "65",
+    "26",
+    "061"
+  ],
+  [
+    "Huron County, Michigan",
+    "7749",
+    "41",
+    "26",
+    "063"
+  ],
+  [
+    "Ingham County, Michigan",
+    "38111",
+    "21",
+    "26",
+    "065"
+  ],
+  [
+    "Ionia County, Michigan",
+    "9323",
+    "87",
+    "26",
+    "067"
+  ],
+  [
+    "Iosco County, Michigan",
+    "7323",
+    "46",
+    "26",
+    "069"
+  ],
+  [
+    "Iron County, Michigan",
+    "3344",
+    "24",
+    "26",
+    "071"
+  ],
+  [
+    "Isabella County, Michigan",
+    "8606",
+    "51",
+    "26",
+    "073"
+  ],
+  [
+    "Jackson County, Michigan",
+    "27279",
+    "73",
+    "26",
+    "075"
+  ],
+  [
+    "Kalamazoo County, Michigan",
+    "38355",
+    "-555555555",
+    "26",
+    "077"
+  ],
+  [
+    "Kalkaska County, Michigan",
+    "3476",
+    "28",
+    "26",
+    "079"
+  ],
+  [
+    "Kent County, Michigan",
+    "85904",
+    "87",
+    "26",
+    "081"
+  ],
+  [
+    "Keweenaw County, Michigan",
+    "741",
+    "12",
+    "26",
+    "083"
+  ],
+  [
+    "Lake County, Michigan",
+    "3288",
+    "38",
+    "26",
+    "085"
+  ],
+  [
+    "Lapeer County, Michigan",
+    "15489",
+    "96",
+    "26",
+    "087"
+  ],
+  [
+    "Leelanau County, Michigan",
+    "6502",
+    "34",
+    "26",
+    "089"
+  ],
+  [
+    "Lenawee County, Michigan",
+    "18050",
+    "67",
+    "26",
+    "091"
+  ],
+  [
+    "Livingston County, Michigan",
+    "31372",
+    "90",
+    "26",
+    "093"
+  ],
+  [
+    "Luce County, Michigan",
+    "1354",
+    "18",
+    "26",
+    "095"
+  ],
+  [
+    "Mackinac County, Michigan",
+    "2948",
+    "48",
+    "26",
+    "097"
+  ],
+  [
+    "Macomb County, Michigan",
+    "144390",
+    "62",
+    "26",
+    "099"
+  ],
+  [
+    "Manistee County, Michigan",
+    "6110",
+    "47",
+    "26",
+    "101"
+  ],
+  [
+    "Marquette County, Michigan",
+    "12289",
+    "66",
+    "26",
+    "103"
+  ],
+  [
+    "Mason County, Michigan",
+    "6681",
+    "58",
+    "26",
+    "105"
+  ],
+  [
+    "Mecosta County, Michigan",
+    "7822",
+    "54",
+    "26",
+    "107"
+  ],
+  [
+    "Menominee County, Michigan",
+    "5456",
+    "36",
+    "26",
+    "109"
+  ],
+  [
+    "Midland County, Michigan",
+    "14991",
+    "99",
+    "26",
+    "111"
+  ],
+  [
+    "Missaukee County, Michigan",
+    "3057",
+    "38",
+    "26",
+    "113"
+  ],
+  [
+    "Monroe County, Michigan",
+    "26204",
+    "84",
+    "26",
+    "115"
+  ],
+  [
+    "Montcalm County, Michigan",
+    "10823",
+    "60",
+    "26",
+    "117"
+  ],
+  [
+    "Montmorency County, Michigan",
+    "2907",
+    "17",
+    "26",
+    "119"
+  ],
+  [
+    "Muskegon County, Michigan",
+    "28541",
+    "25",
+    "26",
+    "121"
+  ],
+  [
+    "Newaygo County, Michigan",
+    "9112",
+    "43",
+    "26",
+    "123"
+  ],
+  [
+    "Oakland County, Michigan",
+    "205052",
+    "52",
+    "26",
+    "125"
+  ],
+  [
+    "Oceana County, Michigan",
+    "5382",
+    "25",
+    "26",
+    "127"
+  ],
+  [
+    "Ogemaw County, Michigan",
+    "5275",
+    "57",
+    "26",
+    "129"
+  ],
+  [
+    "Ontonagon County, Michigan",
+    "2083",
+    "9",
+    "26",
+    "131"
+  ],
+  [
+    "Osceola County, Michigan",
+    "4803",
+    "26",
+    "26",
+    "133"
+  ],
+  [
+    "Oscoda County, Michigan",
+    "2227",
+    "22",
+    "26",
+    "135"
+  ],
+  [
+    "Otsego County, Michigan",
+    "5076",
+    "42",
+    "26",
+    "137"
+  ],
+  [
+    "Ottawa County, Michigan",
+    "41893",
+    "83",
+    "26",
+    "139"
+  ],
+  [
+    "Presque Isle County, Michigan",
+    "3892",
+    "21",
+    "26",
+    "141"
+  ],
+  [
+    "Roscommon County, Michigan",
+    "7617",
+    "39",
+    "26",
+    "143"
+  ],
+  [
+    "Saginaw County, Michigan",
+    "35801",
+    "72",
+    "26",
+    "145"
+  ],
+  [
+    "St. Clair County, Michigan",
+    "29036",
+    "46",
+    "26",
+    "147"
+  ],
+  [
+    "St. Joseph County, Michigan",
+    "10567",
+    "83",
+    "26",
+    "149"
+  ],
+  [
+    "Sanilac County, Michigan",
+    "8678",
+    "40",
+    "26",
+    "151"
+  ],
+  [
+    "Schoolcraft County, Michigan",
+    "2132",
+    "34",
+    "26",
+    "153"
+  ],
+  [
+    "Shiawassee County, Michigan",
+    "12149",
+    "79",
+    "26",
+    "155"
+  ],
+  [
+    "Tuscola County, Michigan",
+    "10506",
+    "40",
+    "26",
+    "157"
+  ],
+  [
+    "Van Buren County, Michigan",
+    "13258",
+    "43",
+    "26",
+    "159"
+  ],
+  [
+    "Washtenaw County, Michigan",
+    "49308",
+    "41",
+    "26",
+    "161"
+  ],
+  [
+    "Wayne County, Michigan",
+    "264487",
+    "22",
+    "26",
+    "163"
+  ],
+  [
+    "Wexford County, Michigan",
+    "6197",
+    "34",
+    "26",
+    "165"
+  ],
+  [
+    "Navajo County, Arizona",
+    "19062",
+    "75",
+    "04",
+    "017"
+  ],
+  [
+    "Humboldt County, Nevada",
+    "2259",
+    "116",
+    "32",
+    "013"
+  ],
+  [
+    "Tuolumne County, California",
+    "13827",
+    "119",
+    "06",
+    "109"
+  ],
+  [
+    "Murray County, Oklahoma",
+    "2674",
+    "39",
+    "40",
+    "099"
+  ],
+  [
+    "Presidio County, Texas",
+    "1683",
+    "149",
+    "48",
+    "377"
+  ],
+  [
+    "Coshocton County, Ohio",
+    "6948",
+    "82",
+    "39",
+    "031"
+  ],
+  [
+    "Onondaga County, New York",
+    "76833",
+    "10",
+    "36",
+    "067"
+  ],
+  [
+    "Franklin County, Illinois",
+    "7819",
+    "39",
+    "17",
+    "055"
+  ],
+  [
+    "Cowley County, Kansas",
+    "6399",
+    "65",
+    "20",
+    "035"
+  ],
+  [
+    "Mahnomen County, Minnesota",
+    "964",
+    "13",
+    "27",
+    "087"
+  ],
+  [
+    "Morgan County, Alabama",
+    "20412",
+    "147",
+    "01",
+    "103"
+  ],
+  [
+    "Howard County, Arkansas",
+    "2346",
+    "50",
+    "05",
+    "061"
+  ],
+  [
+    "Gloucester County, New Jersey",
+    "44794",
+    "62",
+    "34",
+    "015"
+  ],
+  [
+    "Pickaway County, Ohio",
+    "8951",
+    "81",
+    "39",
+    "129"
+  ],
+  [
+    "Lewis and Clark County, Montana",
+    "12193",
+    "69",
+    "30",
+    "049"
+  ],
+  [
+    "Guadalupe County, New Mexico",
+    "949",
+    "196",
+    "35",
+    "019"
+  ],
+  [
+    "Skagway Municipality, Alaska",
+    "130",
+    "32",
+    "02",
+    "230"
+  ],
+  [
+    "Raleigh County, West Virginia",
+    "15077",
+    "111",
+    "54",
+    "081"
+  ],
+  [
+    "Leavenworth County, Kansas",
+    "11394",
+    "111",
+    "20",
+    "103"
+  ],
+  [
+    "Prairie County, Arkansas",
+    "1915",
+    "30",
+    "05",
+    "117"
+  ],
+  [
+    "Klamath County, Oregon",
+    "13849",
+    "42",
+    "41",
+    "035"
+  ],
+  [
+    "Bryan County, Oklahoma",
+    "8204",
+    "50",
+    "40",
+    "013"
+  ],
+  [
+    "McPherson County, South Dakota",
+    "677",
+    "62",
+    "46",
+    "089"
+  ],
+  [
+    "Bergen County, New Jersey",
+    "158415",
+    "35",
+    "34",
+    "003"
+  ],
+  [
+    "Marquette County, Wisconsin",
+    "3693",
+    "27",
+    "55",
+    "077"
+  ],
+  [
+    "Grant County, Kansas",
+    "962",
+    "81",
+    "20",
+    "067"
+  ],
+  [
+    "Montgomery County, New York",
+    "9020",
+    "71",
+    "36",
+    "057"
+  ],
+  [
+    "Harney County, Oregon",
+    "1736",
+    "65",
+    "41",
+    "025"
+  ],
+  [
+    "Foster County, North Dakota",
+    "734",
+    "15",
+    "38",
+    "031"
+  ],
+  [
+    "Shelby County, Iowa",
+    "2632",
+    "58",
+    "19",
+    "165"
+  ],
+  [
+    "North Slope Borough, Alaska",
+    "671",
+    "53",
+    "02",
+    "185"
+  ],
+  [
+    "Denver County, Colorado",
+    "81488",
+    "31",
+    "08",
+    "031"
+  ],
+  [
+    "Hawaii County, Hawaii",
+    "40272",
+    "36",
+    "15",
+    "001"
+  ],
+  [
+    "Morris County, Kansas",
+    "1355",
+    "22",
+    "20",
+    "127"
+  ],
+  [
+    "Denali Borough, Alaska",
+    "209",
+    "82",
+    "02",
+    "068"
+  ],
+  [
+    "Wheeler County, Georgia",
+    "1117",
+    "58",
+    "13",
+    "309"
+  ],
+  [
+    "Okfuskee County, Oklahoma",
+    "2115",
+    "33",
+    "40",
+    "107"
+  ],
+  [
+    "Blair County, Pennsylvania",
+    "24996",
+    "103",
+    "42",
+    "013"
+  ],
+  [
+    "Chase County, Kansas",
+    "637",
+    "12",
+    "20",
+    "017"
+  ],
+  [
+    "McDonald County, Missouri",
+    "3480",
+    "90",
+    "29",
+    "119"
+  ]
+]

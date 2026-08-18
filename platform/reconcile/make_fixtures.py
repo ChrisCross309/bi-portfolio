@@ -53,9 +53,13 @@ FIXTURE_ROOT = REPO_ROOT / "tests" / "fixtures"
 # A fixture must stay far below pre-commit's 2 MB ceiling; this is the alarm, not the limit.
 SIZE_WARN_BYTES = 1_500_000
 
-# 2011 lists the island areas with null estimates; 2024 is the newest. Two vintages is
-# enough to exercise the overlap caveat without carrying fifteen.
-FIXTURE_VINTAGES = ("2011", "2024")
+# 2011 lists the island areas with null estimates; 2024 is the newest. 2019 is here for
+# HLT-E5: its 2015-2019 window shares no sample year with 2024's 2020-2024, and a growth
+# comparison across overlapping vintages is the thing that model exists to refuse. Without a
+# second post-2017 vintage the comparison builds empty in CI and its logic goes unexercised
+# offline -- 2011 cannot stand in, because Census restructured the S0101 subject table at the
+# 2017 vintage and line 030 is median age before it, not a population.
+FIXTURE_VINTAGES = ("2011", "2019", "2024")
 # Non-Michigan counties per file: enough to prove the geography works, few enough to stay small.
 ACS_OTHER_ROWS = 40
 # Filers kept per year in the institution reference, and the count its metadata declares.
@@ -564,8 +568,9 @@ def write_acs_files(con: duckdb.DuckDBPyConnection) -> tuple[int, list[Path]]:
     `header_failures` checks before any of it is trusted as data. It is rebuilt from the
     same `DATASETS` definition the fetcher requests with, so the two cannot disagree.
 
-    Vintages 2011 and 2024: 2011 is the only vintage-dataset pair that enumerates the four
-    island areas, every estimate null, and those rows are the reason `valueless_rows` exists.
+    Vintages 2011, 2019 and 2024: 2011 is the only vintage-dataset pair that enumerates the
+    four island areas, every estimate null, and those rows are the reason `valueless_rows`
+    exists. 2019 and 2024 are the non-overlapping pair HLT-E5 measures 65+ growth across.
     All Michigan counties and all state rows are kept because the loader asserts both
     rosters -- a sample would fail its own check.
     """

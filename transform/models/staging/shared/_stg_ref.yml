@@ -42,13 +42,26 @@ models:
       ACS 5-year population aged 65 and over. HLT-E5's denominator. The figure is the
       publisher's own `S0101_C01_030E` and is deliberately **not** summed from the twelve
       `B01001` age components -- that would be aggregation, and it would disagree with the
-      number the Census Bureau publishes. Every caveat on `stg_ref__acs5_detailed` applies
-      here identically.
+      number the Census Bureau publishes. **Published only from the 2017 vintage onward**:
+      Census restructured the S0101 subject table that year and line 030 means median age
+      before it. Every caveat on `stg_ref__acs5_detailed` applies here identically.
     columns:
       - name: vintage
         data_tests: [not_null]
+      - name: population_65_plus_is_published
+        description: >
+          Whether line 030 is the 65-and-over population on this vintage. **False for
+          2010-2016**, where `S0101_C01_030E` is median age in years: across all 3,220
+          counties those vintages run 18.0 to 66.0 with a median near 40, against a median
+          near 5,000 and a maximum of 1,487,700 from 2017. Michigan's 83 counties sum to
+          3,480 in the 2010 vintage and 1,575,233 in 2017. The boundary is identical in
+          every state, so it is a publisher change and not a download gap.
+        data_tests: [not_null]
       - name: population_65_plus
-        description: "`S0101_C01_030E`, as published."
+        description: >
+          `S0101_C01_030E`, as published, and NULL wherever
+          `population_65_plus_is_published` is false rather than carrying a median age in a
+          column named for a population.
       - name: county_fips
         data_tests:
           - relationships:

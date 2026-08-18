@@ -1,0 +1,582 @@
+version: 2
+
+# Contracts enforced, and the column types below are generated from the built models
+# rather than typed by hand -- the same split PRs 7 and 8 made.
+#
+# Every model here carries the track's standing warnings in its own description, because
+# a reader arrives at one model and not at a preamble: these are aggregate files where a
+# row is a cell and never a person, nothing in them sums to a patient count, and it is
+# public aggregate data only -- no PHI, no re-identification, no individual-level
+# inference.
+#
+# And the one that is not optional: **neither HLT-E2 nor HLT-E3 measures dementia.** The
+# source that carried dementia prevalence and dementia-attributable spending at county
+# grain was retired by CMS effective 2026-06-15; both questions were re-scoped onto
+# Medicare Geographic Variation keeping their IDs, and they are care-burden and cost
+# measures. The track's genuinely cognitive content is HLT-E1 and HLT-E4, from CDC.
+
+models:
+  - name: fct_hlt_cdc_mi_vs_national
+    description: >
+      **HLT-E1 - HLT-E4.** Michigan beside the national estimate for every CDC indicator,
+      compared on **confidence intervals rather than point estimates**: two are treated as
+      distinguishable only when they do not overlap, so the model is allowed to return *no
+      significant difference*, and on subjective cognitive decline it does so in all 24
+      comparable cells. That is the finding, not a failure to find one. A row is a cell, never a
+      person. Direction over the prior cycle is withheld wherever an endpoint carries CDC's `**`
+      footnote -- estimates before and after 2019 are not comparable because the survey
+      questions changed -- or wherever the cycle spans several years.
+    columns:
+      - name: cycle_key
+        data_type: varchar
+        data_tests:
+          - not_null
+      - name: year_start
+        data_type: smallint
+      - name: year_end
+        data_type: smallint
+      - name: spans_multiple_years
+        data_type: boolean
+      - name: question_id
+        data_type: varchar
+        data_tests:
+          - not_null
+      - name: question
+        data_type: varchar
+      - name: class_id
+        data_type: varchar
+      - name: class
+        data_type: varchar
+      - name: indicator_family
+        data_type: varchar
+      - name: short_label
+        data_type: varchar
+      - name: higher_is_better
+        data_type: boolean
+      - name: is_cognitive_decline
+        data_type: boolean
+      - name: is_caregiving
+        data_type: boolean
+      - name: is_screening
+        data_type: boolean
+      - name: age_group
+        data_type: varchar
+      - name: stratification
+        data_type: varchar
+      - name: is_unstratified_second_dimension
+        data_type: boolean
+      - name: mi_value
+        data_type: double
+      - name: mi_low
+        data_type: double
+      - name: mi_high
+        data_type: double
+      - name: national_value
+        data_type: double
+      - name: national_low
+        data_type: double
+      - name: national_high
+        data_type: double
+      - name: gap_to_national
+        data_type: double
+      - name: national_fewer_than_50_states
+        data_type: boolean
+      - name: mi_not_comparable_pre_2019
+        data_type: boolean
+      - name: national_not_comparable_pre_2019
+        data_type: boolean
+      - name: is_comparable
+        data_type: boolean
+        description: >
+          Both sides present and both carrying a confidence interval. Anything less is not a
+          comparison; Michigan publishes no 2016 cognitive-decline row, so 2016 is stated as
+          `not comparable` rather than left as a gap.
+      - name: intervals_overlap
+        data_type: boolean
+      - name: significance
+        data_type: varchar
+        description: >
+          The raw comparison: `MI higher` - `MI lower` - `no significant difference` - `not
+          comparable`. Overlapping intervals are **not** a difference.
+        data_tests:
+          - accepted_values:
+              arguments:
+                values:
+                  - 'MI higher'
+                  - 'MI lower'
+                  - 'no significant difference'
+                  - 'not comparable'
+      - name: benchmark_verdict
+        data_type: varchar
+        description: >
+          `significance` with the indicator's polarity applied. NULL where the seed leaves
+          `higher_is_better` empty, because there is then no such thing as better.
+        data_tests:
+          - accepted_values:
+              arguments:
+                values:
+                  - 'MI better'
+                  - 'MI worse'
+                  - 'no significant difference'
+                  - 'not comparable'
+      - name: prior_cycle_key
+        data_type: varchar
+      - name: mi_prior_value
+        data_type: double
+      - name: mi_change_from_prior
+        data_type: double
+      - name: mi_direction
+        data_type: varchar
+        description: >
+          Michigan against its own prior **single-year** cycle. NULL for multi-year cycles and
+          `not comparable` across the 2019 survey-question change.
+        data_tests:
+          - accepted_values:
+              arguments:
+                values:
+                  - 'improving'
+                  - 'deteriorating'
+                  - 'no significant change'
+                  - 'not comparable'
+
+  - name: fct_hlt_cdc_indicators
+    description: >
+      Every CDC Alzheimer's & Healthy Aging indicator cell, typed, catalogued and flagged; the
+      level table behind HLT-E1, HLT-E4 and HLT-E5's indicator side. **A row is a cell --
+      indicator by place by cycle by stratification -- never a person**, and nothing here sums
+      to a patient count. Covers **adults 50 and older**: the only strata CDC publishes are
+      50-64, 65 or older, and Overall. **State grain only; this source has no county at all.**
+      `location_kind` is what stops a sum across states, regions and the nation at once.
+    columns:
+      - name: cycle_key
+        data_type: varchar
+        data_tests:
+          - not_null
+      - name: year_start
+        data_type: smallint
+      - name: year_end
+        data_type: smallint
+      - name: period_grain
+        data_type: varchar
+      - name: spans_multiple_years
+        data_type: boolean
+      - name: location_abbr
+        data_type: varchar
+      - name: location_desc
+        data_type: varchar
+      - name: location_kind
+        data_type: varchar
+        description: >
+          `state` - `district` - `territory` - `census_region` - `national`. `locationabbr`
+          mixes all five **as peers**, so summing it counts every state up to three times.
+        data_tests:
+          - accepted_values:
+              arguments:
+                values:
+                  - 'state'
+                  - 'district'
+                  - 'territory'
+                  - 'census_region'
+                  - 'national'
+                  - 'other'
+      - name: is_michigan
+        data_type: boolean
+      - name: class_id
+        data_type: varchar
+      - name: class
+        data_type: varchar
+      - name: topic
+        data_type: varchar
+      - name: question_id
+        data_type: varchar
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('seed_cdc_indicator_catalog')
+                field: question_id
+      - name: question
+        data_type: varchar
+      - name: indicator_family
+        data_type: varchar
+      - name: short_label
+        data_type: varchar
+      - name: higher_is_better
+        data_type: boolean
+        description: >
+          From `seed_cdc_indicator_catalog`, and **NULL where CDC's wording does not settle the
+          direction**. Two questions break their own class: `Q42` sits in Cognitive Decline but
+          asks whether decline was discussed with a professional, where higher is better, and
+          `Q22` sits in Screenings but reports blood-pressure prevalence, where it is worse.
+      - name: is_cognitive_decline
+        data_type: boolean
+      - name: is_caregiving
+        data_type: boolean
+      - name: is_screening
+        data_type: boolean
+      - name: age_group
+        data_type: varchar
+        description: >
+          `50-64 years` - `65 years or older` - `Overall`. This file covers adults **50 and
+          older**, not 45 and older.
+        data_tests:
+          - accepted_values:
+              arguments:
+                values:
+                  - '50-64 years'
+                  - '65 years or older'
+                  - 'Overall'
+      - name: stratification
+        data_type: varchar
+      - name: stratification_category
+        data_type: varchar
+      - name: is_overall_age_group
+        data_type: boolean
+      - name: is_unstratified_second_dimension
+        data_type: boolean
+      - name: data_value_type
+        data_type: varchar
+      - name: data_value_unit
+        data_type: varchar
+      - name: data_value
+        data_type: double
+      - name: low_confidence_limit
+        data_type: double
+      - name: high_confidence_limit
+        data_type: double
+      - name: is_suppressed
+        data_type: boolean
+        description: >
+          No value published. A different question from `has_footnote`: a footnote can also
+          annotate a value that is present.
+      - name: has_confidence_interval
+        data_type: boolean
+      - name: footnote_symbol
+        data_type: varchar
+      - name: footnote_text
+        data_type: varchar
+      - name: is_not_comparable_pre_2019
+        data_type: boolean
+        description: >
+          CDC's `**` footnote: the survey questions changed, so an estimate from 2019 on cannot
+          be compared with an earlier one. 1,057 valued rows carry it, **every one of them in
+          the Caregiving class** -- nationally the dementia-caregiving question jumps 13.6 to
+          28.5 across that boundary for this reason alone.
+      - name: is_fewer_than_50_states_reporting
+        data_type: boolean
+      - name: is_regional_estimate
+        data_type: boolean
+
+  - name: fct_hlt_medicare_service_county
+    description: >
+      **HLT-E2.** Michigan county use of long-term-care services against the national rate.
+      **This is not a dementia measure.** CMS retired the only public file carrying dementia
+      prevalence at county grain effective 2026-06-15 and the question was re-scoped keeping its
+      ID; skilled nursing, home health, hospice, inpatient rehabilitation and long-term care
+      hospital use are a long-term-care burden measure, dementia is one driver of that burden
+      among others, and no number here can support a claim about dementia. **A row is a
+      geographic aggregate, never a beneficiary**, and the spending is **fee-for-service only**
+      -- Medicare Advantage beneficiaries are counted but their utilization is not in this file.
+      Both sides of every comparison are all-ages, because CMS publishes county rows at that age
+      level only.
+    columns:
+      - name: measure_year
+        data_type: smallint
+      - name: period_key
+        data_type: varchar
+      - name: period_grain
+        data_type: varchar
+      - name: county_fips
+        data_type: varchar
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_geography_county')
+                field: county_fips
+      - name: county_name
+        data_type: varchar
+      - name: cms_county_label
+        data_type: varchar
+      - name: is_michigan
+        data_type: boolean
+      - name: is_unassigned_county
+        data_type: boolean
+      - name: age_level
+        data_type: varchar
+        description: >
+          Always `All`. CMS publishes county rows at that level only, so the national benchmark
+          is taken at `All` too -- stated as a column rather than assumed.
+        data_tests:
+          - accepted_values:
+              arguments:
+                values:
+                  - 'All'
+      - name: service_code
+        data_type: varchar
+        data_tests:
+          - accepted_values:
+              arguments:
+                values:
+                  - 'SNF'
+                  - 'HH'
+                  - 'HOSPC'
+                  - 'IRF'
+                  - 'LTCH'
+      - name: service_name
+        data_type: varchar
+      - name: measure_kind
+        data_type: varchar
+      - name: is_standardized
+        data_type: boolean
+      - name: county_value
+        data_type: double
+      - name: national_value
+        data_type: double
+      - name: ratio_to_national
+        data_type: double
+      - name: gap_to_national
+        data_type: double
+      - name: is_suppressed
+        data_type: boolean
+        description: >
+          CMS withheld a small cell. **Not zero and not absent** -- see `is_true_zero`.
+      - name: is_true_zero
+        data_type: boolean
+        description: >
+          The service was published as genuinely unused. Long-term care hospitals carry 125 of
+          these across Michigan's county-years alongside 462 suppressed cells, which is why the
+          two can never be collapsed into one another.
+      - name: national_is_suppressed
+        data_type: boolean
+      - name: service_suppressed_cells
+        data_type: bigint
+      - name: service_suppressed_pct
+        data_type: double
+      - name: is_small_cell_service
+        data_type: boolean
+        description: >
+          A third or more of this service's Michigan county-years are suppressed, so it will not
+          support a county ranking. True for long-term care hospitals, where **half** the cells
+          are withheld, and for inpatient rehabilitation.
+      - name: ma_participation_rate
+        data_type: double
+        description: >
+          Carried on every row because the spending is fee-for-service: a county with high
+          Medicare Advantage penetration looks different for reasons unrelated to cost of care.
+      - name: ffs_beneficiary_denominator
+        data_type: double
+
+  - name: fct_hlt_medicare_cost_annual
+    description: >
+      **HLT-E3.** Standardized Medicare cost per fee-for-service beneficiary by jurisdiction,
+      year and age level, nominal and in constant dollars. **This is not a dementia measure** --
+      the question originally asked what a beneficiary with dementia costs against one without,
+      the source carrying that was retired by CMS effective 2026-06-15, and what remains has no
+      condition dimension whatever. A state question rather than a county one, because the
+      65-and-over slice exists only at state and national level. **The three age levels double
+      count**: `<65` and `>=65` sum to their own `All`. Spending is fee-for-service only.
+    columns:
+      - name: measure_year
+        data_type: smallint
+        data_tests:
+          - not_null
+      - name: period_key
+        data_type: varchar
+      - name: period_grain
+        data_type: varchar
+      - name: geo_level
+        data_type: varchar
+      - name: geo_code
+        data_type: varchar
+      - name: geo_description
+        data_type: varchar
+      - name: state_name
+        data_type: varchar
+      - name: is_jurisdiction
+        data_type: boolean
+        description: >
+          False for `Territory` and `ZZ`, CMS's own aggregates at State level, both published
+          with a NULL geo_code. Kept rather than dropped, so a total still reconciles.
+      - name: is_michigan
+        data_type: boolean
+      - name: age_level
+        data_type: varchar
+        description: >
+          **Filter to one.** `<65` and `>=65` sum to their own `All`, so combining them returns
+          a jurisdiction total at twice its true size. HLT-E3 is the `>=65` slice.
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values:
+                  - 'All'
+                  - '<65'
+                  - '>=65'
+      - name: cost_per_capita
+        data_type: double
+      - name: national_cost_per_capita
+        data_type: double
+      - name: gap_to_national
+        data_type: double
+      - name: cost_per_capita_constant
+        data_type: double
+      - name: national_cost_per_capita_constant
+        data_type: double
+      - name: gap_to_national_constant
+        data_type: double
+        description: >
+          Michigan sat **$250 above** national for 65-and-over beneficiaries in 2019 and **$374
+          below** in 2024: the gap changed sign, crossing zero in 2022. A movement in relative
+          standardized cost, and not a statement about dementia or quality of care.
+      - name: constant_dollar_base_year
+        data_type: integer
+      - name: ma_participation_rate
+        data_type: double
+      - name: ffs_beneficiary_denominator
+        data_type: double
+      - name: benes_total_cnt
+        data_type: double
+      - name: bene_avg_age
+        data_type: double
+      - name: bene_dual_eligible_pct
+        data_type: double
+      - name: is_suppressed
+        data_type: boolean
+
+  - name: fct_hlt_mi_population_65_plus
+    description: >
+      **HLT-E5, the need side.** Michigan's 65-and-over population by county and ACS vintage.
+      **These are estimates, not projections** -- ACS measures the population that already
+      exists, and nothing in this repo forecasts. Overlapping vintages are not a time series:
+      consecutive ones share four years of sample, so only every fifth is independent and
+      `is_non_overlapping_with_prior` marks those. Vintages before 2017 are absent because
+      Census restructured the S0101 table that year and the column means median age before it.
+    columns:
+      - name: vintage
+        data_type: varchar
+      - name: vintage_year
+        data_type: smallint
+      - name: vintage_window_start
+        data_type: smallint
+      - name: vintage_window_end
+        data_type: smallint
+      - name: vintage_label
+        data_type: varchar
+      - name: county_fips
+        data_type: varchar
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_geography_county')
+                field: county_fips
+      - name: county_name
+        data_type: varchar
+      - name: is_michigan
+        data_type: boolean
+      - name: population_65_plus
+        data_type: bigint
+        data_tests:
+          - not_null
+      - name: population_65_plus_margin
+        data_type: bigint
+      - name: is_controlled_estimate
+        data_type: boolean
+      - name: state_population_65_plus
+        data_type: hugeint
+      - name: counties_reporting
+        data_type: bigint
+      - name: county_share_of_state_pct
+        data_type: double
+      - name: is_non_overlapping_with_prior
+        data_type: boolean
+        description: >
+          This vintage's five-year window shares no sample year with the previous one. Only
+          these may be differenced; consecutive vintages mostly re-measure the same responses.
+
+  - name: rpt_hlt_need_vs_capacity
+    description: >
+      **HLT-E5.** Michigan's 65-and-over population growth beside the direction of each
+      screening and care indicator. The two are on different scales -- a percentage change in a
+      count against a movement in percentage points of a survey estimate -- so only their
+      **directions** are compared and no ratio between them is published. The ACS window and the
+      CDC cycle never coincide, which `windows_are_aligned` states per row. Neither side
+      measures dementia.
+    columns:
+      - name: question_id
+        data_type: varchar
+        data_tests:
+          - not_null
+      - name: question
+        data_type: varchar
+      - name: class_id
+        data_type: varchar
+      - name: indicator_family
+        data_type: varchar
+      - name: short_label
+        data_type: varchar
+      - name: higher_is_better
+        data_type: boolean
+      - name: age_group
+        data_type: varchar
+      - name: from_vintage
+        data_type: smallint
+      - name: to_vintage
+        data_type: smallint
+      - name: population_window_from
+        data_type: varchar
+      - name: population_window_to
+        data_type: varchar
+      - name: population_from
+        data_type: hugeint
+      - name: population_to
+        data_type: hugeint
+      - name: population_change
+        data_type: hugeint
+      - name: population_change_pct
+        data_type: double
+        description: >
+          Michigan's 65-and-over population grew **12.6%** between the 2015-2019 and 2020-2024
+          windows.
+      - name: windows_are_non_overlapping
+        data_type: boolean
+      - name: indicator_from_cycle
+        data_type: varchar
+      - name: indicator_to_cycle
+        data_type: varchar
+      - name: indicator_window
+        data_type: varchar
+      - name: cycles_available
+        data_type: bigint
+      - name: indicator_from_value
+        data_type: double
+      - name: indicator_to_value
+        data_type: double
+      - name: indicator_change_pp
+        data_type: double
+        description: >
+          Percentage **points**, not percent, and not comparable in magnitude to
+          `population_change_pct`. Only the directions are compared.
+      - name: straddles_2019_break
+        data_type: boolean
+      - name: indicator_direction
+        data_type: varchar
+      - name: windows_are_aligned
+        data_type: boolean
+        description: >
+          False on every row: an ACS 5-year window and a CDC survey cycle never coincide.
+          Published so a reader sees the mismatch at the point of use.
+      - name: need_vs_capacity_verdict
+        data_type: varchar
+        description: >
+          `need outpacing capacity` - `capacity keeping pace` - `need not growing` - `not
+          comparable`. NULL where the indicator's polarity is undefined.
+        data_tests:
+          - accepted_values:
+              arguments:
+                values:
+                  - 'need outpacing capacity'
+                  - 'capacity keeping pace'
+                  - 'need not growing'
+                  - 'not comparable'
