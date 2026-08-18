@@ -69,6 +69,8 @@ models:
         enforced: true
       insurance:
         +schema: mart_ins
+      fintech:
+        +schema: mart_fin
 
 seeds:
   bi_portfolio:
@@ -101,3 +103,8 @@ vars:
   # INS-E3's event-driven share moves with this, which is why it is a variable and why the
   # drill bank asks for 30, 60 and 90 rather than a single number.
   event_attribution_grace_days: 30
+  # A CFPB month is publication-complete when the share of its complaints still awaiting a
+  # company response falls below this. Measured rather than assumed: the pending share runs
+  # 0.06% in May 2026, 17.7% in June and 54.9% in July, so the boundary is visible in the
+  # data and moves on its own as the archive refreshes.
+  publication_pending_threshold_pct: 1.0

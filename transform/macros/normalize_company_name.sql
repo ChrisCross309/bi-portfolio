@@ -12,8 +12,14 @@
   rate that looks plausible and is wrong, which is the failure FIN-E5 has to be able to
   defend against.
 
-  Deliberately not done here: fuzzy or token-set matching. That belongs with the model that
-  reports a match rate and an unmatched bucket, where its cost can be measured.
+  Deliberately not done here: fuzzy or token-set matching, and any attempt to resolve
+  corporate hierarchy. CFPB names the holding company where HMDA names the filing subsidiary
+  -- "JPMORGAN CHASE & CO." against "JPMorgan Chase Bank, National Association", "WELLS FARGO
+  & COMPANY" against "Wells Fargo Bank, National Association" -- and that is the largest
+  single cause of the unmatched bucket, not a shortcoming of the string rule. Widening the
+  suffix list to close it was tried and made the match rate worse, because stripping more
+  tokens collapses distinct institutions together. rpt_fin_entity_match_rate publishes what
+  the gap costs instead of papering over it.
 #}
 {% macro normalize_company_name(column) -%}
     NULLIF(

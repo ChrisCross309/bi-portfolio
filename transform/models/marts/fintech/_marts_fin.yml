@@ -1,0 +1,205 @@
+version: 2
+
+# Contracts enforced, column types generated from the built models -- see _marts_ins.yml.
+
+models:
+  - name: fct_fin_complaints_monthly_geo
+    description: >
+      **FIN-E1 · FIN-E2.** Complaints by month, county and product family, national, with the ACS population whose five-year window contains the complaint year. Counts are **fractional** because they are allocated from ZIP, and rounding them would break the property that they re-sum exactly to the state totals. Recent months are incomplete by design -- join `rpt_fin_publication_window` and filter on `is_publication_complete` before trending, or the newest month always shows a fall that is a publication artifact. This is complaints **to the CFPB**, not consumer dissatisfaction: those referred to other regulators, including depositories under $10 billion, are absent entirely.
+    columns:
+      - name: year_month
+        data_type: varchar
+      - name: received_year
+        data_type: smallint
+      - name: state_code
+        data_type: varchar
+      - name: county_fips
+        data_type: varchar
+      - name: county_name
+        data_type: varchar
+      - name: is_michigan
+        data_type: boolean
+      - name: geography_kind
+        data_type: varchar
+      - name: product_family
+        data_type: varchar
+      - name: allocation_method
+        data_type: varchar
+      - name: allocated_complaints
+        data_type: double
+      - name: allocated_timely
+        data_type: double
+      - name: allocated_relief
+        data_type: double
+      - name: allocated_pending
+        data_type: double
+      - name: allocated_older_american
+        data_type: double
+      - name: county_population
+        data_type: bigint
+      - name: population_vintage_window
+        data_type: varchar
+      - name: population_is_extrapolated
+        data_type: boolean
+      - name: complaints_per_100k
+        data_type: double
+      - name: is_small_cell
+        data_type: boolean
+
+  - name: fct_fin_complaints_monthly_company
+    description: >
+      **FIN-E3.** Complaints by month, state, company and product family with response outcomes. State grain rather than county on purpose -- FIN-E3 asks about companies serving Michigan, which is not a county question. Rates are computed over **closed** complaints only: 592,496 are still In progress, and including them understates every rate by more in a recent window than an old one.
+    columns:
+      - name: year_month
+        data_type: varchar
+      - name: received_year
+        data_type: smallint
+      - name: state_code
+        data_type: varchar
+      - name: is_michigan
+        data_type: boolean
+      - name: company_name
+        data_type: varchar
+      - name: product_family
+        data_type: varchar
+      - name: complaint_count
+        data_type: bigint
+      - name: closed_complaints
+        data_type: bigint
+      - name: pending_complaints
+        data_type: bigint
+      - name: timely_count
+        data_type: bigint
+      - name: relief_count
+        data_type: bigint
+      - name: monetary_relief_count
+        data_type: bigint
+      - name: non_monetary_relief_count
+        data_type: bigint
+      - name: relief_unspecified_count
+        data_type: bigint
+      - name: untimely_count
+        data_type: bigint
+      - name: older_american_count
+        data_type: bigint
+      - name: servicemember_count
+        data_type: bigint
+      - name: narrative_count
+        data_type: bigint
+      - name: timely_rate_pct
+        data_type: double
+      - name: relief_rate_pct
+        data_type: double
+      - name: is_small_cell
+        data_type: boolean
+
+  - name: fct_fin_hmda_annual
+    description: >
+      **FIN-E4.** Michigan mortgage applications by year, county, lender and loan characteristics. Annual grain because HMDA is annual. **Fair lending: HMDA carries no credit score and no debt-to-income underwriting detail, so any denial-rate difference here is a descriptive gap warranting review and never evidence of discrimination.** The national benchmark is not in this table -- raw is Michigan-only by decision, so it comes from the publisher's own aggregation endpoint recorded in the manifest.
+    columns:
+      - name: activity_year
+        data_type: smallint
+      - name: county_fips
+        data_type: varchar
+      - name: county_name
+        data_type: varchar
+      - name: is_michigan
+        data_type: boolean
+      - name: has_no_reported_county
+        data_type: boolean
+      - name: lei
+        data_type: varchar
+      - name: institution_name
+        data_type: varchar
+      - name: loan_purpose_label
+        data_type: varchar
+      - name: loan_type_label
+        data_type: varchar
+      - name: lien_status_label
+        data_type: varchar
+      - name: occupancy_type_label
+        data_type: varchar
+      - name: construction_method_label
+        data_type: varchar
+      - name: applicant_age_band
+        data_type: varchar
+      - name: applicant_race_label
+        data_type: varchar
+      - name: applicant_ethnicity_label
+        data_type: varchar
+      - name: applicant_sex_label
+        data_type: varchar
+      - name: dti_band
+        data_type: varchar
+      - name: application_count
+        data_type: bigint
+      - name: decided_applications
+        data_type: bigint
+      - name: originated_count
+        data_type: bigint
+      - name: approved_not_accepted_count
+        data_type: bigint
+      - name: denied_count
+        data_type: bigint
+      - name: withdrawn_count
+        data_type: bigint
+      - name: closed_incomplete_count
+        data_type: bigint
+      - name: purchased_count
+        data_type: bigint
+      - name: preapproval_count
+        data_type: bigint
+      - name: originated_amount
+        data_type: double
+      - name: application_amount
+        data_type: double
+      - name: median_originated_amount
+        data_type: double
+      - name: median_applicant_income
+        data_type: double
+      - name: partially_exempt_count
+        data_type: bigint
+      - name: denial_rate_pct
+        data_type: double
+      - name: is_small_cell
+        data_type: boolean
+
+  - name: rpt_fin_entity_match_rate
+    description: >
+      **FIN-E5's honesty column.** How well the CFPB-company-to-HMDA-LEI match worked, stated four ways, because they disagree and each is misleading alone. Published so the peer comparison can be read with its own coverage attached rather than presenting whatever happened to join as though it were everything.
+    columns:
+      - name: coverage_basis
+        data_type: varchar
+      - name: matched
+        data_type: hugeint
+      - name: total
+        data_type: hugeint
+      - name: coverage_pct
+        data_type: double
+      - name: interpretation
+        data_type: varchar
+
+  - name: rpt_fin_publication_window
+    description: >
+      Which CFPB months are safe to report on. A complaint publishes only after the company responds or fifteen days elapse, so recent months are incomplete **by design**. Completeness is measured from the data -- the share still marked In progress -- rather than assumed from a fixed lag, so the boundary moves on its own as the archive refreshes.
+    columns:
+      - name: year_month
+        data_type: varchar
+      - name: first_received
+        data_type: date
+      - name: last_received
+        data_type: date
+      - name: complaint_count
+        data_type: bigint
+      - name: pending_count
+        data_type: bigint
+      - name: pending_pct
+        data_type: double
+      - name: is_calendar_month_over
+        data_type: boolean
+      - name: is_publication_complete
+        data_type: boolean
+      - name: pending_threshold_pct
+        data_type: decimal(2,1)
+      - name: is_latest_complete_month
+        data_type: boolean
