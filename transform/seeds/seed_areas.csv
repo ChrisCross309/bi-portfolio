@@ -2,3 +2,6 @@ state_fips,state_code,area_name,entity_type,source_doc
 64,FM,Federated States of Micronesia,freely_associated_state,https://www.huduser.gov/portal/dataset/uspszip-api.html
 68,MH,Marshall Islands,freely_associated_state,https://www.huduser.gov/portal/dataset/uspszip-api.html
 70,PW,Palau,freely_associated_state,https://www.huduser.gov/portal/dataset/uspszip-api.html
+AA,AA,Armed Forces Americas,military_post,https://pe.usps.com/text/pub28/28apb.htm
+AE,AE,Armed Forces Europe,military_post,https://pe.usps.com/text/pub28/28apb.htm
+AP,AP,Armed Forces Pacific,military_post,https://pe.usps.com/text/pub28/28apb.htm
