@@ -1,0 +1,259 @@
+version: 2
+
+models:
+  - name: dim_date
+    description: >
+      Day-grain calendar, 1953-01-01 to 2029-12-31. **Only join this from a source that is
+      genuinely daily** -- CFPB complaints and the NFIP date columns. Annual and
+      survey-cycle sources join `dim_period` instead, which is what stops an annual figure
+      from acquiring a day it never had (CLAUDE.md section 8). The span is set by the data:
+      FEMA's earliest declaration is 1953-05-02 and NFIP policy terms run to 2029-08-29.
+    config:
+      contract:
+        enforced: true
+    columns:
+      - name: date_day
+        data_type: date
+        description: The calendar day. Grain of this table.
+        constraints: [{type: not_null}]
+        data_tests: [unique]
+      - name: date_key
+        data_type: integer
+        description: YYYYMMDD, for a compact join key.
+        constraints: [{type: not_null}]
+        data_tests: [unique]
+      - name: calendar_year
+        data_type: smallint
+        constraints: [{type: not_null}]
+      - name: calendar_quarter
+        data_type: tinyint
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: [1, 2, 3, 4]
+                quote: false
+      - name: calendar_month
+        data_type: tinyint
+      - name: month_name
+        data_type: varchar
+      - name: year_month
+        data_type: varchar
+        description: "`YYYY-MM`, matching `dim_period.period_key` at month grain."
+      - name: year_quarter
+        data_type: varchar
+      - name: month_start
+        data_type: date
+      - name: month_end
+        data_type: date
+      - name: quarter_start
+        data_type: date
+      - name: year_start
+        data_type: date
+      - name: day_of_year
+        data_type: smallint
+      - name: iso_day_of_week
+        data_type: tinyint
+      - name: day_name
+        data_type: varchar
+      - name: iso_week
+        data_type: tinyint
+      - name: is_weekend
+        data_type: boolean
+      - name: is_month_end
+        data_type: boolean
+
+  - name: dim_period
+    description: >
+      One row per reporting period at the grain its publisher actually reports.
+      **This is where honest grain is structural rather than remembered.** A mart joins the
+      rows of its own grain, so an annual measure has no monthly key available to be
+      presented at -- not by convention, but because none exists for it. Grains: `month`
+      (CPI-U, monthly rollups of CFPB), `year` (CMS 2014-2024, HMDA 2018-2025, ACS vintages,
+      and back to 1913 because the CPI-U deflator does), and `survey_cycle` (CDC). Two of
+      CDC's ten cycles span several years -- 2019-2022 and 2021-2022, 9,261 rows between
+      them -- and `spans_multiple_years` flags them because a multi-year cycle describes its
+      whole window and must never be plotted as a point on its final year.
+    config:
+      contract:
+        enforced: true
+    columns:
+      - name: grain
+        data_type: varchar
+        description: "`month`, `year` or `survey_cycle`. The grain a mart is declaring."
+        constraints: [{type: not_null}]
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ['month', 'year', 'survey_cycle']
+      - name: period_key
+        data_type: varchar
+        description: Unique within a grain, never across grains -- 2024 is both a year and a cycle.
+        constraints: [{type: not_null}]
+      - name: period_start
+        data_type: date
+        constraints: [{type: not_null}]
+      - name: period_end
+        data_type: date
+        description: The last day the period covers. For a multi-year cycle this is years after the start.
+        constraints: [{type: not_null}]
+      - name: period_label
+        data_type: varchar
+      - name: calendar_year
+        data_type: smallint
+        description: >
+          The final year of the window, and a label of convenience only. For a multi-year
+          survey cycle it is **not** the year the estimate describes; check
+          `spans_multiple_years` before using it as one.
+      - name: spans_multiple_years
+        data_type: boolean
+        description: True where the period covers more than one calendar year. Every such row needs a caveat.
+
+  - name: dim_state
+    description: >
+      The 56 states, DC and territories from `platform/reference/state_codes.csv` -- the same
+      file `ingest.common.load_state_codes` reads and every L1 partition check rests on --
+      plus the three postal areas that are none of those. Census region and division come
+      with it, which is what INS-E2's national median and HLT-E1's peer comparison need.
+    config:
+      contract:
+        enforced: true
+    columns:
+      - name: state_code
+        data_type: varchar
+        description: Two-letter postal code.
+        constraints: [{type: not_null}]
+        data_tests: [unique]
+      - name: state_fips
+        data_type: varchar
+        description: Two-digit FIPS, zero-padded. Alaska is `02`, and typing it as an integer breaks every join.
+        constraints: [{type: not_null}]
+        data_tests: [unique]
+      - name: state_name
+        data_type: varchar
+        constraints: [{type: not_null}]
+      - name: entity_type
+        data_type: varchar
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ['state', 'district', 'territory', 'freely_associated_state']
+      - name: census_region
+        data_type: varchar
+      - name: census_region_name
+        data_type: varchar
+      - name: census_division
+        data_type: varchar
+      - name: census_division_name
+        data_type: varchar
+      - name: is_us_jurisdiction
+        data_type: boolean
+        description: >
+          False for FM, MH and PW. They are sovereign nations with US postal service, not US
+          territories -- which is why they are absent from the state reference and why the
+          ingestion layer counts them as nonstandard partition keys, deliberately.
+      - name: is_michigan
+        data_type: boolean
+
+  - name: dim_geography_county
+    description: >
+      Every county key any landed source references, national. Built from all fifteen ACS
+      vintages rather than the newest, because the 2022 vintage replaced Connecticut's eight
+      counties with nine planning regions and Alaska has split boroughs twice -- so a roster
+      from the current vintage alone leaves 18 NFIP keys, 65 CMS keys and 11 HUD keys with
+      nowhere to join. Three populations ACS will never contain are added and labelled:
+      the `XX000` unassigned buckets, the island areas (NFIP has 3,513 claims there, and
+      INS-E5 ties to FEMA totals that include them), and codes retired before 2010.
+      National on purpose -- a Michigan-only dimension would force a `WHERE state = 'MI'`
+      inside a mart, which CLAUDE.md section 4 calls the likeliest scope bug in the repo.
+    config:
+      contract:
+        enforced: true
+    columns:
+      - name: county_fips
+        data_type: varchar
+        description: Five-digit state+county FIPS as every publisher here writes it. Grain of this table.
+        constraints: [{type: not_null}]
+        data_tests: [unique]
+      - name: state_fips
+        data_type: varchar
+        constraints: [{type: not_null}]
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('dim_state')
+                field: state_fips
+      - name: county_fips_3
+        data_type: varchar
+        description: The county half alone, which is how ACS stores it.
+      - name: state_code
+        data_type: varchar
+      - name: state_name
+        data_type: varchar
+      - name: county_name
+        data_type: varchar
+        description: >
+          Bare name for an axis label. NULL where no publisher here names the geography --
+          most island areas. The unassigned buckets carry CMS's own `XX-UNKNOWN` label.
+      - name: county_name_full
+        data_type: varchar
+        description: As ACS published it, e.g. "Alcona County, Michigan". NULL outside the ACS roster.
+      - name: geography_kind
+        data_type: varchar
+        constraints: [{type: not_null}]
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ['county', 'unknown_county', 'island_area', 'retired']
+      - name: is_reportable_county
+        data_type: boolean
+        description: >
+          True only for `county`. **This is the filter a county-grain measure wants** --
+          it excludes the unassigned buckets and the unnamed island areas without dropping
+          them from the dimension, so a denominator can state what it left out.
+      - name: is_michigan
+        data_type: boolean
+        description: 84 rows -- Michigan's 83 counties plus its `26000` unassigned bucket.
+      - name: first_vintage
+        data_type: varchar
+      - name: last_vintage
+        data_type: varchar
+        description: The most recent ACS vintage naming this FIPS. 2021 for Connecticut's old counties.
+      - name: is_current_vintage
+        data_type: boolean
+        description: >
+          False means the boundary moved. Connecticut's counties and Alaska's retired
+          census areas read False, and that is a boundary change rather than a data error.
+      - name: geography_note
+        data_type: varchar
+
+seeds:
+  - name: seed_survey_cycles
+    description: >
+      CDC's ten Alzheimer's & Healthy Aging survey cycles. Seeded rather than derived from
+      the CDC table so a conformed dimension does not reach into a track's source for its own
+      definition; the health staging PR adds the test that this still matches what CDC
+      publishes.
+    columns:
+      - name: cycle_key
+        data_tests: [unique, not_null]
+
+  - name: seed_areas
+    description: >
+      The three postal areas absent from `state_codes.csv`: Micronesia, the Marshall Islands
+      and Palau. Sovereign nations with US postal service, established while landing the HUD
+      crosswalk, which serves them. Kept out of the state reference on purpose so the
+      ingestion layer keeps flagging them as nonstandard.
+    columns:
+      - name: state_fips
+        data_tests: [unique, not_null]
+      - name: state_code
+        data_tests: [unique, not_null]
+
+  - name: seed_county_exceptions
+    description: >
+      County keys that landed data references and no ACS vintage names, where another
+      publisher does name them. Only the three US Virgin Islands counties qualify today, from
+      CMS Geographic Variation. Everything else unnamed stays NULL rather than being invented.
+    columns:
+      - name: county_fips
+        data_tests: [unique, not_null]
