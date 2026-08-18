@@ -181,7 +181,7 @@ def test_every_spec_is_backed_by_a_registry_entry() -> None:
 def test_every_raw_source_is_registered_in_l1() -> None:
     """All twelve. A source that lands but is never verified is the gap this closes."""
     assert {s.source for s in SOURCES} == {s.source for s in RAW_SOURCES}
-    assert len(SOURCES) == 12
+    assert len(SOURCES) == 13
 
 
 # ── landing resolution ────────────────────────────────────────────────────────
@@ -382,7 +382,7 @@ def test_fixture_mode_load_and_l1_pass_offline() -> None:
     from ingest.health import cdc as cdc_module
     from ingest.health import cms
     from ingest.insurance import fema_declarations, nfip_policies
-    from ingest.shared import bls, census
+    from ingest.shared import bls, census, hud_crosswalk
     from reconcile import l1_integrity
 
     for module in (
@@ -395,6 +395,7 @@ def test_fixture_mode_load_and_l1_pass_offline() -> None:
         cms,
         bls,
         census,
+        hud_crosswalk,
     ):
         assert module.main(["--mode", "fixture"]) == 0, module.__name__
     assert l1_integrity.main(["--mode", "fixture"]) == 0

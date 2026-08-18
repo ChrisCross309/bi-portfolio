@@ -77,9 +77,33 @@ Four caveats that change how every FIN measure must be worded:
 - **Some ZIP codes are masked**, and they stay as text per the all-varchar rule.
 
 **There is no county column at all.** CFPB publishes state and ZIP only, so FIN-E1's county grain
-needs a ZIP-to-county crosswalk in session 2 — ZIPs cross county lines, so that will be an
-allocation with a stated rule, not a lookup. The Michigan geography gate reports this outright
-rather than leaving it to be discovered during modelling.
+comes from the HUD USPS ZIP-to-county crosswalk, landed as a domain-neutral `shared` reference
+alongside the population denominators and the deflator. The Michigan geography gate reports the gap
+outright rather than leaving it to be discovered during modelling.
+
+### The allocation rule, stated up front
+
+**381 of Michigan's 1,102 ZIP codes — 34.6% — cross a county line.** A ZIP is a postal delivery
+route, not an area, so turning one into a county is a weighted allocation, never a lookup. HUD
+publishes the weights: the share of each ZIP's residential, business and other addresses falling in
+each county, rebuilt quarterly from USPS delivery data. The rule this track uses, and states on
+every county-grain complaint measure:
+
+1. A complaint with a full 5-digit ZIP is allocated across counties by **`res_ratio`**, the
+   residential address share — a complaint is filed by a household, so that is the right weight.
+2. **3,571 ZIPs nationally have no residential addresses at all** — PO-box and business-only ZIPs,
+   where `res_ratio` sums to zero. Those fall back to **`tot_ratio`**, all address types.
+   **67 Michigan complaints sit in such a ZIP**, and a rule using `res_ratio` alone would silently
+   drop every one of them.
+3. A complaint whose ZIP is masked to three digits is allocated by the weighted aggregate of every
+   ZIP sharing that prefix. One with no usable ZIP lands in an explicit **unallocated** bucket.
+
+Counts are therefore **fractional and never rounded up**, and the allocated county counts re-sum
+exactly to the state total. Michigan ZIPs split 337,178 full · 27,820 masked to three digits ·
+1,728 fully masked · 8 null · 1 malformed, so roughly 92% allocate directly.
+
+The crosswalk moves each quarter, so a figure allocated with one vintage is not identical to the
+same figure allocated with the next; the vintage that served each run is recorded in its manifest.
 
 ## Why HMDA raw is Michigan only
 

@@ -57,6 +57,7 @@ SOURCES: tuple[RawSource, ...] = (
     RawSource("shared", "acs5_subject", "raw.ref_acs5_subject", "vintage"),
     RawSource("shared", "cpi_u", "raw.ref_cpi_u", "year"),
     RawSource("shared", "cpi_u_series", "raw.ref_cpi_u_series", "seasonal"),
+    RawSource("shared", "zip_county_crosswalk", "raw.ref_zip_county_crosswalk", "state"),
 )
 
 

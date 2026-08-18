@@ -1,0 +1,25 @@
+{
+  "crosswalk_name": "zip-county",
+  "crosswalk_type": "2",
+  "documentation_url": "https://www.huduser.gov/portal/dataset/uspszip-api.html",
+  "endpoint": "https://www.huduser.gov/hudapi/public/usps",
+  "note": "HUD documents this API on a portal page rather than as machine-readable field metadata, and that page answers non-browser clients with HTTP 202 and an empty body. This is a pointer file, per CLAUDE.md rule 8, plus the field names the API actually returned.",
+  "response_fields": [
+    "crosswalk_type",
+    "input",
+    "quarter",
+    "year"
+  ],
+  "retrieved_at": "2026-08-17T22:48:32.055149Z",
+  "row_fields": [
+    "zip",
+    "geoid",
+    "city",
+    "state",
+    "res_ratio",
+    "bus_ratio",
+    "oth_ratio",
+    "tot_ratio"
+  ],
+  "terms_url": "https://www.huduser.gov/portal/dataset/api-terms-of-service.html"
+}

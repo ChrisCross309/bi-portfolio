@@ -46,6 +46,7 @@ health:
 shared:
     uv run python -m ingest.shared.census
     uv run python -m ingest.shared.bls
+    uv run python -m ingest.shared.hud_crosswalk
     uv run python -m reconcile.l1_integrity --track shared
 
 # all four tracks, in any order
@@ -84,6 +85,7 @@ ci:
     uv run python -m ingest.health.cms --mode fixture
     uv run python -m ingest.shared.bls --mode fixture
     uv run python -m ingest.shared.census --mode fixture
+    uv run python -m ingest.shared.hud_crosswalk --mode fixture
     uv run python -m ingest.reload --mode fixture
     uv run python -m reconcile.l1_integrity --mode fixture
     uv run dbt build --project-dir transform --target ci

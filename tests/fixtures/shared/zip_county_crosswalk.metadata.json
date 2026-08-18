@@ -1,0 +1,6 @@
+{
+  "_comment": "Stratified sample of raw.ref_zip_county_crosswalk, rebuilt by `just fixture` from local raw and wrapped in HUD's own response envelope. Not a live publisher response.",
+  "spot_check_note": "Michigan rows in this sample. Live, the fetcher gets this by asking HUD for Michigan alone; offline this file is the publisher.",
+  "spot_check_rows": 1601,
+  "vintage": "2026Q1"
+}

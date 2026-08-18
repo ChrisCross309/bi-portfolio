@@ -156,6 +156,22 @@ GATES: tuple[MichiganGate, ...] = (
             ("acs5_subject", "raw.ref_acs5_subject"),
         )
     ),
+    MichiganGate(
+        source="zip_county_crosswalk",
+        table="raw.ref_zip_county_crosswalk",
+        michigan_filter="state = 'MI'",
+        geography_column="geoid",
+        # A county FIPS is five digits. HUD serves a few two-character territory codes with
+        # no county component; none of them is Michigan's, but the predicate says what it
+        # means rather than assuming.
+        unusable="geoid IS NULL OR trim(geoid) = '' OR length(geoid) <> 5",
+        county_expr="geoid",
+        expected_counties=MICHIGAN_COUNTY_COUNT,
+        note=(
+            "the bridge that gives CFPB complaints a county at all -- a missing county here "
+            "would be missing from every county-grain complaint rate"
+        ),
+    ),
 )
 
 

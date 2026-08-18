@@ -14,7 +14,7 @@ mix.**
 | Project 1 | `insurance` | Insurance / Insurtech | FEMA NFIP claims, NFIP policies, FEMA disaster declarations |
 | Project 2 | `fintech` | Fintech / Consumer Lending | CFPB consumer complaints, HMDA LAR, HMDA institution reference |
 | Project 3 | `health` | Health / Alzheimer's & Dementia | CDC Alzheimer's & Healthy Aging, CMS Geographic Variation |
-| Shared | `shared` | Domain-neutral reference | Census ACS denominators, BLS CPI-U, state codes |
+| Shared | `shared` | Domain-neutral reference | Census ACS denominators, BLS CPI-U, HUD ZIP-to-county crosswalk, state codes |
 
 No insurance data in the fintech or health tracks. No fintech data in the insurance or health tracks.
 No health data in the insurance or fintech tracks. What the tracks share is *platform* — DuckDB, the
