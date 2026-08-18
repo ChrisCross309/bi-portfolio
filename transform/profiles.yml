@@ -29,10 +29,12 @@ bi_portfolio:
         # Matches ingest.reload.DUCKDB_MEMORY_LIMIT. The largest source is 17M rows of
         # CFPB narrative; let DuckDB spill rather than exhaust RAM.
         memory_limit: 4GB
-        # Spill beside the data on the same drive. The default is the system temp
-        # directory, which here is the C: drive that `data/` was moved off in the first
-        # place.
-        temp_directory: "{{ env_var('DBT_TEMP_DIR', 'data/.duckdb_tmp') }}"
+        # `temp_directory` is deliberately not set. dbt runs four threads against one DuckDB
+        # instance, and DuckDB refuses to change its temp directory once a query has begun
+        # spilling -- "Cannot switch temporary directory after the current one has been
+        # used", which surfaces as a failed model rather than as a settings error. Left
+        # unset, DuckDB spills beside the database file, which is already on the data drive
+        # and already gitignored, so the reason the setting existed no longer applies.
     ci:
       <<: *duckdb_defaults
       path: "{{ env_var('DBT_WAREHOUSE_DIR', 'platform/duckdb') }}/fixture.duckdb"

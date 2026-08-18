@@ -10,12 +10,11 @@ set windows-shell := ["powershell.exe", "-NoLogo", "-NoProfile", "-Command"]
 export PYTHONPATH := "platform"
 
 # dbt reads its profile from the repo rather than `~/.dbt/`, so a fresh clone can build.
-# Nothing in it is a secret. The two path variables are absolute so dbt resolves the
-# warehouse the same way whatever directory it is invoked from; `transform/profiles.yml`
-# falls back to repo-root-relative defaults for a bare `dbt` call outside `just`.
+# Nothing in it is a secret. `DBT_WAREHOUSE_DIR` is absolute so dbt resolves the warehouse
+# the same way whatever directory it is invoked from; `transform/profiles.yml` falls back to
+# a repo-root-relative default for a bare `dbt` call outside `just`.
 export DBT_PROFILES_DIR := "transform"
 export DBT_WAREHOUSE_DIR := justfile_directory() / "platform" / "duckdb"
-export DBT_TEMP_DIR := justfile_directory() / "data" / ".duckdb_tmp"
 
 _default:
     @just --list --unsorted
