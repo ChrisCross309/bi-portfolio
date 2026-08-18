@@ -125,8 +125,9 @@ models:
         data_tests: [unique]
       - name: state_fips
         data_type: varchar
-        description: Two-digit FIPS, zero-padded. Alaska is `02`, and typing it as an integer breaks every join.
-        constraints: [{type: not_null}]
+        description: >
+          Two-digit FIPS, zero-padded. Alaska is `02`, and typing it as an integer breaks
+          every join. NULL for the `UN` unknown-state member, which has no FIPS.
         data_tests: [unique]
       - name: state_name
         data_type: varchar
@@ -136,7 +137,7 @@ models:
         data_tests:
           - accepted_values:
               arguments:
-                values: ['state', 'district', 'territory', 'freely_associated_state']
+                values: ['state', 'district', 'territory', 'freely_associated_state', 'unknown']
       - name: census_region
         data_type: varchar
       - name: census_region_name
@@ -148,9 +149,10 @@ models:
       - name: is_us_jurisdiction
         data_type: boolean
         description: >
-          False for FM, MH and PW. They are sovereign nations with US postal service, not US
-          territories -- which is why they are absent from the state reference and why the
-          ingestion layer counts them as nonstandard partition keys, deliberately.
+          False for FM, MH and PW -- sovereign nations with US postal service rather than US
+          territories, which is why they are absent from the state reference and why the
+          ingestion layer counts them as nonstandard partition keys, deliberately. NULL for
+          the `UN` member, where the question has no answer.
       - name: is_michigan
         data_type: boolean
 
