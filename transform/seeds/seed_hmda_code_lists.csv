@@ -1,0 +1,108 @@
+list_name,code,label,source_doc
+action_taken,1,Loan originated,https://ffiec.cfpb.gov/documentation/publications/loan-level-datasets/lar-data-fields
+action_taken,2,Application approved but not accepted,https://ffiec.cfpb.gov/documentation/publications/loan-level-datasets/lar-data-fields
+action_taken,3,Application denied,https://ffiec.cfpb.gov/documentation/publications/loan-level-datasets/lar-data-fields
+action_taken,4,Application withdrawn by applicant,https://ffiec.cfpb.gov/documentation/publications/loan-level-datasets/lar-data-fields
+action_taken,5,File closed for incompleteness,https://ffiec.cfpb.gov/documentation/publications/loan-level-datasets/lar-data-fields
+action_taken,6,Purchased loan,https://ffiec.cfpb.gov/documentation/publications/loan-level-datasets/lar-data-fields
+action_taken,7,Preapproval request denied,https://ffiec.cfpb.gov/documentation/publications/loan-level-datasets/lar-data-fields
+action_taken,8,Preapproval request approved but not accepted,https://ffiec.cfpb.gov/documentation/publications/loan-level-datasets/lar-data-fields
+loan_purpose,1,Home purchase,https://ffiec.cfpb.gov/documentation/publications/loan-level-datasets/lar-data-fields
+loan_purpose,2,Home improvement,https://ffiec.cfpb.gov/documentation/publications/loan-level-datasets/lar-data-fields
+loan_purpose,31,Refinancing,https://ffiec.cfpb.gov/documentation/publications/loan-level-datasets/lar-data-fields
+loan_purpose,32,Cash-out refinancing,https://ffiec.cfpb.gov/documentation/publications/loan-level-datasets/lar-data-fields
+loan_purpose,4,Other purpose,https://ffiec.cfpb.gov/documentation/publications/loan-level-datasets/lar-data-fields
+loan_purpose,5,Not applicable,https://ffiec.cfpb.gov/documentation/publications/loan-level-datasets/lar-data-fields
+loan_type,1,Conventional,https://ffiec.cfpb.gov/documentation/publications/loan-level-datasets/lar-data-fields
+loan_type,2,Federal Housing Administration insured,https://ffiec.cfpb.gov/documentation/publications/loan-level-datasets/lar-data-fields
+loan_type,3,Veterans Affairs guaranteed,https://ffiec.cfpb.gov/documentation/publications/loan-level-datasets/lar-data-fields
+loan_type,4,USDA Rural Housing or Farm Service Agency guaranteed,https://ffiec.cfpb.gov/documentation/publications/loan-level-datasets/lar-data-fields
+lien_status,1,Secured by a first lien,https://ffiec.cfpb.gov/documentation/publications/loan-level-datasets/lar-data-fields
+lien_status,2,Secured by a subordinate lien,https://ffiec.cfpb.gov/documentation/publications/loan-level-datasets/lar-data-fields
+occupancy_type,1,Principal residence,https://ffiec.cfpb.gov/documentation/publications/loan-level-datasets/lar-data-fields
+occupancy_type,2,Second residence,https://ffiec.cfpb.gov/documentation/publications/loan-level-datasets/lar-data-fields
+occupancy_type,3,Investment property,https://ffiec.cfpb.gov/documentation/publications/loan-level-datasets/lar-data-fields
+construction_method,1,Site-built,https://ffiec.cfpb.gov/documentation/publications/loan-level-datasets/lar-data-fields
+construction_method,2,Manufactured home,https://ffiec.cfpb.gov/documentation/publications/loan-level-datasets/lar-data-fields
+preapproval,1,Preapproval requested,https://ffiec.cfpb.gov/documentation/publications/loan-level-datasets/lar-data-fields
+preapproval,2,Preapproval not requested,https://ffiec.cfpb.gov/documentation/publications/loan-level-datasets/lar-data-fields
+hoepa_status,1,High-cost mortgage,https://ffiec.cfpb.gov/documentation/publications/loan-level-datasets/lar-data-fields
+hoepa_status,2,Not a high-cost mortgage,https://ffiec.cfpb.gov/documentation/publications/loan-level-datasets/lar-data-fields
+hoepa_status,3,Not applicable,https://ffiec.cfpb.gov/documentation/publications/loan-level-datasets/lar-data-fields
+business_or_commercial_purpose,1,Primarily for a business or commercial purpose,https://ffiec.cfpb.gov/documentation/publications/loan-level-datasets/lar-data-fields
+business_or_commercial_purpose,2,Not primarily for a business or commercial purpose,https://ffiec.cfpb.gov/documentation/publications/loan-level-datasets/lar-data-fields
+business_or_commercial_purpose,1111,Exempt,https://ffiec.cfpb.gov/documentation/publications/loan-level-datasets/lar-data-fields
+reverse_mortgage,1,Reverse mortgage,https://ffiec.cfpb.gov/documentation/publications/loan-level-datasets/lar-data-fields
+reverse_mortgage,2,Not a reverse mortgage,https://ffiec.cfpb.gov/documentation/publications/loan-level-datasets/lar-data-fields
+reverse_mortgage,1111,Exempt,https://ffiec.cfpb.gov/documentation/publications/loan-level-datasets/lar-data-fields
+open_end_line_of_credit,1,Open-end line of credit,https://ffiec.cfpb.gov/documentation/publications/loan-level-datasets/lar-data-fields
+open_end_line_of_credit,2,Not an open-end line of credit,https://ffiec.cfpb.gov/documentation/publications/loan-level-datasets/lar-data-fields
+open_end_line_of_credit,1111,Exempt,https://ffiec.cfpb.gov/documentation/publications/loan-level-datasets/lar-data-fields
+purchaser_type,0,Not applicable,https://ffiec.cfpb.gov/documentation/publications/loan-level-datasets/lar-data-fields
+purchaser_type,1,Fannie Mae,https://ffiec.cfpb.gov/documentation/publications/loan-level-datasets/lar-data-fields
+purchaser_type,2,Ginnie Mae,https://ffiec.cfpb.gov/documentation/publications/loan-level-datasets/lar-data-fields
+purchaser_type,3,Freddie Mac,https://ffiec.cfpb.gov/documentation/publications/loan-level-datasets/lar-data-fields
+purchaser_type,4,Farmer Mac,https://ffiec.cfpb.gov/documentation/publications/loan-level-datasets/lar-data-fields
+purchaser_type,5,Private securitizer,https://ffiec.cfpb.gov/documentation/publications/loan-level-datasets/lar-data-fields
+purchaser_type,6,Commercial bank or savings bank or savings association,https://ffiec.cfpb.gov/documentation/publications/loan-level-datasets/lar-data-fields
+purchaser_type,8,Affiliate institution,https://ffiec.cfpb.gov/documentation/publications/loan-level-datasets/lar-data-fields
+purchaser_type,9,Other type of purchaser,https://ffiec.cfpb.gov/documentation/publications/loan-level-datasets/lar-data-fields
+purchaser_type,71,Credit union or mortgage company or finance company,https://ffiec.cfpb.gov/documentation/publications/loan-level-datasets/lar-data-fields
+purchaser_type,72,Life insurance company,https://ffiec.cfpb.gov/documentation/publications/loan-level-datasets/lar-data-fields
+sex,1,Male,https://ffiec.cfpb.gov/documentation/publications/loan-level-datasets/lar-data-fields
+sex,2,Female,https://ffiec.cfpb.gov/documentation/publications/loan-level-datasets/lar-data-fields
+sex,3,Information not provided by applicant in mail internet or telephone application,https://ffiec.cfpb.gov/documentation/publications/loan-level-datasets/lar-data-fields
+sex,4,Not applicable,https://ffiec.cfpb.gov/documentation/publications/loan-level-datasets/lar-data-fields
+sex,5,No co-applicant,https://ffiec.cfpb.gov/documentation/publications/loan-level-datasets/lar-data-fields
+sex,6,Applicant selected both male and female,https://ffiec.cfpb.gov/documentation/publications/loan-level-datasets/lar-data-fields
+ethnicity,1,Hispanic or Latino,https://ffiec.cfpb.gov/documentation/publications/loan-level-datasets/lar-data-fields
+ethnicity,11,Mexican,https://ffiec.cfpb.gov/documentation/publications/loan-level-datasets/lar-data-fields
+ethnicity,12,Puerto Rican,https://ffiec.cfpb.gov/documentation/publications/loan-level-datasets/lar-data-fields
+ethnicity,13,Cuban,https://ffiec.cfpb.gov/documentation/publications/loan-level-datasets/lar-data-fields
+ethnicity,14,Other Hispanic or Latino,https://ffiec.cfpb.gov/documentation/publications/loan-level-datasets/lar-data-fields
+ethnicity,2,Not Hispanic or Latino,https://ffiec.cfpb.gov/documentation/publications/loan-level-datasets/lar-data-fields
+ethnicity,3,Information not provided by applicant in mail internet or telephone application,https://ffiec.cfpb.gov/documentation/publications/loan-level-datasets/lar-data-fields
+ethnicity,4,Not applicable,https://ffiec.cfpb.gov/documentation/publications/loan-level-datasets/lar-data-fields
+ethnicity,5,No co-applicant,https://ffiec.cfpb.gov/documentation/publications/loan-level-datasets/lar-data-fields
+race,1,American Indian or Alaska Native,https://ffiec.cfpb.gov/documentation/publications/loan-level-datasets/lar-data-fields
+race,2,Asian,https://ffiec.cfpb.gov/documentation/publications/loan-level-datasets/lar-data-fields
+race,21,Asian Indian,https://ffiec.cfpb.gov/documentation/publications/loan-level-datasets/lar-data-fields
+race,22,Chinese,https://ffiec.cfpb.gov/documentation/publications/loan-level-datasets/lar-data-fields
+race,23,Filipino,https://ffiec.cfpb.gov/documentation/publications/loan-level-datasets/lar-data-fields
+race,24,Japanese,https://ffiec.cfpb.gov/documentation/publications/loan-level-datasets/lar-data-fields
+race,25,Korean,https://ffiec.cfpb.gov/documentation/publications/loan-level-datasets/lar-data-fields
+race,26,Vietnamese,https://ffiec.cfpb.gov/documentation/publications/loan-level-datasets/lar-data-fields
+race,27,Other Asian,https://ffiec.cfpb.gov/documentation/publications/loan-level-datasets/lar-data-fields
+race,3,Black or African American,https://ffiec.cfpb.gov/documentation/publications/loan-level-datasets/lar-data-fields
+race,4,Native Hawaiian or Other Pacific Islander,https://ffiec.cfpb.gov/documentation/publications/loan-level-datasets/lar-data-fields
+race,41,Native Hawaiian,https://ffiec.cfpb.gov/documentation/publications/loan-level-datasets/lar-data-fields
+race,42,Guamanian or Chamorro,https://ffiec.cfpb.gov/documentation/publications/loan-level-datasets/lar-data-fields
+race,43,Samoan,https://ffiec.cfpb.gov/documentation/publications/loan-level-datasets/lar-data-fields
+race,44,Other Pacific Islander,https://ffiec.cfpb.gov/documentation/publications/loan-level-datasets/lar-data-fields
+race,5,White,https://ffiec.cfpb.gov/documentation/publications/loan-level-datasets/lar-data-fields
+race,6,Information not provided by applicant in mail internet or telephone application,https://ffiec.cfpb.gov/documentation/publications/loan-level-datasets/lar-data-fields
+race,7,Not applicable,https://ffiec.cfpb.gov/documentation/publications/loan-level-datasets/lar-data-fields
+race,8,No co-applicant,https://ffiec.cfpb.gov/documentation/publications/loan-level-datasets/lar-data-fields
+denial_reason,1,Debt-to-income ratio,https://ffiec.cfpb.gov/documentation/publications/loan-level-datasets/lar-data-fields
+denial_reason,2,Employment history,https://ffiec.cfpb.gov/documentation/publications/loan-level-datasets/lar-data-fields
+denial_reason,3,Credit history,https://ffiec.cfpb.gov/documentation/publications/loan-level-datasets/lar-data-fields
+denial_reason,4,Collateral,https://ffiec.cfpb.gov/documentation/publications/loan-level-datasets/lar-data-fields
+denial_reason,5,Insufficient cash for downpayment or closing costs,https://ffiec.cfpb.gov/documentation/publications/loan-level-datasets/lar-data-fields
+denial_reason,6,Unverifiable information,https://ffiec.cfpb.gov/documentation/publications/loan-level-datasets/lar-data-fields
+denial_reason,7,Credit application incomplete,https://ffiec.cfpb.gov/documentation/publications/loan-level-datasets/lar-data-fields
+denial_reason,8,Mortgage insurance denied,https://ffiec.cfpb.gov/documentation/publications/loan-level-datasets/lar-data-fields
+denial_reason,9,Other,https://ffiec.cfpb.gov/documentation/publications/loan-level-datasets/lar-data-fields
+denial_reason,10,Not applicable,https://ffiec.cfpb.gov/documentation/publications/loan-level-datasets/lar-data-fields
+denial_reason,1111,Exempt,https://ffiec.cfpb.gov/documentation/publications/loan-level-datasets/lar-data-fields
+submission_of_application,1,Submitted directly to your institution,https://ffiec.cfpb.gov/documentation/publications/loan-level-datasets/lar-data-fields
+submission_of_application,2,Not submitted directly to your institution,https://ffiec.cfpb.gov/documentation/publications/loan-level-datasets/lar-data-fields
+submission_of_application,3,Not applicable,https://ffiec.cfpb.gov/documentation/publications/loan-level-datasets/lar-data-fields
+submission_of_application,1111,Exempt,https://ffiec.cfpb.gov/documentation/publications/loan-level-datasets/lar-data-fields
+initially_payable_to_institution,1,Initially payable to your institution,https://ffiec.cfpb.gov/documentation/publications/loan-level-datasets/lar-data-fields
+initially_payable_to_institution,2,Not initially payable to your institution,https://ffiec.cfpb.gov/documentation/publications/loan-level-datasets/lar-data-fields
+initially_payable_to_institution,3,Not applicable,https://ffiec.cfpb.gov/documentation/publications/loan-level-datasets/lar-data-fields
+initially_payable_to_institution,1111,Exempt,https://ffiec.cfpb.gov/documentation/publications/loan-level-datasets/lar-data-fields
+conforming_loan_limit,C,Conforming,https://ffiec.cfpb.gov/documentation/publications/loan-level-datasets/lar-data-fields
+conforming_loan_limit,NC,Nonconforming,https://ffiec.cfpb.gov/documentation/publications/loan-level-datasets/lar-data-fields
+conforming_loan_limit,NA,Not applicable,https://ffiec.cfpb.gov/documentation/publications/loan-level-datasets/lar-data-fields
+conforming_loan_limit,U,Undetermined,https://ffiec.cfpb.gov/documentation/publications/loan-level-datasets/lar-data-fields

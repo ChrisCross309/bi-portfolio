@@ -1,0 +1,194 @@
+version: 2
+
+# Contracts are not enforced on staging, matching PR 4 and for the same reason: a contract
+# earns its cost at an interface, which here means the conformed dimensions and the marts.
+# What is tested instead is what can go wrong silently -- the keys, whether every county and
+# state resolves, and whether every publisher value the seeds are supposed to map actually
+# maps. That last one is not hypothetical: the first build of this PR left 2,163,770
+# complaints unmapped because a product label had been transcribed from a truncated console
+# line, and it looked completely fine until counted.
+
+models:
+  - name: stg_fin__cfpb_complaints
+    description: >
+      CFPB consumer complaints, national, one row per complaint. 17.0M rows. Typed out of
+      quoted publisher column names, with the two taxonomies mapped to stable families and
+      the ZIP masking classified so PR 8's county allocation has a branch per case.
+    columns:
+      - name: complaint_id
+        description: CFPB's own identifier. Unique across all 17,021,062 rows, verified.
+        data_tests: [unique, not_null]
+
+      - name: product_family
+        description: >
+          A label that survives CFPB's three taxonomy eras. Credit reporting alone was
+          published under three different strings, so grouping by the publisher's own value
+          makes FIN-E2 report the current label growing from nothing in 2023 while its
+          predecessor vanishes. Mapped, credit reporting reads as one series from 2012 --
+          13.8M complaints.
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['credit_reporting', 'debt_collection', 'mortgage', 'student_loan',
+                         'deposit_account', 'card', 'money_transfer', 'consumer_lending',
+                         'debt_relief_services', 'other']
+
+      - name: response_family
+        description: >
+          Relief outcome, mapped across the legacy and modern response vocabularies. The
+          legacy `Closed with relief` and `Closed without relief` do not record the monetary
+          split, so `relief_unspecified` says so rather than guessing.
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ['monetary_relief', 'non_monetary_relief', 'explanation_only',
+                         'relief_unspecified', 'no_relief', 'closed_unspecified',
+                         'untimely', 'open']
+
+      - name: is_response_pending
+        description: >
+          592,496 complaints are `In progress` -- open, not an outcome. FIN-E3's relief rate
+          has to exclude them from its denominator or it understates itself, and by more in a
+          recent window than an old one.
+
+      - name: zip_mask_kind
+        description: >
+          `full` · `prefix_masked` · `fully_masked` · `null` · `malformed`. Michigan splits
+          337,178 / 27,820 / 1,728 / 8 / 1, so roughly 8% cannot be placed precisely and PR 8
+          needs a rule per case rather than a filter.
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['full', 'prefix_masked', 'fully_masked', 'null', 'malformed']
+
+      - name: zip5
+        description: Populated only where the publisher gave all five digits.
+
+      - name: zip3
+        description: >
+          The first three digits, populated for full and prefix-masked ZIPs alike, so the
+          fallback allocation reads one column rather than re-deriving the prefix.
+
+      - name: state_code
+        description: >
+          Two-letter code. NULL for the 1,386 complaints carrying the full name
+          "UNITED STATES MINOR OUTLYING ISLANDS" where a code belongs -- see
+          `has_malformed_state`. The military post codes AA, AE and AP are real and resolve.
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('dim_state')
+                field: state_code
+
+      - name: has_malformed_state
+        description: 1,386 rows. A publisher data-quality artifact, flagged rather than dimensioned.
+
+      - name: has_tag_older_american
+        description: >
+          Contains-matched, because `Older American, Servicemember` is a real combined value.
+          286,974 complaints carry the tag against 229,134 that carry it alone -- an equality
+          filter would lose the 57,840 difference.
+
+      - name: has_narrative
+        description: >
+          Narratives exist only where the consumer consented to publication: 22.5% of the
+          file. Any text analysis describes that subset and not all complainants.
+
+      - name: was_sent_before_received
+        description: 7,050 complaints. A publisher anomaly, flagged rather than repaired.
+
+  - name: stg_fin__hmda_lar
+    description: >
+      HMDA Loan/Application Register, Michigan 2018-2025, 4.04M rows, 99 columns typed
+      deliberately. **Fair lending: this file carries no credit score and no debt-to-income
+      underwriting detail, so any difference visible through the demographic columns is a
+      descriptive gap warranting review and never a conclusion.** Nothing here can support a
+      finding of discrimination, and every measure built on it must say so.
+    columns:
+      - name: lei
+        description: Legal Entity Identifier of the filing institution.
+        data_tests: [not_null]
+
+      - name: loan_amount
+        description: >
+          Typed with `TRY_CAST` and never a regex gate. 1,108 amounts are written in
+          scientific notation and they are the largest loans in the file -- $10.0M to
+          $950.5M against $5,000 to $9,995,000 for everything else. A digits-only guard would
+          drop the entire multifamily book.
+        data_tests: [not_null]
+
+      - name: is_partially_exempt
+        description: >
+          The partial exemption in either of its two spellings: the literal `Exempt` in any
+          of the fourteen value columns, or the code `1111` in a categorical one. 81,148
+          rows, more than any single column, because the two halves do not overlap exactly.
+
+      - name: dti_band
+        description: The band as published, including `NA` on 1,087,886 rows and `Exempt`.
+      - name: dti_exact_pct
+        description: >
+          Populated only where HMDA published an exact integer, which it does between 36 and
+          49 and nowhere else. 1,210,686 rows.
+      - name: dti_sentinel
+        description: "`NA` or `Exempt`, kept apart from both the band and the exact value."
+
+      - name: total_units_band
+        description: >
+          Exact for 1 to 4 units and banded above it -- `5-24`, `25-49`, `50-99`, `100-149`,
+          `>149` across 8,030 rows. The same hybrid shape as debt-to-income.
+      - name: total_units_exact
+        description: Populated for 1 to 4 only; NULL on the 8,030 banded rows.
+
+      - name: applicant_age_band
+        description: Banded, with `8888` and `9999` moved to the sentinel column rather than read as ages.
+      - name: applicant_age_sentinel
+        description: 263,402 rows carrying a code where an age band belongs.
+
+      - name: county_fips
+        description: >
+          NULL for the 44,167 filings that say `NA`. A real filing with no usable county
+          rather than a load failure.
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('dim_geography_county')
+                field: county_fips
+
+      - name: action_taken_label
+        description: >
+          Decoded here rather than in each mart, so FIN-E4 and FIN-E5 cannot decode the same
+          column two different ways. 2,359,412 originated, 598,614 denied.
+        data_tests: [not_null]
+
+      - name: applicant_race_label
+        description: >
+          Decoded from the primary race code. **Descriptive only** -- see the model
+          description. HMDA has no underwriting detail, so a rate difference across this
+          column warrants review and is not evidence of discrimination.
+      - name: applicant_ethnicity_label
+        description: Descriptive only. See `applicant_race_label`.
+      - name: applicant_sex_label
+        description: Descriptive only. See `applicant_race_label`.
+      - name: denial_reason_1_label
+        description: >
+          Primary denial reason. `Exempt` here is the `1111` code, not a reason -- which is
+          why the code list carries it explicitly rather than leaving it to look like one.
+
+  - name: stg_fin__hmda_institutions
+    description: >
+      The HMDA filer list, national. One row per LEI per filing year, so an institution that
+      filed in six years appears six times -- counting institutions means counting distinct
+      LEIs.
+    columns:
+      - name: lei
+        data_tests: [not_null]
+      - name: institution_name_normalized
+        description: >
+          Casefolded and stripped of corporate suffixes, for FIN-E5's match against CFPB
+          company names. Shared with the complaint side through a macro, because applying the
+          normalisation differently to each side of that join would produce a match rate that
+          looks plausible and is wrong.
+      - name: filings_reported
+        description: The institution's own count for the year, as the publisher reported it.

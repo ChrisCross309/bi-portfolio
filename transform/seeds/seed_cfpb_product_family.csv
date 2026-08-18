@@ -1,0 +1,22 @@
+product,product_family,era_first_year,era_last_year,note,source_doc
+"Credit reporting",credit_reporting,2012,2017,First-era label.,https://www.consumerfinance.gov/data-research/consumer-complaints/
+"Credit reporting, credit repair services, or other personal consumer reports",credit_reporting,2017,2023,Second-era label after CFPB folded credit repair in.,https://www.consumerfinance.gov/data-research/consumer-complaints/
+"Credit reporting or other personal consumer reports",credit_reporting,2023,2026,Current label. Largest product in the file at 11.5M complaints.,https://www.consumerfinance.gov/data-research/consumer-complaints/
+"Debt collection",debt_collection,2013,2026,Stable across every era.,https://www.consumerfinance.gov/data-research/consumer-complaints/
+"Mortgage",mortgage,2011,2026,Stable across every era.,https://www.consumerfinance.gov/data-research/consumer-complaints/
+"Student loan",student_loan,2012,2026,Stable across every era.,https://www.consumerfinance.gov/data-research/consumer-complaints/
+"Bank account or service",deposit_account,2012,2017,First-era label.,https://www.consumerfinance.gov/data-research/consumer-complaints/
+"Checking or savings account",deposit_account,2017,2026,Current label.,https://www.consumerfinance.gov/data-research/consumer-complaints/
+"Credit card",card,2011,2026,Reported separately outside the 2017-2023 window.,https://www.consumerfinance.gov/data-research/consumer-complaints/
+"Prepaid card",card,2014,2026,Reported separately outside the 2017-2023 window.,https://www.consumerfinance.gov/data-research/consumer-complaints/
+"Credit card or prepaid card",card,2017,2023,CFPB merged credit and prepaid for this window only; the split is not recoverable inside it.,https://www.consumerfinance.gov/data-research/consumer-complaints/
+"Money transfers",money_transfer,2013,2017,First-era label.,https://www.consumerfinance.gov/data-research/consumer-complaints/
+"Virtual currency",money_transfer,2014,2017,Folded into the money-service label in 2017.,https://www.consumerfinance.gov/data-research/consumer-complaints/
+"Money transfer, virtual currency, or money service",money_transfer,2017,2026,Current label.,https://www.consumerfinance.gov/data-research/consumer-complaints/
+"Consumer Loan",consumer_lending,2012,2017,First-era label covering vehicle and personal lending together.,https://www.consumerfinance.gov/data-research/consumer-complaints/
+"Vehicle loan or lease",consumer_lending,2017,2026,Split out of Consumer Loan in 2017.,https://www.consumerfinance.gov/data-research/consumer-complaints/
+"Payday loan",consumer_lending,2013,2017,First-era label.,https://www.consumerfinance.gov/data-research/consumer-complaints/
+"Payday loan, title loan, or personal loan",consumer_lending,2017,2023,Second-era label.,https://www.consumerfinance.gov/data-research/consumer-complaints/
+"Payday loan, title loan, personal loan, or advance loan",consumer_lending,2023,2026,Current label.,https://www.consumerfinance.gov/data-research/consumer-complaints/
+"Debt or credit management",debt_relief_services,2023,2026,Genuinely new in 2023; it has no earlier counterpart and must not be trended before then.,https://www.consumerfinance.gov/data-research/consumer-complaints/
+"Other financial service",other,2014,2017,Retired catch-all.,https://www.consumerfinance.gov/data-research/consumer-complaints/

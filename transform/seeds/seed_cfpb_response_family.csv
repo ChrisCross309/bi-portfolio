@@ -1,0 +1,9 @@
+company_response,response_family,is_closed,grants_relief,note,source_doc
+"Closed with monetary relief",monetary_relief,true,true,Modern category.,https://www.consumerfinance.gov/data-research/consumer-complaints/
+"Closed with non-monetary relief",non_monetary_relief,true,true,Modern category.,https://www.consumerfinance.gov/data-research/consumer-complaints/
+"Closed with explanation",explanation_only,true,false,Modern category and the largest at 10.4M.,https://www.consumerfinance.gov/data-research/consumer-complaints/
+"Closed with relief",relief_unspecified,true,true,Legacy category. Relief was granted but the monetary split is not recorded.,https://www.consumerfinance.gov/data-research/consumer-complaints/
+"Closed without relief",no_relief,true,false,Legacy category.,https://www.consumerfinance.gov/data-research/consumer-complaints/
+"Closed",closed_unspecified,true,,Legacy category. Whether relief was granted is not recorded at all.,https://www.consumerfinance.gov/data-research/consumer-complaints/
+"Untimely response",untimely,true,false,The company did not respond inside the window.,https://www.consumerfinance.gov/data-research/consumer-complaints/
+"In progress",open,false,,Not an outcome. The complaint is still open and its result is unknown.,https://www.consumerfinance.gov/data-research/consumer-complaints/

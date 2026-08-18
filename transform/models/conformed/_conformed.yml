@@ -137,7 +137,7 @@ models:
         data_tests:
           - accepted_values:
               arguments:
-                values: ['state', 'district', 'territory', 'freely_associated_state', 'unknown']
+                values: ['state', 'district', 'territory', 'freely_associated_state', 'military_post', 'unknown']
       - name: census_region
         data_type: varchar
       - name: census_region_name
@@ -241,10 +241,12 @@ seeds:
 
   - name: seed_areas
     description: >
-      The three postal areas absent from `state_codes.csv`: Micronesia, the Marshall Islands
-      and Palau. Sovereign nations with US postal service, established while landing the HUD
-      crosswalk, which serves them. Kept out of the state reference on purpose so the
-      ingestion layer keeps flagging them as nonstandard.
+      Postal areas that appear in published data but are not US states, districts or
+      territories, so they are absent from `state_codes.csv` by design -- the ingestion layer
+      counts them as nonstandard partition keys and warns, which is the behaviour we want.
+      Two kinds: the freely associated states (Micronesia, the Marshall Islands, Palau),
+      established while landing the HUD crosswalk which serves them; and the three military
+      post codes (AA, AE, AP) that CFPB files 4,267 complaints under.
     columns:
       - name: state_fips
         data_tests: [unique, not_null]
