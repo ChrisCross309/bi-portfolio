@@ -1,0 +1,40 @@
+question_id,class_id,indicator_family,short_label,higher_is_better,source_doc
+Q30,C06,cognitive_decline,Subjective cognitive decline,false,https://data.cdc.gov/d/hfr9-rurv
+Q31,C06,cognitive_decline,SCD interferes with activities,false,https://data.cdc.gov/d/hfr9-rurv
+Q41,C06,cognitive_decline,SCD requires assistance with daily activities,false,https://data.cdc.gov/d/hfr9-rurv
+Q42,C06,cognitive_decline,Discussed SCD with a health professional,true,https://data.cdc.gov/d/hfr9-rurv
+Q36,C07,caregiving,Provided care in the past month,,https://data.cdc.gov/d/hfr9-rurv
+Q37,C07,caregiving,Expects to provide care within two years,,https://data.cdc.gov/d/hfr9-rurv
+Q38,C07,caregiving,Provided care for six months or more,false,https://data.cdc.gov/d/hfr9-rurv
+Q39,C07,caregiving,Provides 20 or more hours of care per week,false,https://data.cdc.gov/d/hfr9-rurv
+Q40,C07,caregiving,Cared for someone with dementia or cognitive impairment,false,https://data.cdc.gov/d/hfr9-rurv
+Q09,C03,screening,Pneumococcal vaccine among at-risk adults,true,https://data.cdc.gov/d/hfr9-rurv
+Q10,C03,screening,Men up to date with preventive services,true,https://data.cdc.gov/d/hfr9-rurv
+Q11,C03,screening,Women up to date with preventive services,true,https://data.cdc.gov/d/hfr9-rurv
+Q12,C03,screening,Mammogram within two years,true,https://data.cdc.gov/d/hfr9-rurv
+Q14,C03,screening,Cholesterol screening within five years,true,https://data.cdc.gov/d/hfr9-rurv
+Q15,C03,screening,Colorectal cancer screening,true,https://data.cdc.gov/d/hfr9-rurv
+Q18,C03,screening,Influenza vaccine within the past year,true,https://data.cdc.gov/d/hfr9-rurv
+Q19,C03,screening,Diabetes screening within three years,true,https://data.cdc.gov/d/hfr9-rurv
+Q20,C03,screening,Pap test within three years,true,https://data.cdc.gov/d/hfr9-rurv
+Q22,C03,screening,Ever told they have high blood pressure,false,https://data.cdc.gov/d/hfr9-rurv
+Q04,C01,overall_health,Taking medication for high blood pressure,true,https://data.cdc.gov/d/hfr9-rurv
+Q05,C01,overall_health,Fall with injury within the past year,false,https://data.cdc.gov/d/hfr9-rurv
+Q07,C01,overall_health,Lost five or fewer teeth to decay or gum disease,true,https://data.cdc.gov/d/hfr9-rurv
+Q08,C01,overall_health,Physically unhealthy days per month,false,https://data.cdc.gov/d/hfr9-rurv
+Q32,C01,overall_health,Self-reported fair or poor health,false,https://data.cdc.gov/d/hfr9-rurv
+Q33,C01,overall_health,Self-reported good to excellent health,true,https://data.cdc.gov/d/hfr9-rurv
+Q34,C01,overall_health,Sufficient sleep over six hours,true,https://data.cdc.gov/d/hfr9-rurv
+Q35,C01,overall_health,Days with activity limitations per month,false,https://data.cdc.gov/d/hfr9-rurv
+Q43,C01,overall_health,Ever told they have arthritis,false,https://data.cdc.gov/d/hfr9-rurv
+Q44,C01,overall_health,Severe joint pain among those with arthritis,false,https://data.cdc.gov/d/hfr9-rurv
+Q45,C01,overall_health,Fair or poor health among those with arthritis,false,https://data.cdc.gov/d/hfr9-rurv
+Q46,C01,overall_health,Reports a disability,false,https://data.cdc.gov/d/hfr9-rurv
+Q01,C02,nutrition_activity,Eats two or more fruits daily,true,https://data.cdc.gov/d/hfr9-rurv
+Q02,C02,nutrition_activity,Eats three or more vegetables daily,true,https://data.cdc.gov/d/hfr9-rurv
+Q13,C02,nutrition_activity,Obese with a BMI of 30 or more,false,https://data.cdc.gov/d/hfr9-rurv
+Q16,C02,nutrition_activity,No leisure-time physical activity in the past month,false,https://data.cdc.gov/d/hfr9-rurv
+Q17,C04,substance_use,Currently smokes,false,https://data.cdc.gov/d/hfr9-rurv
+Q21,C04,substance_use,Binge drinking within the past 30 days,false,https://data.cdc.gov/d/hfr9-rurv
+Q03,C05,mental_health,Frequent mental distress,false,https://data.cdc.gov/d/hfr9-rurv
+Q27,C05,mental_health,Lifetime diagnosis of depression,,https://data.cdc.gov/d/hfr9-rurv

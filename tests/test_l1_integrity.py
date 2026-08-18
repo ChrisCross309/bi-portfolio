@@ -28,6 +28,7 @@ from reconcile.l1_integrity import (
     report,
     resolve_landing_path,
 )
+from reconcile.make_fixtures import FIXTURE_VINTAGES
 
 NFIP = next(s for s in SOURCES if s.source == "nfip_claims")
 CFPB = next(s for s in SOURCES if s.source == "cfpb_complaints")
@@ -239,7 +240,9 @@ def test_the_nested_acs_fixtures_resolve_into_their_subdirectory() -> None:
     """Every other source's fixtures sit directly under the track directory."""
     pattern = resolve_landing_path(ACS_DETAILED, "fixture", REPO_ROOT / "data")
     assert pattern.parent.name == "acs5"
-    assert len(landing_files(pattern)) == 6  # 2 vintages x 3 geographies
+    # Driven by the generator rather than a literal: the vintage set moved once already, when
+    # HLT-E5 needed a second post-2017 vintage to compare across.
+    assert len(landing_files(pattern)) == len(FIXTURE_VINTAGES) * 3  # x us, state, county
 
 
 # ── peers and rollups ─────────────────────────────────────────────────────────

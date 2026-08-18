@@ -71,6 +71,8 @@ models:
         +schema: mart_ins
       fintech:
         +schema: mart_fin
+      health:
+        +schema: mart_hlt
 
 seeds:
   bi_portfolio:
@@ -108,3 +110,10 @@ vars:
   # 0.06% in May 2026, 17.7% in June and 54.9% in July, so the boundary is visible in the
   # data and moves on its own as the archive refreshes.
   publication_pending_threshold_pct: 1.0
+  # The ACS vintage pair HLT-E5 measures 65+ growth across. Consecutive 5-year vintages share
+  # four years of sample, so only every fifth is independent -- 2015-2019 against 2020-2024 is
+  # the most recent pair that shares none. Both are variables because moving one without the
+  # other silently reintroduces the overlap the comparison exists to avoid, and a test asserts
+  # the two windows do not touch.
+  acs_growth_from_vintage: 2019
+  acs_growth_to_vintage: 2024
