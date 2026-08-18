@@ -113,7 +113,9 @@ whole thing still builds on a fresh clone with no network.
 ## Integrity
 
 `platform/reconcile/l1_integrity.py` runs after every ingestion and exits non-zero on any failure.
-Output is grouped by project track.
+Output is grouped by project track. `platform/reconcile/l2_reconciliation.py` (`just l2`) is the
+second layer: it asks whether the publisher's schema moved under us, and whether the semantic layer
+loses anything between raw and staging. Both run offline, so CI carries both.
 
 **All 13 raw sources are registered.** The thirteenth is the HUD ZIP-to-county crosswalk,
 added in session 2 because FIN-E1 needs a county grain CFPB does not publish; it is held to the same
