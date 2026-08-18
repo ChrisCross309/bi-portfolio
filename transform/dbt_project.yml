@@ -61,6 +61,14 @@ models:
     intermediate:
       +materialized: view
       +schema: int
+    # Marts are tables because Power BI reads them in session 3, and because they are the
+    # only layer whose shape is a promise to something outside this project.
+    marts:
+      +materialized: table
+      +contract:
+        enforced: true
+      insurance:
+        +schema: mart_ins
 
 seeds:
   bi_portfolio:
@@ -83,3 +91,13 @@ seeds:
         state_fips: varchar
         census_region: varchar
         census_division: varchar
+
+vars:
+  # The latest CPI-U annual average BLS has published. Every constant-dollar measure in the
+  # repo restates to this year, so moving it moves all of them together -- which is the point
+  # of it being one variable rather than a literal in each mart.
+  deflator_base_year: 2025
+  # How long after a declared incident ends a flood loss may still be attributed to it.
+  # INS-E3's event-driven share moves with this, which is why it is a variable and why the
+  # drill bank asks for 30, 60 and 90 rather than a single number.
+  event_attribution_grace_days: 30

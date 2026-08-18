@@ -1,0 +1,397 @@
+version: 2
+
+# Contracts are enforced from here on, and the column types below are generated from the
+# built models rather than typed by hand.
+#
+# A mart is an interface: session 3 reads these into Power BI, and a column that silently
+# changes type between refreshes breaks a report at a moment when nobody is looking at the
+# pipeline. Staging stays uncontracted because it is internal to this project -- the same
+# split PRs 4 through 6 made, now with the other side of it filled in.
+
+models:
+  - name: fct_ins_claims_monthly
+    description: >
+      **INS-E1 · INS-E2.** Flood claims by county and loss month, national. Michigan is a
+      filter on `is_michigan`, not a property of the grain, so the national benchmark INS-E2
+      needs comes from the same table. Carries the seasonality and top-county drills.
+    columns:
+      - name: loss_year
+        data_type: smallint
+        data_tests: [not_null]
+      - name: county_fips
+        data_type: varchar
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('dim_geography_county')
+                field: county_fips
+      - name: paid_total
+        data_type: decimal(38,2)
+        description: >
+          Gross, so NULL-paid claims are skipped rather than counted as zero. `net_paid_total`
+          makes the opposite choice. Staging carries both because they answer different
+          questions and neither is right in general.
+      - name: paid_total_constant
+        data_type: double
+        description: >
+          **INS-E2.** Restated in constant dollars of the deflator base year using CPI-U's
+          unadjusted annual average. NULL for any year BLS has not published one for -- 2026
+          has none, so it has no constant-dollar figure rather than a silently nominal one.
+      - name: is_complete_loss_year
+        data_type: boolean
+        description: >
+          The loss year is over. The file runs to July 2026, so 2026 is partial and plotting
+          it beside a full year shows a collapse that is an artifact of the download date.
+      - name: is_development_mature
+        data_type: boolean
+        description: >
+          Twelve months have passed since the year ended. A flood claim is not paid the day
+          it is filed -- nationally the median gap from loss to last payment is 45-60 days and
+          the 90th percentile runs 140-220 -- so **the most recent complete year always
+          understates itself**. INS-E1 asks for the latest complete year; this is the flag
+          that says whether that year has finished settling. With data through July 2026,
+          2025 is complete and not yet mature.
+      - name: is_small_cell
+        data_type: boolean
+        description: >
+          Fewer than ten claims. The insurance README's display rule: show the count beside
+          the rate, and grey a rate built on a handful rather than publishing a number that
+          looks precise. A 100% loss rate drawn from one claim is misleading regardless of
+          privacy.
+      - name: loss_month
+        data_type: tinyint
+      - name: loss_year_month
+        data_type: varchar
+      - name: loss_year_key
+        data_type: varchar
+      - name: state_code
+        data_type: varchar
+      - name: county_name
+        data_type: varchar
+      - name: state_name
+        data_type: varchar
+      - name: is_michigan
+        data_type: boolean
+      - name: is_state_unknown
+        data_type: boolean
+      - name: claim_count
+        data_type: bigint
+      - name: closed_without_payment_count
+        data_type: bigint
+      - name: zero_paid_count
+        data_type: bigint
+      - name: no_county_count
+        data_type: bigint
+      - name: paid_building
+        data_type: decimal(38,2)
+      - name: paid_contents
+        data_type: decimal(38,2)
+      - name: paid_icc
+        data_type: decimal(38,2)
+      - name: net_paid_total
+        data_type: decimal(38,2)
+      - name: building_coverage
+        data_type: hugeint
+      - name: contents_coverage
+        data_type: hugeint
+      - name: avg_paid_per_claim
+        data_type: double
+      - name: avg_paid_per_claim_constant
+        data_type: double
+
+  - name: fct_ins_claims_detail_mi
+    description: >
+      Michigan claims at claim grain, roughly 14,900 rows. Every drill needing a single claim
+      lives here; the national picture stays aggregated because 2.7M rows at claim grain is a
+      mart nobody queries and a Power BI model nobody refreshes. The split is the Michigan
+      lens expressed as grain rather than as a filter.
+    columns:
+      - name: claim_id
+        data_type: bigint
+        data_tests: [unique, not_null]
+      - name: county_fips
+        data_type: varchar
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('dim_geography_county')
+                field: county_fips
+      - name: is_spring_melt_season
+        data_type: boolean
+        description: >
+          March through May. **Michigan's flood year is not the national one** -- it peaks on
+          snowmelt and spring convective storms while the national profile peaks August
+          through October on hurricanes. A month-over-month comparison of the two compares two
+          different physical processes and reads as Michigan being anomalous when it is simply
+          inland.
+      - name: county_name
+        data_type: varchar
+      - name: has_usable_county
+        data_type: boolean
+      - name: county_matches_reported_state
+        data_type: boolean
+      - name: date_of_loss
+        data_type: date
+      - name: loss_year
+        data_type: smallint
+      - name: loss_month
+        data_type: tinyint
+      - name: loss_year_month
+        data_type: varchar
+      - name: amount_paid_on_building_claim
+        data_type: decimal(12,2)
+      - name: amount_paid_on_contents_claim
+        data_type: decimal(12,2)
+      - name: amount_paid_on_icc_claim
+        data_type: decimal(12,2)
+      - name: total_amount_paid
+        data_type: decimal(14,2)
+      - name: total_net_payment
+        data_type: decimal(14,2)
+      - name: is_closed_without_payment
+        data_type: boolean
+      - name: is_zero_paid
+        data_type: boolean
+      - name: has_negative_payment
+        data_type: boolean
+      - name: total_amount_paid_constant
+        data_type: double
+      - name: rated_flood_zone
+        data_type: varchar
+      - name: flood_zone_current
+        data_type: varchar
+      - name: occupancy_type
+        data_type: smallint
+      - name: crs_class_code
+        data_type: smallint
+      - name: pre_firm_indicator
+        data_type: boolean
+      - name: post_firm_construction_indicator
+        data_type: boolean
+      - name: foundation_type
+        data_type: varchar
+      - name: water_depth
+        data_type: smallint
+      - name: exterior_water_depth
+        data_type: integer
+      - name: interior_water_depth
+        data_type: integer
+      - name: building_damage_amount
+        data_type: integer
+      - name: contents_damage_amount
+        data_type: integer
+      - name: total_building_insurance_coverage
+        data_type: integer
+      - name: total_contents_insurance_coverage
+        data_type: integer
+      - name: number_of_floors_in_the_insured_building
+        data_type: smallint
+      - name: primary_residence_indicator
+        data_type: boolean
+      - name: rental_property_indicator
+        data_type: boolean
+      - name: elevated_building_indicator
+        data_type: boolean
+      - name: nfip_community_name
+        data_type: varchar
+      - name: reported_city
+        data_type: varchar
+      - name: reported_zip_code
+        data_type: varchar
+      - name: open_date
+        data_type: date
+      - name: most_recent_payment_date
+        data_type: date
+      - name: days_loss_to_last_payment
+        data_type: integer
+
+  - name: fct_ins_policies_mi_monthly
+    description: >
+      **INS-E4.** Michigan policies in force at each month end, by county, expanded from
+      effective and termination dates because the file carries no in-force flag.
+    columns:
+      - name: policies_in_force
+        data_type: hugeint
+        description: >
+          **`SUM(policy_count)`, never `COUNT(*)`.** A condominium master policy covers many
+          units in one record, so Michigan's book is about 6% larger than its row count and
+          the gap moves with the condo mix. `policy_records` is published beside it so the
+          difference is visible rather than a discrepancy someone has to chase.
+        data_tests: [not_null]
+      - name: county_fips
+        data_type: varchar
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('dim_geography_county')
+                field: county_fips
+      - name: month_end
+        data_type: date
+      - name: year_month
+        data_type: varchar
+      - name: calendar_year
+        data_type: smallint
+      - name: county_name
+        data_type: varchar
+      - name: is_michigan
+        data_type: boolean
+      - name: policy_records
+        data_type: bigint
+      - name: premium_in_force
+        data_type: hugeint
+      - name: building_coverage_in_force
+        data_type: hugeint
+      - name: contents_coverage_in_force
+        data_type: hugeint
+      - name: policy_cost_in_force
+        data_type: hugeint
+      - name: policies_beyond_records
+        data_type: hugeint
+      - name: is_small_cell
+        data_type: boolean
+
+  - name: dim_ins_disaster_declaration
+    description: >
+      One row per federally declared disaster, collapsed from 70,184 declaration-area rows to
+      5,239 disasters. Counting declarations here is counting rows; counting them in the
+      source is not, and the difference is a factor of thirteen.
+    columns:
+      - name: disaster_number
+        data_type: smallint
+        data_tests: [unique, not_null]
+      - name: is_incident_open
+        data_type: boolean
+        description: >
+          Any area of the disaster still open, in which case `incident_end_date` is NULL. A
+          `BETWEEN` against a NULL end matches nothing silently, which is why the flag exists.
+      - name: fema_declaration_string
+        data_type: varchar
+      - name: declaration_type
+        data_type: varchar
+      - name: declaration_title
+        data_type: varchar
+      - name: incident_type
+        data_type: varchar
+      - name: declaration_date
+        data_type: date
+      - name: incident_begin_date
+        data_type: date
+      - name: incident_end_date
+        data_type: date
+      - name: has_invalid_incident_window
+        data_type: boolean
+      - name: designated_area_count
+        data_type: bigint
+      - name: designated_county_count
+        data_type: bigint
+      - name: statewide_area_count
+        data_type: bigint
+      - name: state_count
+        data_type: bigint
+      - name: is_flood_related
+        data_type: boolean
+      - name: is_major_disaster
+        data_type: boolean
+      - name: touches_michigan
+        data_type: boolean
+      - name: ia_program_declared
+        data_type: boolean
+      - name: pa_program_declared
+        data_type: boolean
+
+  - name: bridge_ins_claim_declaration
+    description: >
+      **INS-E3.** Which Michigan claims fall inside which declared flood disaster. Inferred,
+      not published -- FEMA declares disasters and NFIP pays claims and the two files share no
+      key -- so the rule is stated in the model and every number built on it inherits the
+      caveat. **This is a bridge, not a lookup: a claim can match more than one disaster**
+      (3,821 rows across 3,574 distinct claims), so a naive join through it double counts paid
+      dollars. Sum over distinct claims, or take the earliest match, and say which.
+    columns:
+      - name: claim_id
+        data_type: bigint
+        data_tests: [not_null]
+      - name: incident_type
+        data_type: varchar
+        description: >
+          **Only flood-related declarations attribute.** Without that restriction this model
+          reported 100% of Michigan losses as event-driven in 2021 and 2022, which looked like
+          a finding and was an artifact: FEMA declared COVID-19 a statewide Michigan disaster
+          running 2020-01-20 to 2023-05-11, and it matched every Michigan flood claim in those
+          three years. A declaration is a legal instrument, not a description of the weather.
+      - name: grace_window_days
+        data_type: integer
+        description: >
+          How long after an incident ends a loss may still be attributed to it. A variable
+          rather than a literal because INS-E3's answer moves with it, which is exactly why
+          the drill bank asks for 30, 60 and 90 rather than one number.
+      - name: county_fips
+        data_type: varchar
+      - name: date_of_loss
+        data_type: date
+      - name: loss_year
+        data_type: smallint
+      - name: total_amount_paid
+        data_type: decimal(14,2)
+      - name: disaster_number
+        data_type: smallint
+      - name: declaration_type
+        data_type: varchar
+      - name: declaration_title
+        data_type: varchar
+      - name: incident_begin_date
+        data_type: date
+      - name: incident_end_date
+        data_type: date
+      - name: matched_via_statewide_declaration
+        data_type: boolean
+      - name: incident_duration_days
+        data_type: integer
+      - name: days_into_incident
+        data_type: integer
+      - name: is_in_grace_window
+        data_type: boolean
+
+  - name: rpt_ins_reconciliation
+    description: >
+      **INS-E5: do our totals tie to FEMA's published figures?** The only question in the set
+      whose answer lives outside the warehouse -- FEMA's own count is not a column anywhere,
+      it is what the API reported when the bulk file was downloaded, which the ingestion layer
+      wrote into the source manifest for exactly this purpose.
+    columns:
+      - name: source_name
+        data_type: varchar
+        data_tests: [not_null]
+      - name: publisher_to_landing_gap
+        data_type: bigint
+        description: >
+          FEMA reported 2,724,656 claims and served a bulk file containing 2,724,014. Counts
+          and bulk files are generated at different moments, so this gap is **timing, not a
+          defect** -- L1 already classifies it that way using the two refresh timestamps.
+      - name: warehouse_to_mart_gap
+        data_type: hugeint
+        description: >
+          A gap here would be ours and would be a defect. Asserted zero by a test rather than
+          left to be noticed.
+      - name: measure_label
+        data_type: varchar
+      - name: publisher_figure
+        data_type: bigint
+      - name: rows_landing
+        data_type: bigint
+      - name: rows_raw
+        data_type: bigint
+      - name: rows_duckdb
+        data_type: bigint
+      - name: rows_staged
+        data_type: bigint
+      - name: rows_in_mart
+        data_type: hugeint
+      - name: retrieved_at
+        data_type: timestamp
+      - name: source_last_refresh
+        data_type: timestamp
+      - name: source_metadata_refresh
+        data_type: timestamp
+      - name: interpretation
+        data_type: varchar
