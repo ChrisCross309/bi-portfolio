@@ -1,0 +1,182 @@
+version: 2
+
+# Contracts are not enforced on staging, deliberately.
+#
+# A contract's value is at an interface -- a model something else depends on and should not
+# be able to change under. That is the conformed dimensions, which every mart joins, and the
+# marts themselves, which Power BI reads. Staging is internal to this project: it renames one
+# source and derives flags from it, and nothing outside `transform/` consumes it.
+#
+# The cost of enforcing them here would be 199 column entries across three models, which
+# would bury the twenty or so lines below that actually say something. What is tested instead
+# is what can silently go wrong: the keys, and whether every county resolves.
+
+models:
+  - name: stg_ins__nfip_claims
+    description: >
+      NFIP claims, national, one row per claim. 84 columns renamed from FEMA's camelCase
+      mechanically so each maps back to the publisher's own name, plus derived columns for
+      the four decisions a mart should not each make for itself: which of two county columns
+      to trust, what `UN` means, whether a NULL payment is a denial or a gap, and whether to
+      measure gross or net of recoveries.
+    columns:
+      - name: claim_id
+        description: FEMA's own `id`. Unique across all 2.7M rows, verified.
+        data_tests: [unique, not_null]
+
+      - name: county_fips
+        description: >
+          `countyCode` where FEMA populated it, `censusGeoid`'s first five characters
+          otherwise. NULL for 44,473 claims with neither. The coalesce is worth 3x: 1.63%
+          of claims nationally have no usable county this way against 5.03% via
+          `censusGeoid` alone, and Michigan goes from 372 unplaceable claims to 147.
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('dim_geography_county')
+                field: county_fips
+
+      - name: county_fips_source
+        description: >
+          Which column supplied the county: `county_code` for 2,661,578 claims,
+          `census_geoid` for the 17,963 it rescues, NULL where neither had one. Here so the
+          coalesce is auditable rather than asserted.
+
+      - name: county_matches_reported_state
+        description: >
+          False where the county FIPS names a different state than the claim's own -- 704
+          claims nationally, 15 of them Michigan-filed. Surfaced rather than corrected:
+          which of the two fields is wrong is FEMA's to say. NULL where there is no county.
+
+      - name: state_code
+        description: Two-letter code, or FEMA's `UN` where the state is unavailable.
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_state')
+                field: state_code
+
+      - name: is_state_unknown
+        description: >
+          16,441 claims, mostly pre-1990, whose state FEMA could not determine. Real claims.
+          A state join that drops them understates the national total by exactly that much,
+          and INS-E5 ties to FEMA's published national figures.
+
+      - name: total_amount_paid
+        description: >
+          Building plus contents plus ICC, gross. NULL -- never zero -- for the 567,044
+          claims that closed without payment, because all three components are NULL on
+          exactly the same rows. A SUM over this skips them.
+
+      - name: total_net_payment
+        description: >
+          The same three amounts net of recoveries and subrogation. Never NULL: reads 0 for
+          the closed-unpaid claims and differs from the gross figure on 9,882 others. A SUM
+          over this counts the unpaid claims as zero. **Neither column is the right one in
+          general** -- a mart has to say which question it is asking.
+
+      - name: is_closed_without_payment
+        description: >
+          556,554 claims: no payment recorded and a non-payment reason given. A denial is
+          not missing data, and is not the same as a claim that paid zero.
+
+      - name: is_unexplained_missing_payment
+        description: The other 10,490 -- no payment and no stated reason. Genuinely unknown.
+
+      - name: is_zero_paid
+        description: 41,289 claims where all three components paid exactly zero.
+
+      - name: has_negative_payment
+        description: >
+          128 claims where a recovery or adjustment pushed a component below zero. Real, and
+          kept, so a total that looks slightly low has an explanation.
+
+      - name: loss_year_month
+        description: "`YYYY-MM`, joining `dim_period` at month grain."
+
+  - name: stg_ins__nfip_policies
+    description: >
+      NFIP policies, **Michigan only** -- the documented size exception in CLAUDE.md section
+      4, set at ingestion and enforced by L1, not re-filtered here. One row per policy
+      record, which is not one row per policy.
+    columns:
+      - name: policy_id
+        data_tests: [unique, not_null]
+
+      - name: policy_count
+        description: >
+          1 to 289. A condominium master policy covers many units in a single row, so
+          policies in force is `SUM(policy_count)` and never `COUNT(*)`. The gap is real:
+          408,747 policies across 384,067 rows, and it moves with the condo mix.
+        data_tests: [not_null]
+
+      - name: is_multi_policy_row
+        description: 2,041 rows where the two counts diverge.
+
+      - name: county_fips
+        description: >
+          From `censusGeoid` only -- this file has no `countyCode` column, so the coalesce
+          that rescues 3% of claims has nothing to work with here. 77 of Michigan's 83
+          counties appear, which is a fact about where flood policies are sold rather than a
+          load failure.
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('dim_geography_county')
+                field: county_fips
+
+      - name: policy_term_days
+        description: Effective to termination. Negative or zero on the four invalid rows below.
+
+      - name: has_invalid_term
+        description: >
+          Four policies terminate on or before they take effect. Flagged rather than
+          filtered: a month-end in-force count that silently dropped them and one that
+          silently kept them would disagree, and neither would say so.
+
+  - name: stg_ins__fema_declarations
+    description: >
+      FEMA disaster declarations, national. The event dimension INS-E3 uses to separate
+      event-driven Michigan losses from attritional ones. One row per declaration per
+      designated area -- 70,184 rows across 5,239 distinct disasters.
+    columns:
+      - name: declaration_area_id
+        description: >
+          FEMA's `id`, and the only stable key. `designated_area` is not unique within a
+          disaster: 4527 designated six separate "Lincoln (Township of)" rows, one per
+          county containing a township of that name, so a join on the area name fans out.
+        data_tests: [unique, not_null]
+
+      - name: disaster_number
+        description: Counting declarations means counting distinct values here, not rows.
+        data_tests: [not_null]
+
+      - name: county_fips
+        description: >
+          State plus county FIPS. `XX000` on the 1,605 statewide declarations, which
+          `dim_geography_county` carries as an unknown-county member for this reason.
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('dim_geography_county')
+                field: county_fips
+
+      - name: is_statewide
+        description: >
+          1,605 declarations covering a whole state and naming no county. An
+          event-attribution rule that joins on county alone misses every one of them.
+
+      - name: is_incident_open
+        description: >
+          599 declarations with no end date -- the incident was not closed when the file was
+          generated. A `BETWEEN` against a NULL end matches nothing silently, so the mart has
+          to decide whether an open window runs to the present or is excluded.
+
+      - name: has_invalid_incident_window
+        description: Two declarations end before they begin. Flagged, not repaired.
+
+      - name: is_flood_related
+        description: >
+          Flood, severe storm or dam/levee break. A convenience filter for INS-E3, not a
+          FEMA classification -- the published `incident_type` is the authority.

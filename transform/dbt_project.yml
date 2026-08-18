@@ -55,6 +55,9 @@ models:
     conformed:
       +materialized: table
       +schema: conformed
+    staging:
+      +materialized: view
+      +schema: stg
 
 seeds:
   bi_portfolio:
