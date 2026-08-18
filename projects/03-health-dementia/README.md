@@ -65,7 +65,7 @@ this decision.
 
 ## Executive questions
 
-- **HLT-E1** — What share of MI adults 45+ report subjective cognitive decline, and is MI
+- **HLT-E1** — What share of MI adults 50 and older report subjective cognitive decline, and is MI
   significantly better or worse than national — CI-aware, not ranked noise?
 - **HLT-E2** — Are MI Medicare beneficiaries using skilled-nursing and home-health care at rates
   above or below national, and which direction over five years? *(Re-scoped — see the retired
@@ -73,8 +73,10 @@ this decision.
 - **HLT-E3** — What does a MI Medicare beneficiary aged 65+ cost against national in constant
   dollars, and is the gap widening or narrowing? *(Re-scoped — see above.)*
 - **HLT-E4** — Are MI caregiver-burden indicators improving or deteriorating?
-- **HLT-E5** — Given 65+ population projections, is MI's need growing faster than its screening and
-  care indicators?
+- **HLT-E5** — Given the growth in the 65+ population, is MI's need growing faster than its
+  screening and care indicators? *(Worded as "projections" originally. **ACS publishes an estimate
+  of the population that already exists, not a forecast**, and nothing in this repo projects one, so
+  the question is answered from observed growth across two non-overlapping survey windows.)*
 
 What answers the two re-scoped questions, so the claim is checkable rather than asserted:
 
@@ -86,6 +88,55 @@ What answers the two re-scoped questions, so the claim is checkable rather than 
 Standardized payments are used throughout: CMS's `_STDZD_` columns remove geographic wage and
 payment-policy differences, which is what makes a Michigan-vs-national comparison mean anything.
 The CPI-U deflator was ingested for exactly this — see `data/raw/shared/cpi_u/`.
+
+## Answered by
+
+Every question resolves to a contracted mart in [`transform/models/marts/health/`](../../transform/models/marts/health/),
+materialised into the `mart_hlt` schema. The IDs travel with the work (CLAUDE.md section 2):
+each model's own description names the question it answers, and a test refuses to let a health
+mart cite another track's ID.
+
+| Question | Mart | Grain |
+|---|---|---|
+| HLT-E1 · HLT-E4 | `fct_hlt_cdc_mi_vs_national` | cycle × question × age group, MI beside national |
+| HLT-E2 | `fct_hlt_medicare_service_county` | MI county × year × service × measure |
+| HLT-E3 | `fct_hlt_medicare_cost_annual` | jurisdiction × year × age level |
+| HLT-E5 | `fct_hlt_mi_population_65_plus` · `rpt_hlt_need_vs_capacity` | MI county × ACS vintage; indicator × comparison window |
+
+`fct_hlt_cdc_indicators` sits under HLT-E1, HLT-E4 and HLT-E5's indicator side as the level
+table -- every CDC cell, typed, catalogued and flagged.
+
+**Both re-scoped questions say so in their own model descriptions.** `fct_hlt_medicare_service_county`
+and `fct_hlt_medicare_cost_annual` state in the text a reader sees first that nothing in them
+measures dementia.
+
+### What the models found
+
+- **HLT-E1 returns "no significant difference" in all 24 comparable cells** — nine cycles by
+  three age groups, minus the three where Michigan published no 2016 row. Michigan's point
+  estimate sits above national in most cycles (12.7 against 11.6 in 2019) and never
+  significantly so. That is the finding, not a failure to find one.
+- **HLT-E3's gap changed sign.** In constant 2025 dollars Michigan sat **$250 above** the
+  national figure for 65-and-over beneficiaries in 2019 and **$374 below** it in 2024, crossing
+  zero in 2022. A movement in relative standardized cost, and not a statement about dementia,
+  about quality of care, or about Medicare Advantage beneficiaries, whose spending is not in
+  this file.
+- **HLT-E2 runs below national, not above.** Michigan counties' median ratio to the national
+  rate is 0.751 for skilled nursing and 0.739 for home health.
+- **HLT-E4's dementia-caregiving indicator is "not comparable", and that is the honest
+  answer.** CDC's `**` footnote marks estimates from 2019 on as incomparable with earlier ones
+  because the survey questions changed, and Michigan's only two usable points straddle it.
+- **HLT-E5**: the 65+ population grew **12.6%** between the non-overlapping 2015–2019 and
+  2020–2024 windows, while 38 of 57 indicator and age-group combinations read "need outpacing
+  capacity".
+
+### One constraint on HLT-E5 worth stating
+
+Census restructured the ACS `S0101` subject table at the **2017 vintage**, and the line this
+repo reads is *median age* before it — across all 3,220 counties the pre-2017 values run 18.0
+to 66.0 against a median near 5,000 after. `stg_ref__acs5_subject` therefore publishes the 65+
+estimate only from 2017 onward, and HLT-E5 runs on the eight vintages that are real rather than
+fifteen with seven quietly wrong.
 
 ## Drill bank
 

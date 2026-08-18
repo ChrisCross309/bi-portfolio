@@ -32,6 +32,24 @@ level, for FIN-E5.
   national?
 - **FIN-E5** — Which large MI lenders over- or under-perform peers on complaints per $1B originated?
 
+## Answered by
+
+Every question resolves to a contracted mart in [`transform/models/marts/fintech/`](../../transform/models/marts/fintech/),
+materialised into the `mart_fin` schema. The IDs travel with the work (CLAUDE.md section 2):
+each model's own description names the question it answers, and a test refuses to let a
+fintech mart cite another track's ID.
+
+| Question | Mart | Grain |
+|---|---|---|
+| FIN-E1 · FIN-E2 | `fct_fin_complaints_monthly_geo` | month × county × product family, national |
+| FIN-E3 | `fct_fin_complaints_monthly_company` | month × state × company × product family |
+| FIN-E4 | `fct_fin_hmda_annual` | year × MI county × lender × loan characteristics |
+| FIN-E5 | `rpt_fin_entity_match_rate` | one row per coverage basis |
+
+`rpt_fin_publication_window` is the model FIN-E1 must be filtered by rather than a question of
+its own: a complaint publishes only after the company responds or fifteen days elapse, so the
+newest month always looks like a fall until it is excluded.
+
 ## Drill bank
 
 Timely-response % · relief % · median and p90 days-to-response · top companies by MI volume · the

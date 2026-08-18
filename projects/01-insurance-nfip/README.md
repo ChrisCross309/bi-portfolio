@@ -34,6 +34,24 @@ measure descriptions — do not renumber them.
   units compare to national?
 - **INS-E5** — Do our totals tie to FEMA's published figures?
 
+## Answered by
+
+Every question resolves to a contracted mart in [`transform/models/marts/insurance/`](../../transform/models/marts/insurance/),
+materialised into the `mart_ins` schema. The IDs travel with the work (CLAUDE.md section 2):
+each model's own description names the question it answers, and a test refuses to let an
+insurance mart cite another track's ID.
+
+| Question | Mart | Grain |
+|---|---|---|
+| INS-E1 · INS-E2 | `fct_ins_claims_monthly` | county × loss month, national |
+| INS-E3 | `bridge_ins_claim_declaration` | claim × declaration, within the attribution window |
+| INS-E4 | `fct_ins_policies_mi_monthly` | MI county × month |
+| INS-E5 | `rpt_ins_reconciliation` | one row per source, our totals beside FEMA's |
+
+Two further marts carry the drills rather than a headline: `fct_ins_claims_detail_mi` is the
+Michigan claim-level detail an executive page drills into, and `dim_ins_disaster_declaration`
+collapses 70,184 declaration-area rows to the distinct disasters behind them.
+
 ## Drill bank
 
 Building/contents/ICC mix · $0-paid share · top counties by paid and per-capita paid · loss-year
@@ -93,14 +111,23 @@ being anomalous when it is simply inland.
 ## County geography quality
 
 Claims and policies both carry `censusGeoid`, whose first five characters are the state and county
-FIPS. Coverage is good but not complete, and the gaps are not errors:
+FIPS. **Claims carry a second county key as well** -- `countyCode` -- and it is populated on rows
+where `censusGeoid` is not. Coverage below is measured the way the models measure it, by coalescing
+the two, because that is what `stg_ins__nfip_claims` and `dim_geography_county` do. Policies have no
+`countyCode` column at all, so their figure is `censusGeoid` alone and cannot be improved.
 
 | | Michigan rows | no usable county | MI counties present |
 |---|---|---|---|
-| Claims | 14,938 | 372 (2.49%) | 82 of 83 |
+| Claims | 14,938 | 147 (0.98%) | 82 of 83 |
 | Policies | 384,067 | 1,315 (0.34%) | 77 of 83 |
 
-Nationally 5.03% of claims have no usable county, so Michigan is *better* covered than average. The
+Reading `censusGeoid` alone would report 372 Michigan claims (2.49%) with no county -- the second key
+recovers 225 of them, and it recovers nothing for the county roster, which is 82 either way. The
+difference matters because it is the gap between what the file looks like and what the models
+actually resolve.
+
+Nationally 1.63% of claims have no usable county once both keys are coalesced, against 5.03% on
+`censusGeoid` alone. Michigan is *better* covered than average on the like-for-like comparison. The
 missing counties are a fact about flood insurance rather than a load failure — claims are not filed
 and policies are not sold in every county — which is why L1 reports the roster for these two sources
 instead of requiring all 83. Note the null convention: `censusGeoid` is NULL when absent, while

@@ -98,15 +98,23 @@ compared against. National sources are never filtered to Michigan in raw.
 | Session | Scope | Status |
 |---|---|---|
 | 1 | Every raw pipeline, all three tracks: discover → download → land → parquet → DuckDB `raw` → L1 integrity → schema baselines | **complete** — 12 sources, 24.8M rows |
-| **2** | Semantic layer: dbt staging/intermediate/marts per project, seeds, contracts, tests, conformed dimensions, deeper reconciliation | **in progress** |
+| **2** | Semantic layer: dbt staging/intermediate/marts per project, seeds, contracts, tests, conformed dimensions, L2 reconciliation | **complete** — 38 models, 17 singular tests, 9 seeds |
 | 3 | Power BI: one `.pbip` semantic model and report per project, executive summary drilling to detail | planned |
 
 Session 1 landed no dbt models, no marts, and no Power BI artifacts. Its finish line was that every
 executive question is *answerable from raw* — proven by the per-track question-coverage checks in
 the L1 harness, not asserted. Session 2 answers them: the dbt project lives in
-[`transform/`](transform/), types every column raw deliberately left as text, and builds one mart
-per track. It reads the live warehouse locally and the committed fixtures in CI, which is why the
-whole thing still builds on a fresh clone with no network.
+[`transform/`](transform/), types every column raw deliberately left as text, and builds contracted
+marts for all three tracks. It reads the live warehouse locally and the committed fixtures in CI,
+which is why the whole thing still builds on a fresh clone with no network.
+
+**All fifteen executive questions now resolve to a named mart**, listed in each project README's
+*Answered by* table. Contracts are enforced on marts and conformed dimensions, so a column that
+silently changes type fails the build rather than a Power BI refresh in session 3. Session 2 landed
+no Power BI artifacts, and it deliberately left three findings as findings rather than smoothing
+them: HLT-E1 returns "no significant difference" in every comparable cell, HLT-E4's
+dementia-caregiving trend is "not comparable" across CDC's 2019 question change, and neither
+re-scoped health question measures dementia at all.
 
 ---
 
@@ -136,6 +144,19 @@ standard as the first twelve.
 - **Question coverage** — all fifteen executive questions, checked for the columns, geographies,
   benchmarks and deflators they need. This is session 1's finish line.
 - **Publisher spot checks** — NFIP per-state counts asked of the FEMA API directly.
+
+L2 adds the two questions L1 deliberately does not ask:
+
+- **Schema drift** — each committed baseline's field roster against the columns actually in raw, so
+  a publisher renaming a field fails a run instead of surfacing as a silent NULL column three models
+  downstream. Detectability is not uniform and the harness says so: six sources publish a full
+  roster, two publish the variables we request, one publishes only a column count, and four publish
+  nothing machine-readable and report `SKIP` **with the reason**. One of those four is
+  `cpi_u_series`, which has no committed baseline at all — thirteen sources, twelve baselines, and
+  the gap is named rather than passed over.
+- **Staging conservation** — all thirteen raw tables against their staging views. Staging types and
+  renames; it never filters. Nothing covered that gap before, because L1 stops at raw and the dbt
+  singular tests start at staging.
 
 **A `SKIP` is never a silent pass.** Fixture mode skips anything that would call a publisher; a
 stratified sample skips coverage questions it cannot answer; and a source whose landing has been
