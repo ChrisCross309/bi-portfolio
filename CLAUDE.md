@@ -75,7 +75,10 @@ prove.
 8. **Schema baselines.** Wherever a publisher exposes field metadata via API, snapshot it to
    `platform/reconcile/baselines/` and commit it (OpenFEMA fields; Socrata columns; CMS descriptors).
    For HMDA and CFPB, commit a pointer file with the documentation URL and retrieval date. Session 1
-   captures baselines only — **no drift diffing this session**; that is L2's job.
+   captures baselines only — **no drift diffing that session**; that is L2's job, and
+   `reconcile.l2_reconciliation` now does it: each baseline's field roster against the columns
+   actually in raw. Four sources publish no machine-readable roster and report `SKIP` with the
+   reason, never a pass.
 9. **DuckDB naming.** One `raw` schema; tables prefixed by track — `ins_*`, `fin_*`, `hlt_*`, `ref_*`
    — so any query's domain is visible at a glance and session 2 can define dbt sources per project
    cleanly.
@@ -103,6 +106,7 @@ from raw.
 data/{landing,raw}/{insurance,fintech,health,shared}/   gitignored
 platform/ingest/<track>/<source>.py                     fetchers
 platform/reconcile/l1_integrity.py                      the integrity harness
+platform/reconcile/l2_reconciliation.py                 schema drift + staging conservation
 platform/reconcile/baselines/                           committed schema snapshots
 transform/                                              the dbt semantic layer
 projects/0N-<track>/README.md                           questions verbatim + scope/caveats

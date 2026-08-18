@@ -67,13 +67,18 @@ dbt-sources:
 
 # ── verification ───────────────────────────────────────────
 
+# L2: schema drift against the committed baselines, and raw -> staging conservation
+l2 track="all":
+    uv run python -m reconcile.l2_reconciliation --track {{track}}
+
 # ruff + pytest; live-endpoint tests are marked `slow` and excluded
 check:
     uv run ruff check .
     uv run ruff format --check .
     uv run pytest
 
-# what CI runs: load committed fixtures, then L1 logic with network checks skipped
+# what CI runs: load committed fixtures, L1 with network checks skipped, the semantic
+# layer against the fixture warehouse, then L2 drift and conservation
 ci:
     uv run python -m ingest.insurance.nfip_claims --mode fixture
     uv run python -m ingest.insurance.nfip_policies --mode fixture
@@ -88,6 +93,8 @@ ci:
     uv run python -m ingest.reload --mode fixture
     uv run python -m reconcile.l1_integrity --mode fixture
     uv run dbt build --project-dir transform --target ci
+    # L2 runs after dbt, not before: staging conservation needs the views to exist.
+    uv run python -m reconcile.l2_reconciliation --mode fixture
 
 # regenerate committed fixtures from local raw — deliberate, never automatic
 fixture source="":
