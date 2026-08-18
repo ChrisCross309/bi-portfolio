@@ -29,62 +29,129 @@ models:
     columns:
       - name: cycle_key
         data_type: varchar
+        description: >
+          CDC survey cycle. Eight of the ten are single years; `2019-2022` and `2021-2022` are
+          not.
         data_tests:
           - not_null
       - name: year_start
         data_type: smallint
+        description: >
+          First year of the reporting window.
       - name: year_end
         data_type: smallint
+        description: >
+          Last year of the reporting window. Equal to `year_start` for a single-year period.
       - name: spans_multiple_years
         data_type: boolean
+        description: >
+          TRUE where the period covers several years. A multi-year estimate describes its whole
+          window and must never be plotted as a point on its final year.
       - name: question_id
         data_type: varchar
+        description: >
+          CDC question code. Joins `seed_cdc_indicator_catalog`.
         data_tests:
           - not_null
       - name: question
         data_type: varchar
+        description: >
+          CDC's own full question wording, as published.
       - name: class_id
         data_type: varchar
+        description: >
+          CDC class code -- `C06` Cognitive Decline, `C07` Caregiving, `C03` Screenings and
+          Vaccines.
       - name: class
         data_type: varchar
+        description: >
+          CDC indicator class, the top level of its taxonomy.
       - name: indicator_family
         data_type: varchar
+        description: >
+          `cognitive_decline` · `caregiving` · `screening` · `overall_health` ·
+          `nutrition_activity` · `substance_use` · `mental_health`.
       - name: short_label
         data_type: varchar
+        description: >
+          A chart-length label for the indicator, from the seed. CDC's own wording runs to a
+          paragraph.
       - name: higher_is_better
         data_type: boolean
+        description: >
+          Whether a rise in this indicator is good news. **NULL where CDC's wording does not
+          settle it** -- caregiving prevalence is genuinely two-sided -- and every direction
+          downstream is NULL when it is.
       - name: is_cognitive_decline
         data_type: boolean
+        description: >
+          The Cognitive Decline class, which HLT-E1 draws on.
       - name: is_caregiving
         data_type: boolean
+        description: >
+          The Caregiving class, which HLT-E4 draws on. **The only class carrying CDC's 2019
+          comparability break.**
       - name: is_screening
         data_type: boolean
+        description: >
+          The Screenings and Vaccines class, which HLT-E5's capacity side draws on.
       - name: age_group
         data_type: varchar
+        description: >
+          `50-64 years` · `65 years or older` · `Overall`. This source covers adults **50 and
+          older**, not 45 and older.
       - name: stratification
         data_type: varchar
+        description: >
+          The second stratification dimension -- a race/ethnicity or sex band, or `Overall` where
+          the cell is unstratified.
       - name: is_unstratified_second_dimension
         data_type: boolean
+        description: >
+          TRUE on the `Overall` cells. Summing across the stratified ones double counts the
+          population.
       - name: mi_value
         data_type: double
+        description: >
+          Michigan's published estimate.
       - name: mi_low
         data_type: double
+        description: >
+          Lower confidence limit on the Michigan estimate.
       - name: mi_high
         data_type: double
+        description: >
+          Upper confidence limit on the Michigan estimate.
       - name: national_value
         data_type: double
+        description: >
+          The national figure for the same period and measure, carried beside the local one so a
+          benchmark needs no second query.
       - name: national_low
         data_type: double
+        description: >
+          Lower confidence limit on the national estimate.
       - name: national_high
         data_type: double
+        description: >
+          Upper confidence limit on the national estimate.
       - name: gap_to_national
         data_type: double
+        description: >
+          Local value minus national, in the measure's own units. Positive means above national,
+          which is not the same as better.
       - name: national_fewer_than_50_states
         data_type: boolean
+        description: >
+          The national side was built from fewer than 50 states reporting.
       - name: mi_not_comparable_pre_2019
         data_type: boolean
+        description: >
+          Michigan's estimate carries CDC's 2019 comparability break.
       - name: national_not_comparable_pre_2019
         data_type: boolean
+        description: >
+          The national estimate carries CDC's 2019 comparability break.
       - name: is_comparable
         data_type: boolean
         description: >
@@ -93,6 +160,9 @@ models:
           `not comparable` rather than left as a gap.
       - name: intervals_overlap
         data_type: boolean
+        description: >
+          The two confidence intervals overlap, so the estimates are **not** distinguishable. This
+          is the whole test behind HLT-E1.
       - name: significance
         data_type: varchar
         description: >
@@ -121,10 +191,18 @@ models:
                   - 'not comparable'
       - name: prior_cycle_key
         data_type: varchar
+        description: >
+          The previous single-year cycle this row's change is measured against. Multi-year cycles
+          are levels, never trend endpoints.
       - name: mi_prior_value
         data_type: double
+        description: >
+          Michigan's estimate in the prior single-year cycle.
       - name: mi_change_from_prior
         data_type: double
+        description: >
+          Change in percentage points from the prior cycle. NULL wherever an endpoint straddles
+          the 2019 question change or the cycle spans several years.
       - name: mi_direction
         data_type: varchar
         description: >
@@ -150,20 +228,38 @@ models:
     columns:
       - name: cycle_key
         data_type: varchar
+        description: >
+          CDC survey cycle. Eight of the ten are single years; `2019-2022` and `2021-2022` are
+          not.
         data_tests:
           - not_null
       - name: year_start
         data_type: smallint
+        description: >
+          First year of the reporting window.
       - name: year_end
         data_type: smallint
+        description: >
+          Last year of the reporting window. Equal to `year_start` for a single-year period.
       - name: period_grain
         data_type: varchar
+        description: >
+          Which cadence this row is reported at. Annual and survey-cycle sources stay annual and
+          survey-cycle; nothing here may be presented at a finer one.
       - name: spans_multiple_years
         data_type: boolean
+        description: >
+          TRUE where the period covers several years. A multi-year estimate describes its whole
+          window and must never be plotted as a point on its final year.
       - name: location_abbr
         data_type: varchar
+        description: >
+          CDC's location code. Mixes states, DC, territories, census regions and the nation -- see
+          `location_kind` before aggregating.
       - name: location_desc
         data_type: varchar
+        description: >
+          Location name as CDC publishes it.
       - name: location_kind
         data_type: varchar
         description: >
@@ -181,14 +277,26 @@ models:
                   - 'other'
       - name: is_michigan
         data_type: boolean
+        description: >
+          The Michigan lens, applied at the point of use rather than baked into the grain.
+          National rows are retained so Michigan has a benchmark.
       - name: class_id
         data_type: varchar
+        description: >
+          CDC class code -- `C06` Cognitive Decline, `C07` Caregiving, `C03` Screenings and
+          Vaccines.
       - name: class
         data_type: varchar
+        description: >
+          CDC indicator class, the top level of its taxonomy.
       - name: topic
         data_type: varchar
+        description: >
+          CDC indicator topic, one level below class.
       - name: question_id
         data_type: varchar
+        description: >
+          CDC question code. Joins `seed_cdc_indicator_catalog`.
         data_tests:
           - not_null
           - relationships:
@@ -197,10 +305,18 @@ models:
                 field: question_id
       - name: question
         data_type: varchar
+        description: >
+          CDC's own full question wording, as published.
       - name: indicator_family
         data_type: varchar
+        description: >
+          `cognitive_decline` · `caregiving` · `screening` · `overall_health` ·
+          `nutrition_activity` · `substance_use` · `mental_health`.
       - name: short_label
         data_type: varchar
+        description: >
+          A chart-length label for the indicator, from the seed. CDC's own wording runs to a
+          paragraph.
       - name: higher_is_better
         data_type: boolean
         description: >
@@ -210,10 +326,17 @@ models:
           `Q22` sits in Screenings but reports blood-pressure prevalence, where it is worse.
       - name: is_cognitive_decline
         data_type: boolean
+        description: >
+          The Cognitive Decline class, which HLT-E1 draws on.
       - name: is_caregiving
         data_type: boolean
+        description: >
+          The Caregiving class, which HLT-E4 draws on. **The only class carrying CDC's 2019
+          comparability break.**
       - name: is_screening
         data_type: boolean
+        description: >
+          The Screenings and Vaccines class, which HLT-E5's capacity side draws on.
       - name: age_group
         data_type: varchar
         description: >
@@ -228,22 +351,46 @@ models:
                   - 'Overall'
       - name: stratification
         data_type: varchar
+        description: >
+          The second stratification dimension -- a race/ethnicity or sex band, or `Overall` where
+          the cell is unstratified.
       - name: stratification_category
         data_type: varchar
+        description: >
+          Which dimension the second stratification is on -- `Race/Ethnicity`, `Sex`, or
+          `Overall`.
       - name: is_overall_age_group
         data_type: boolean
+        description: >
+          The `Overall` age stratum rather than 50-64 or 65-plus. Combining all three double
+          counts.
       - name: is_unstratified_second_dimension
         data_type: boolean
+        description: >
+          TRUE on the `Overall` cells. Summing across the stratified ones double counts the
+          population.
       - name: data_value_type
         data_type: varchar
+        description: >
+          `Percentage` or `Mean`. The two are not interchangeable and must never share an axis.
       - name: data_value_unit
         data_type: varchar
+        description: >
+          The unit the value is in.
       - name: data_value
         data_type: double
+        description: >
+          The published estimate. **A survey estimate with no denominator in this file, so it
+          cannot be summed or averaged across places or strata** -- it is valid only at the grain
+          CDC published it.
       - name: low_confidence_limit
         data_type: double
+        description: >
+          Lower confidence limit as published.
       - name: high_confidence_limit
         data_type: double
+        description: >
+          Upper confidence limit as published.
       - name: is_suppressed
         data_type: boolean
         description: >
@@ -251,10 +398,17 @@ models:
           annotate a value that is present.
       - name: has_confidence_interval
         data_type: boolean
+        description: >
+          Both limits are present. A comparison without them is not defensible: this is a
+          self-reported telephone survey and its state estimates carry real sampling error.
       - name: footnote_symbol
         data_type: varchar
+        description: >
+          CDC's footnote marker on this cell.
       - name: footnote_text
         data_type: varchar
+        description: >
+          What the footnote says, in CDC's own words.
       - name: is_not_comparable_pre_2019
         data_type: boolean
         description: >
@@ -264,8 +418,13 @@ models:
           28.5 across that boundary for this reason alone.
       - name: is_fewer_than_50_states_reporting
         data_type: boolean
+        description: >
+          CDC's `#` footnote: this national estimate was built from an incomplete set of states.
       - name: is_regional_estimate
         data_type: boolean
+        description: >
+          CDC's `&` footnote: a census-region estimate that may not represent every state in the
+          region.
 
   - name: fct_hlt_medicare_service_county
     description: >
@@ -282,12 +441,23 @@ models:
     columns:
       - name: measure_year
         data_type: smallint
+        description: >
+          Calendar year of the CMS measure. Annual is the only cadence this file has.
       - name: period_key
         data_type: varchar
+        description: >
+          The period this row describes, as text. `YYYY-MM` at month grain, `YYYY` at year grain,
+          and the cycle label at survey-cycle grain.
       - name: period_grain
         data_type: varchar
+        description: >
+          Which cadence this row is reported at. Annual and survey-cycle sources stay annual and
+          survey-cycle; nothing here may be presented at a finer one.
       - name: county_fips
         data_type: varchar
+        description: >
+          Five-digit state+county FIPS. Joins `dim_geography_county`. NULL where the publisher
+          reported no county, which is a real category and not a load failure.
         data_tests:
           - not_null
           - relationships:
@@ -296,12 +466,25 @@ models:
                 field: county_fips
       - name: county_name
         data_type: varchar
+        description: >
+          County name without the state suffix, for a chart axis. The unassigned bucket reads
+          `XX-UNKNOWN` rather than blank.
       - name: cms_county_label
         data_type: varchar
+        description: >
+          CMS's own county label, `MI-Alcona` style. Kept beside the conformed name so a figure
+          can be traced back to the published file.
       - name: is_michigan
         data_type: boolean
+        description: >
+          The Michigan lens, applied at the point of use rather than baked into the grain.
+          National rows are retained so Michigan has a benchmark.
       - name: is_unassigned_county
         data_type: boolean
+        description: >
+          The `26000` / `MI-UNKNOWN` bucket -- beneficiaries whose county could not be assigned.
+          Eleven rows, one per year, real people. A county rollup includes them explicitly or
+          excludes them explicitly, never by accident.
       - name: age_level
         data_type: varchar
         description: >
@@ -314,6 +497,8 @@ models:
                   - 'All'
       - name: service_code
         data_type: varchar
+        description: >
+          CMS service category code. Joins `seed_cms_service_category`.
         data_tests:
           - accepted_values:
               arguments:
@@ -325,18 +510,39 @@ models:
                   - 'LTCH'
       - name: service_name
         data_type: varchar
+        description: >
+          Readable service category name.
       - name: measure_kind
         data_type: varchar
+        description: >
+          Which question the number answers: `per_capita` dollars per fee-for-service beneficiary,
+          or `user_pct` share of beneficiaries who used the service. **Not interchangeable.**
       - name: is_standardized
         data_type: boolean
+        description: >
+          The payment has geographic wage and payment-policy differences removed. **The single
+          easiest invisible error in this track** -- only standardized payments make a
+          Michigan-versus-national comparison mean anything, and the unstandardized twin measures
+          something real and different.
       - name: county_value
         data_type: double
+        description: >
+          The county's value for this service and measure. NULL where CMS suppressed the cell.
       - name: national_value
         data_type: double
+        description: >
+          The national figure for the same period and measure, carried beside the local one so a
+          benchmark needs no second query.
       - name: ratio_to_national
         data_type: double
+        description: >
+          County value over the national value. Below 1 means the county uses less than the
+          nation. Recompute from `county_value` and `national_value` before aggregating.
       - name: gap_to_national
         data_type: double
+        description: >
+          Local value minus national, in the measure's own units. Positive means above national,
+          which is not the same as better.
       - name: is_suppressed
         data_type: boolean
         description: >
@@ -349,10 +555,16 @@ models:
           two can never be collapsed into one another.
       - name: national_is_suppressed
         data_type: boolean
+        description: >
+          CMS suppressed the national benchmark for this service and year.
       - name: service_suppressed_cells
         data_type: bigint
+        description: >
+          How many of this service's Michigan county-years CMS withheld.
       - name: service_suppressed_pct
         data_type: double
+        description: >
+          The same as a percentage of the service's 924 county-years.
       - name: is_small_cell_service
         data_type: boolean
         description: >
@@ -366,6 +578,9 @@ models:
           Medicare Advantage penetration looks different for reasons unrelated to cost of care.
       - name: ffs_beneficiary_denominator
         data_type: double
+        description: >
+          Original-Medicare beneficiary count, and the correct denominator for anything per-capita
+          here, because the spending is fee-for-service only.
 
   - name: fct_hlt_medicare_cost_annual
     description: >
@@ -379,20 +594,38 @@ models:
     columns:
       - name: measure_year
         data_type: smallint
+        description: >
+          Calendar year of the CMS measure. Annual is the only cadence this file has.
         data_tests:
           - not_null
       - name: period_key
         data_type: varchar
+        description: >
+          The period this row describes, as text. `YYYY-MM` at month grain, `YYYY` at year grain,
+          and the cycle label at survey-cycle grain.
       - name: period_grain
         data_type: varchar
+        description: >
+          Which cadence this row is reported at. Annual and survey-cycle sources stay annual and
+          survey-cycle; nothing here may be presented at a finer one.
       - name: geo_level
         data_type: varchar
+        description: >
+          `State` or `National`. County is deliberately absent: CMS publishes the 65-and-over
+          slice at these two levels only.
       - name: geo_code
         data_type: varchar
+        description: >
+          Two-digit state FIPS. NULL on the National row and on CMS's own `Territory` and `ZZ`
+          aggregates.
       - name: geo_description
         data_type: varchar
+        description: >
+          CMS's own label -- a state abbreviation, `National`, or one of its two aggregate rows.
       - name: state_name
         data_type: varchar
+        description: >
+          Full state name as published.
       - name: is_jurisdiction
         data_type: boolean
         description: >
@@ -400,6 +633,9 @@ models:
           with a NULL geo_code. Kept rather than dropped, so a total still reconciles.
       - name: is_michigan
         data_type: boolean
+        description: >
+          The Michigan lens, applied at the point of use rather than baked into the grain.
+          National rows are retained so Michigan has a benchmark.
       - name: age_level
         data_type: varchar
         description: >
@@ -415,14 +651,28 @@ models:
                   - '>=65'
       - name: cost_per_capita
         data_type: double
+        description: >
+          Standardized Medicare payment per fee-for-service beneficiary, nominal dollars.
+          Standardized means geographic wage and payment-policy differences are removed, which is
+          what makes a cross-state comparison mean anything.
       - name: national_cost_per_capita
         data_type: double
+        description: >
+          The same measure for the nation in the same year and age level.
       - name: gap_to_national
         data_type: double
+        description: >
+          Local value minus national, in the measure's own units. Positive means above national,
+          which is not the same as better.
       - name: cost_per_capita_constant
         data_type: double
+        description: >
+          Cost per beneficiary in constant dollars of the deflator base year, via CPI-U's annual
+          average.
       - name: national_cost_per_capita_constant
         data_type: double
+        description: >
+          The national figure in constant dollars.
       - name: gap_to_national_constant
         data_type: double
         description: >
@@ -431,18 +681,40 @@ models:
           standardized cost, and not a statement about dementia or quality of care.
       - name: constant_dollar_base_year
         data_type: integer
+        description: >
+          The year all constant-dollar figures are restated to. One project variable, so every
+          deflated measure in the repo moves together.
       - name: ma_participation_rate
         data_type: double
+        description: >
+          Share of beneficiaries in Medicare Advantage. Carried on every row because their
+          utilization is **not in this file**: a high-MA geography differs for reasons unrelated
+          to cost of care.
       - name: ffs_beneficiary_denominator
         data_type: double
+        description: >
+          Original-Medicare beneficiary count, and the correct denominator for anything per-capita
+          here, because the spending is fee-for-service only.
       - name: benes_total_cnt
         data_type: double
+        description: >
+          All Medicare beneficiaries in the geography, fee-for-service and Medicare Advantage
+          together. **Not the spending denominator** -- see `ffs_beneficiary_denominator`.
       - name: bene_avg_age
         data_type: double
+        description: >
+          Average beneficiary age, a compositional control: an older population costs more without
+          anything being wrong.
       - name: bene_dual_eligible_pct
         data_type: double
+        description: >
+          Share dually eligible for Medicare and Medicaid -- the other major compositional driver
+          of cost.
       - name: is_suppressed
         data_type: boolean
+        description: >
+          The publisher withheld this value. **Not zero and not missing data** -- suppression is
+          information about a small cell.
 
   - name: fct_hlt_mi_population_65_plus
     description: >
@@ -455,16 +727,30 @@ models:
     columns:
       - name: vintage
         data_type: varchar
+        description: >
+          ACS 5-year vintage, as text.
       - name: vintage_year
         data_type: smallint
+        description: >
+          ACS vintage as a number -- the final year of its five-year window.
       - name: vintage_window_start
         data_type: smallint
+        description: >
+          First year of the five-year sample window.
       - name: vintage_window_end
         data_type: smallint
+        description: >
+          Last year of the five-year sample window.
       - name: vintage_label
         data_type: varchar
+        description: >
+          The window written out, `2020-2024` style. Calling that vintage '2024 population'
+          overstates it.
       - name: county_fips
         data_type: varchar
+        description: >
+          Five-digit state+county FIPS. Joins `dim_geography_county`. NULL where the publisher
+          reported no county, which is a real category and not a load failure.
         data_tests:
           - not_null
           - relationships:
@@ -473,22 +759,47 @@ models:
                 field: county_fips
       - name: county_name
         data_type: varchar
+        description: >
+          County name without the state suffix, for a chart axis. The unassigned bucket reads
+          `XX-UNKNOWN` rather than blank.
       - name: is_michigan
         data_type: boolean
+        description: >
+          The Michigan lens, applied at the point of use rather than baked into the grain.
+          National rows are retained so Michigan has a benchmark.
       - name: population_65_plus
         data_type: bigint
+        description: >
+          Population aged 65 and over, the Census Bureau's own `S0101` figure rather than a sum of
+          age components. **An estimate of the population that already exists, not a projection.**
+          Only vintages from 2017 appear: Census restructured the table that year and the line
+          means median age before it.
         data_tests:
           - not_null
       - name: population_65_plus_margin
         data_type: bigint
+        description: >
+          Published margin of error. NULL where ACS annotated a controlled estimate rather than
+          measuring one.
       - name: is_controlled_estimate
         data_type: boolean
+        description: >
+          ACS controlled this estimate to an external total, so no margin applies. The annotation
+          is `-555555555`, which averaged as a number would be catastrophic.
       - name: state_population_65_plus
         data_type: hugeint
+        description: >
+          Michigan's 65-and-over total for the same vintage, carried so a county share needs no
+          second query.
       - name: counties_reporting
         data_type: bigint
+        description: >
+          Michigan counties present in this vintage. 83 throughout.
       - name: county_share_of_state_pct
         data_type: double
+        description: >
+          This county's share of Michigan's 65-and-over population. Recompute from the two
+          population columns before aggregating.
       - name: is_non_overlapping_with_prior
         data_type: boolean
         description: >
@@ -506,34 +817,68 @@ models:
     columns:
       - name: question_id
         data_type: varchar
+        description: >
+          CDC question code. Joins `seed_cdc_indicator_catalog`.
         data_tests:
           - not_null
       - name: question
         data_type: varchar
+        description: >
+          CDC's own full question wording, as published.
       - name: class_id
         data_type: varchar
+        description: >
+          CDC class code -- `C06` Cognitive Decline, `C07` Caregiving, `C03` Screenings and
+          Vaccines.
       - name: indicator_family
         data_type: varchar
+        description: >
+          `cognitive_decline` · `caregiving` · `screening` · `overall_health` ·
+          `nutrition_activity` · `substance_use` · `mental_health`.
       - name: short_label
         data_type: varchar
+        description: >
+          A chart-length label for the indicator, from the seed. CDC's own wording runs to a
+          paragraph.
       - name: higher_is_better
         data_type: boolean
+        description: >
+          Whether a rise in this indicator is good news. **NULL where CDC's wording does not
+          settle it** -- caregiving prevalence is genuinely two-sided -- and every direction
+          downstream is NULL when it is.
       - name: age_group
         data_type: varchar
+        description: >
+          `50-64 years` · `65 years or older` · `Overall`. This source covers adults **50 and
+          older**, not 45 and older.
       - name: from_vintage
         data_type: smallint
+        description: >
+          The earlier ACS vintage in the growth comparison.
       - name: to_vintage
         data_type: smallint
+        description: >
+          The later ACS vintage in the growth comparison.
       - name: population_window_from
         data_type: varchar
+        description: >
+          The earlier vintage's five-year sample window.
       - name: population_window_to
         data_type: varchar
+        description: >
+          The later vintage's five-year sample window.
       - name: population_from
         data_type: hugeint
+        description: >
+          Michigan's 65-and-over population in the earlier window.
       - name: population_to
         data_type: hugeint
+        description: >
+          Michigan's 65-and-over population in the later window.
       - name: population_change
         data_type: hugeint
+        description: >
+          Change in people between the two windows.
       - name: population_change_pct
         data_type: double
         description: >
@@ -541,18 +886,33 @@ models:
           windows.
       - name: windows_are_non_overlapping
         data_type: boolean
+        description: >
+          Proof rather than assertion that the two ACS windows share no sample year.
       - name: indicator_from_cycle
         data_type: varchar
+        description: >
+          The earliest usable CDC cycle for this indicator in Michigan.
       - name: indicator_to_cycle
         data_type: varchar
+        description: >
+          The latest usable CDC cycle for this indicator in Michigan.
       - name: indicator_window
         data_type: varchar
+        description: >
+          The indicator's own comparison window, which does not coincide with the population's.
       - name: cycles_available
         data_type: bigint
+        description: >
+          How many single-year cycles Michigan published for this indicator. Fewer than two means
+          no comparison.
       - name: indicator_from_value
         data_type: double
+        description: >
+          The indicator at the start of its window.
       - name: indicator_to_value
         data_type: double
+        description: >
+          The indicator at the end of its window.
       - name: indicator_change_pp
         data_type: double
         description: >
@@ -560,8 +920,12 @@ models:
           `population_change_pct`. Only the directions are compared.
       - name: straddles_2019_break
         data_type: boolean
+        description: >
+          An endpoint carries CDC's 2019 comparability break, which disqualifies the comparison.
       - name: indicator_direction
         data_type: varchar
+        description: >
+          `improving` · `deteriorating` · `no significant change` · `not comparable`. CI-aware.
       - name: windows_are_aligned
         data_type: boolean
         description: >

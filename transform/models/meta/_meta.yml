@@ -1,0 +1,73 @@
+version: 2
+
+# No contract here. The dictionary's shape is DuckDB's catalogue, not ours, and pinning it
+# would mean re-declaring someone else's schema every time they extend it. Descriptions
+# still persist, so the dictionary describes itself when you query it.
+
+models:
+  - name: meta_dictionary
+    description: >
+      The warehouse describing itself: one row per column across every layer, with its type
+      and its description. `+persist_docs` already puts descriptions into DuckDB as COMMENTs,
+      which a SQL client shows when you inspect a table -- this is the version you can
+      **query**, so "which table holds the flood zone?" is one statement rather than a hunt
+      through model files. A view rather than a table, so it can never disagree with the
+      warehouse it describes. Marts and conformed dimensions are documented in full;
+      raw and staging deliberately are not, because raw is the publisher's shape and staging
+      is an internal step on the way to a mart.
+    columns:
+      - name: schema_name
+        data_type: varchar
+        description: >
+          The DuckDB schema. `raw` · `stg` · `int` · `conformed` · `seeds` · `mart_ins` ·
+          `mart_fin` · `mart_hlt` · `meta`.
+      - name: relation_name
+        data_type: varchar
+        description: The table or view name.
+      - name: relation_kind
+        data_type: varchar
+        description: >
+          `table` or `view`. Staging and intermediate models are views and cost nothing to
+          store; marts and conformed dimensions are tables because something outside this
+          project reads them.
+      - name: layer
+        data_type: varchar
+        description: >
+          `raw` · `staging` · `intermediate` · `conformed` · `mart` · `seed` · `meta`.
+          Derived from the schema name so every consumer does not write the same CASE.
+      - name: track
+        data_type: varchar
+        description: >
+          Which project owns the relation -- `insurance` · `fintech` · `health` · `shared`.
+          Read from the track prefix that CLAUDE.md rule 9 puts on every table name, which
+          exists so any query's domain is visible at a glance.
+      - name: ordinal_position
+        data_type: bigint
+        description: Column order within the relation, as declared.
+      - name: column_name
+        data_type: varchar
+        description: The column name.
+      - name: data_type
+        data_type: varchar
+        description: >
+          The column's type as DuckDB holds it. On contracted models this is the type the
+          contract pins, so a change here without a contract change is impossible by design.
+      - name: is_nullable
+        data_type: boolean
+        description: Whether the column admits NULL.
+      - name: relation_description
+        data_type: varchar
+        description: >
+          What the table or view is for, from its model description. NULL where the relation
+          carries none -- raw tables and seeds do not.
+      - name: column_description
+        data_type: varchar
+        description: >
+          What the column means, what its units are, and what it cannot be used for. NULL
+          where undocumented; an empty description is normalised to NULL, because a consumer
+          should not have to know that dbt writes a blank COMMENT rather than none.
+      - name: is_documented
+        data_type: boolean
+        description: >
+          Whether this column carries a description. TRUE for all 432 mart and conformed
+          columns, which a test in `tests/test_transform_layout.py` keeps true.

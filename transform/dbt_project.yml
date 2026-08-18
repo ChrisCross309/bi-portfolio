@@ -73,6 +73,12 @@ models:
         +schema: mart_fin
       health:
         +schema: mart_hlt
+    # The dictionary is a view over DuckDB's own catalogue, so it describes whatever is in
+    # the warehouse at query time rather than whatever was there when it was last built.
+    # No contract: its shape is DuckDB's, not ours.
+    meta:
+      +materialized: view
+      +schema: meta
 
 seeds:
   bi_portfolio:

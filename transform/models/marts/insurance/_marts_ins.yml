@@ -17,9 +17,14 @@ models:
     columns:
       - name: loss_year
         data_type: smallint
+        description: >
+          Calendar year the flood loss occurred, not the year the claim was paid.
         data_tests: [not_null]
       - name: county_fips
         data_type: varchar
+        description: >
+          Five-digit state+county FIPS. Joins `dim_geography_county`. NULL where the publisher
+          reported no county, which is a real category and not a load failure.
         data_tests:
           - relationships:
               arguments:
@@ -60,44 +65,92 @@ models:
           privacy.
       - name: loss_month
         data_type: tinyint
+        description: >
+          Calendar month of loss, 1-12. Carries the seasonality drill.
       - name: loss_year_month
         data_type: varchar
+        description: >
+          `YYYY-MM` of the loss date. Joins `dim_period` at month grain.
       - name: loss_year_key
         data_type: varchar
+        description: >
+          `loss_year` as text, for joining `dim_period` at year grain.
       - name: state_code
         data_type: varchar
+        description: >
+          Two-letter postal code. Joins `dim_state`.
       - name: county_name
         data_type: varchar
+        description: >
+          County name without the state suffix, for a chart axis. The unassigned bucket reads
+          `XX-UNKNOWN` rather than blank.
       - name: state_name
         data_type: varchar
+        description: >
+          Full state name as published.
       - name: is_michigan
         data_type: boolean
+        description: >
+          The Michigan lens, applied at the point of use rather than baked into the grain.
+          National rows are retained so Michigan has a benchmark.
       - name: is_state_unknown
         data_type: boolean
+        description: >
+          The publisher reported no state for these claims. Kept rather than dropped, so a
+          national total still reconciles.
       - name: claim_count
         data_type: bigint
+        description: >
+          Claims with a loss date in this month and county. Every claim, including those that
+          closed without payment.
       - name: closed_without_payment_count
         data_type: bigint
+        description: >
+          Claims closed with nothing paid. The reason gross and net severity differ.
       - name: zero_paid_count
         data_type: bigint
+        description: >
+          Claims where the paid total came to zero.
       - name: no_county_count
         data_type: bigint
+        description: >
+          Claims in this group whose county could not be resolved from either key.
       - name: paid_building
         data_type: decimal(38,2)
+        description: >
+          Paid on the building claim, nominal dollars.
       - name: paid_contents
         data_type: decimal(38,2)
+        description: >
+          Paid on the contents claim, nominal dollars.
       - name: paid_icc
         data_type: decimal(38,2)
+        description: >
+          Paid on the Increased Cost of Compliance claim, nominal dollars.
       - name: net_paid_total
         data_type: decimal(38,2)
+        description: >
+          Net of recoveries, nominal dollars. Counts a claim closed without payment as zero, where
+          the gross measure skips it. Both are carried because they answer different questions.
       - name: building_coverage
         data_type: hugeint
+        description: >
+          Total building insurance coverage on these claims -- exposure, not a payment.
       - name: contents_coverage
         data_type: hugeint
+        description: >
+          Total contents insurance coverage on these claims -- exposure, not a payment.
       - name: avg_paid_per_claim
         data_type: double
+        description: >
+          Severity. NULL rather than zero where nothing paid, so an average is over claims that
+          actually paid. Recompute from `paid_total` and `claim_count` before aggregating -- this
+          column cannot be summed or averaged.
       - name: avg_paid_per_claim_constant
         data_type: double
+        description: >
+          Severity in constant dollars. Same rule: recompute from the components rather than
+          aggregating this column.
 
   - name: fct_ins_claims_detail_mi
     description: >
@@ -108,9 +161,15 @@ models:
     columns:
       - name: claim_id
         data_type: bigint
+        description: >
+          NFIP's own claim identifier. Unique in the detail table; repeated in the bridge, where
+          one claim may match more than one disaster.
         data_tests: [unique, not_null]
       - name: county_fips
         data_type: varchar
+        description: >
+          Five-digit state+county FIPS. Joins `dim_geography_county`. NULL where the publisher
+          reported no county, which is a real category and not a load failure.
         data_tests:
           - relationships:
               arguments:
@@ -126,84 +185,180 @@ models:
           inland.
       - name: county_name
         data_type: varchar
+        description: >
+          County name without the state suffix, for a chart axis. The unassigned bucket reads
+          `XX-UNKNOWN` rather than blank.
       - name: has_usable_county
         data_type: boolean
+        description: >
+          Whether a county resolved from either `countyCode` or `censusGeoid`. The models coalesce
+          the two; reading only the second overstates the gap.
       - name: county_matches_reported_state
         data_type: boolean
+        description: >
+          Whether the resolved county sits in the state the claim reports. FALSE flags a publisher
+          inconsistency rather than a load error.
       - name: date_of_loss
         data_type: date
+        description: >
+          Date the flood loss occurred. Joins `dim_date`.
       - name: loss_year
         data_type: smallint
+        description: >
+          Calendar year the flood loss occurred, not the year the claim was paid.
       - name: loss_month
         data_type: tinyint
+        description: >
+          Calendar month of loss, 1-12. Carries the seasonality drill.
       - name: loss_year_month
         data_type: varchar
+        description: >
+          `YYYY-MM` of the loss date. Joins `dim_period` at month grain.
       - name: amount_paid_on_building_claim
         data_type: decimal(12,2)
+        description: >
+          Paid on the building claim, nominal dollars.
       - name: amount_paid_on_contents_claim
         data_type: decimal(12,2)
+        description: >
+          Paid on the contents claim, nominal dollars.
       - name: amount_paid_on_icc_claim
         data_type: decimal(12,2)
+        description: >
+          Paid on the Increased Cost of Compliance claim, nominal dollars.
       - name: total_amount_paid
         data_type: decimal(14,2)
+        description: >
+          Building, contents and ICC paid together, in nominal dollars. Gross: it excludes claims
+          closed without payment rather than counting them as zero.
       - name: total_net_payment
         data_type: decimal(14,2)
+        description: >
+          Net payment after recoveries, nominal dollars.
       - name: is_closed_without_payment
         data_type: boolean
+        description: >
+          The claim closed with nothing paid. A real outcome, not a missing value.
       - name: is_zero_paid
         data_type: boolean
+        description: >
+          The paid total came to exactly zero.
       - name: has_negative_payment
         data_type: boolean
+        description: >
+          A negative amount, which FEMA's own documentation allows where a recovery exceeded a
+          payment. Kept as published.
       - name: total_amount_paid_constant
         data_type: double
+        description: >
+          Paid total in constant dollars of the deflator base year.
       - name: rated_flood_zone
         data_type: varchar
+        description: >
+          The flood zone the policy was rated on, which is what determined the premium.
       - name: flood_zone_current
         data_type: varchar
+        description: >
+          The flood zone currently mapped at the property. Differs from `rated_flood_zone` where
+          the map has been revised since the policy was written.
       - name: occupancy_type
         data_type: smallint
+        description: >
+          NFIP occupancy code -- single family, two-to-four family, other residential,
+          non-residential.
       - name: crs_class_code
         data_type: smallint
+        description: >
+          Community Rating System class, 1-10. A lower class means the community does more
+          floodplain management and its policyholders get a larger premium discount.
       - name: pre_firm_indicator
         data_type: boolean
+        description: >
+          The building predates its community's first Flood Insurance Rate Map, so it was never
+          built to the flood standard.
       - name: post_firm_construction_indicator
         data_type: boolean
+        description: >
+          The building was constructed after its community's first Flood Insurance Rate Map.
       - name: foundation_type
         data_type: varchar
+        description: >
+          Foundation as reported -- basement, crawlspace, slab, elevated.
       - name: water_depth
         data_type: smallint
+        description: >
+          Water depth as reported, in feet relative to the first floor. Negative means the water
+          stayed below it.
       - name: exterior_water_depth
         data_type: integer
+        description: >
+          Water depth outside the building, in inches.
       - name: interior_water_depth
         data_type: integer
+        description: >
+          Water depth inside the building, in inches.
       - name: building_damage_amount
         data_type: integer
+        description: >
+          Assessed building damage, which is not the same as the amount paid: coverage limits and
+          deductibles sit between them.
       - name: contents_damage_amount
         data_type: integer
+        description: >
+          Assessed contents damage. Same caveat as building damage.
       - name: total_building_insurance_coverage
         data_type: integer
+        description: >
+          Building coverage carried on the policy -- the exposure, not a payment.
       - name: total_contents_insurance_coverage
         data_type: integer
+        description: >
+          Contents coverage carried on the policy -- the exposure, not a payment.
       - name: number_of_floors_in_the_insured_building
         data_type: smallint
+        description: >
+          Floors in the insured building, as coded by NFIP.
       - name: primary_residence_indicator
         data_type: boolean
+        description: >
+          The insured building is the policyholder's primary residence.
       - name: rental_property_indicator
         data_type: boolean
+        description: >
+          The insured building is a rental property.
       - name: elevated_building_indicator
         data_type: boolean
+        description: >
+          The building is elevated above grade, a mitigation measure that changes both risk and
+          rating.
       - name: nfip_community_name
         data_type: varchar
+        description: >
+          The NFIP community the property sits in. Communities, not counties, are what join the
+          CRS programme.
       - name: reported_city
         data_type: varchar
+        description: >
+          City as reported on the claim.
       - name: reported_zip_code
         data_type: varchar
+        description: >
+          ZIP as reported. Uses the **empty string** where absent, while `censusGeoid` uses NULL
+          -- same publisher, same file, two conventions.
       - name: open_date
         data_type: date
+        description: >
+          Date the claim was opened.
       - name: most_recent_payment_date
         data_type: date
+        description: >
+          Date of the last payment on the claim. NULL where nothing was ever paid.
       - name: days_loss_to_last_payment
         data_type: integer
+        description: >
+          Days from loss to final payment. This is the development lag that makes a recent loss
+          year understate itself: the national median runs 45-60 days and the 90th percentile
+          140-220.
 
   - name: fct_ins_policies_mi_monthly
     description: >
@@ -220,6 +375,9 @@ models:
         data_tests: [not_null]
       - name: county_fips
         data_type: varchar
+        description: >
+          Five-digit state+county FIPS. Joins `dim_geography_county`. NULL where the publisher
+          reported no county, which is a real category and not a load failure.
         data_tests:
           - relationships:
               arguments:
@@ -227,28 +385,56 @@ models:
                 field: county_fips
       - name: month_end
         data_type: date
+        description: >
+          Last calendar day of the month, the date the month-end snapshot is taken on.
       - name: year_month
         data_type: varchar
+        description: >
+          `YYYY-MM`. Joins `dim_period` at month grain.
       - name: calendar_year
         data_type: smallint
+        description: >
+          Four-digit calendar year.
       - name: county_name
         data_type: varchar
+        description: >
+          County name without the state suffix, for a chart axis. The unassigned bucket reads
+          `XX-UNKNOWN` rather than blank.
       - name: is_michigan
         data_type: boolean
+        description: >
+          The Michigan lens, applied at the point of use rather than baked into the grain.
+          National rows are retained so Michigan has a benchmark.
       - name: policy_records
         data_type: bigint
+        description: >
+          Underlying policy records. Not the same as policies -- see `policies_in_force`.
       - name: premium_in_force
         data_type: hugeint
+        description: >
+          Total premium on policies in force at month end.
       - name: building_coverage_in_force
         data_type: hugeint
+        description: >
+          Total building coverage in force at month end.
       - name: contents_coverage_in_force
         data_type: hugeint
+        description: >
+          Total contents coverage in force at month end.
       - name: policy_cost_in_force
         data_type: hugeint
+        description: >
+          Total policy cost in force at month end.
       - name: policies_beyond_records
         data_type: hugeint
+        description: >
+          How many more policies than records this group holds -- the condominium gap, made
+          visible so the sum-not-count rule can be checked rather than trusted.
       - name: is_small_cell
         data_type: boolean
+        description: >
+          Fewer than ten underlying records. A rate built on this many swings wildly; show the
+          count beside it or grey it out rather than publishing a number that looks precise.
 
   - name: dim_ins_disaster_declaration
     description: >
@@ -258,6 +444,8 @@ models:
     columns:
       - name: disaster_number
         data_type: smallint
+        description: >
+          FEMA's disaster number. Joins `dim_ins_disaster_declaration`.
         data_tests: [unique, not_null]
       - name: is_incident_open
         data_type: boolean
@@ -266,38 +454,81 @@ models:
           `BETWEEN` against a NULL end matches nothing silently, which is why the flag exists.
       - name: fema_declaration_string
         data_type: varchar
+        description: >
+          FEMA's own composite declaration identifier, as published.
       - name: declaration_type
         data_type: varchar
+        description: >
+          FEMA declaration type: `DR` major disaster, `EM` emergency, `FM` fire management.
       - name: declaration_title
         data_type: varchar
+        description: >
+          FEMA's own title for the declared event.
       - name: incident_type
         data_type: varchar
+        description: >
+          FEMA's classification of the incident. **A declared disaster is not automatically a
+          flood event** -- attribution is restricted to flood-related types for exactly this
+          reason.
       - name: declaration_date
         data_type: date
+        description: >
+          Date the disaster was declared, which is not the date the incident began.
       - name: incident_begin_date
         data_type: date
+        description: >
+          First day of the declared incident window.
       - name: incident_end_date
         data_type: date
+        description: >
+          Last day of the declared incident window. NULL while the incident is still open.
       - name: has_invalid_incident_window
         data_type: boolean
+        description: >
+          The incident ends before it begins. Two rows, kept as published and flagged rather than
+          silently corrected.
       - name: designated_area_count
         data_type: bigint
+        description: >
+          Declaration rows for this disaster -- one per designated area. The reason 70,184 raw
+          rows collapse to 5,239 disasters.
       - name: designated_county_count
         data_type: bigint
+        description: >
+          Distinct counties this disaster designated.
       - name: statewide_area_count
         data_type: bigint
+        description: >
+          Designations naming no county. A statewide declaration covers everywhere in the state,
+          which is why attribution has to handle it separately.
       - name: state_count
         data_type: bigint
+        description: >
+          How many states this disaster touched.
       - name: is_flood_related
         data_type: boolean
+        description: >
+          Flood, severe storm, or dam/levee break. **The condition that stops attribution being
+          nonsense**: without it, FEMA's statewide COVID-19 declaration ran 2020-2023 and matched
+          every Michigan flood claim in that span -- 13,541 of them, attributed to a pandemic.
       - name: is_major_disaster
         data_type: boolean
+        description: >
+          Declaration type `DR`, the major-disaster instrument, as against an emergency or
+          fire-management declaration.
       - name: touches_michigan
         data_type: boolean
+        description: >
+          This disaster designated at least one Michigan area.
       - name: ia_program_declared
         data_type: boolean
+        description: >
+          Individual Assistance was declared -- aid to households and individuals.
       - name: pa_program_declared
         data_type: boolean
+        description: >
+          Public Assistance was declared -- aid to governments and certain non-profits for
+          infrastructure.
 
   - name: bridge_ins_claim_declaration
     description: >
@@ -310,6 +541,9 @@ models:
     columns:
       - name: claim_id
         data_type: bigint
+        description: >
+          NFIP's own claim identifier. Unique in the detail table; repeated in the bridge, where
+          one claim may match more than one disaster.
         data_tests: [not_null]
       - name: incident_type
         data_type: varchar
@@ -327,30 +561,62 @@ models:
           the drill bank asks for 30, 60 and 90 rather than one number.
       - name: county_fips
         data_type: varchar
+        description: >
+          Five-digit state+county FIPS. Joins `dim_geography_county`. NULL where the publisher
+          reported no county, which is a real category and not a load failure.
       - name: date_of_loss
         data_type: date
+        description: >
+          Date the flood loss occurred. Joins `dim_date`.
       - name: loss_year
         data_type: smallint
+        description: >
+          Calendar year the flood loss occurred, not the year the claim was paid.
       - name: total_amount_paid
         data_type: decimal(14,2)
+        description: >
+          Building, contents and ICC paid together, in nominal dollars. Gross: it excludes claims
+          closed without payment rather than counting them as zero.
       - name: disaster_number
         data_type: smallint
+        description: >
+          FEMA's disaster number. Joins `dim_ins_disaster_declaration`.
       - name: declaration_type
         data_type: varchar
+        description: >
+          FEMA declaration type: `DR` major disaster, `EM` emergency, `FM` fire management.
       - name: declaration_title
         data_type: varchar
+        description: >
+          FEMA's own title for the declared event.
       - name: incident_begin_date
         data_type: date
+        description: >
+          First day of the declared incident window.
       - name: incident_end_date
         data_type: date
+        description: >
+          Last day of the declared incident window. NULL while the incident is still open.
       - name: matched_via_statewide_declaration
         data_type: boolean
+        description: >
+          The disaster designated no county and was declared statewide, so it matches every
+          Michigan claim in its window. 1,605 declaration rows name no county and would otherwise
+          attribute nothing at all.
       - name: incident_duration_days
         data_type: integer
+        description: >
+          Length of the declared incident window in days.
       - name: days_into_incident
         data_type: integer
+        description: >
+          Days from the incident's start to the loss date. Negative is impossible here; larger
+          than `incident_duration_days` means the loss fell in the grace window.
       - name: is_in_grace_window
         data_type: boolean
+        description: >
+          The loss happened after the declared incident ended but within the grace window -- a
+          flood that begins on the last declared day does not stop that night.
 
   - name: rpt_ins_reconciliation
     description: >
@@ -361,6 +627,8 @@ models:
     columns:
       - name: source_name
         data_type: varchar
+        description: >
+          Which ingested source this row reconciles.
         data_tests: [not_null]
       - name: publisher_to_landing_gap
         data_type: bigint
@@ -375,23 +643,48 @@ models:
           left to be noticed.
       - name: measure_label
         data_type: varchar
+        description: >
+          What is being counted, in words, so the figure is not mistaken for a different unit.
       - name: publisher_figure
         data_type: bigint
+        description: >
+          The count the publisher's own API reported at download time. NULL where the endpoint
+          refuses a count for the filter.
       - name: rows_landing
         data_type: bigint
+        description: >
+          Rows in the as-downloaded landing files.
       - name: rows_raw
         data_type: bigint
+        description: >
+          Rows in the canonical raw parquet.
       - name: rows_duckdb
         data_type: bigint
+        description: >
+          Rows in the DuckDB raw table.
       - name: rows_staged
         data_type: bigint
+        description: >
+          Rows in the typed staging view.
       - name: rows_in_mart
         data_type: hugeint
+        description: >
+          Rows, or summed counts, reaching the mart.
       - name: retrieved_at
         data_type: timestamp
+        description: >
+          When this source was downloaded, UTC.
       - name: source_last_refresh
         data_type: timestamp
+        description: >
+          When the publisher says it last refreshed the data.
       - name: source_metadata_refresh
         data_type: timestamp
+        description: >
+          When the publisher's metadata was last refreshed, which can differ from the data's own
+          timestamp and is what distinguishes lag from a real gap.
       - name: interpretation
         data_type: varchar
+        description: >
+          A sentence stating how to read this row, carried in the data so a figure cannot be
+          quoted without its caveat.
