@@ -1,0 +1,21 @@
+service_code,service_name,is_long_term_care,note,source_doc
+TOT,All services,false,The file's own total across every category below.,https://data.cms.gov/summary-statistics-on-use-and-payments/medicare-geographic-comparisons
+IP,Inpatient hospital,false,,https://data.cms.gov/summary-statistics-on-use-and-payments/medicare-geographic-comparisons
+OP,Outpatient hospital,false,,https://data.cms.gov/summary-statistics-on-use-and-payments/medicare-geographic-comparisons
+ER,Emergency room,false,Utilization and beneficiary counts only; CMS publishes no separate ER payment column.,https://data.cms.gov/summary-statistics-on-use-and-payments/medicare-geographic-comparisons
+ASC,Ambulatory surgical center,false,,https://data.cms.gov/summary-statistics-on-use-and-payments/medicare-geographic-comparisons
+SNF,Skilled nursing facility,true,One of the two measures HLT-E2 rests on.,https://data.cms.gov/summary-statistics-on-use-and-payments/medicare-geographic-comparisons
+IRF,Inpatient rehabilitation facility,true,,https://data.cms.gov/summary-statistics-on-use-and-payments/medicare-geographic-comparisons
+LTCH,Long-term care hospital,true,,https://data.cms.gov/summary-statistics-on-use-and-payments/medicare-geographic-comparisons
+HH,Home health,true,The other measure HLT-E2 rests on.,https://data.cms.gov/summary-statistics-on-use-and-payments/medicare-geographic-comparisons
+HOSPC,Hospice,true,,https://data.cms.gov/summary-statistics-on-use-and-payments/medicare-geographic-comparisons
+EM,Evaluation and management,false,,https://data.cms.gov/summary-statistics-on-use-and-payments/medicare-geographic-comparisons
+PRCDRS,Procedures,false,,https://data.cms.gov/summary-statistics-on-use-and-payments/medicare-geographic-comparisons
+TESTS,Tests,false,,https://data.cms.gov/summary-statistics-on-use-and-payments/medicare-geographic-comparisons
+IMGNG,Imaging,false,,https://data.cms.gov/summary-statistics-on-use-and-payments/medicare-geographic-comparisons
+DME,Durable medical equipment,false,,https://data.cms.gov/summary-statistics-on-use-and-payments/medicare-geographic-comparisons
+OP_DLYS,Outpatient dialysis,false,,https://data.cms.gov/summary-statistics-on-use-and-payments/medicare-geographic-comparisons
+FQHC_RHC,Federally qualified health center and rural health clinic,false,,https://data.cms.gov/summary-statistics-on-use-and-payments/medicare-geographic-comparisons
+AMBLNC,Ambulance,false,,https://data.cms.gov/summary-statistics-on-use-and-payments/medicare-geographic-comparisons
+TRTMNTS,Treatments,false,,https://data.cms.gov/summary-statistics-on-use-and-payments/medicare-geographic-comparisons
+PTB_OTHR_SRVCS,Part B other services,false,CMS truncates this column name and omits its measure suffix.,https://data.cms.gov/summary-statistics-on-use-and-payments/medicare-geographic-comparisons

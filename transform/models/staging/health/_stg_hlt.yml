@@ -1,0 +1,164 @@
+version: 2
+
+# Contracts stay unenforced on staging, matching PRs 4 and 5.
+#
+# Every model here carries the track's three standing warnings in its own description, not
+# because repetition is elegant but because a reader arrives at one model, not at a preamble:
+# these are aggregate files where a row is a cell and never a person; nothing in them sums to
+# a patient count; and public aggregate data only, with no PHI, no re-identification and no
+# individual-level inference.
+
+models:
+  - name: stg_hlt__cms_geographic_variation
+    description: >
+      Medicare Geographic Variation, the 44 columns that are not service-keyed. **A row is a
+      geographic aggregate, never a beneficiary.** The other 202 columns unpivot in
+      `int_hlt__cms_service_measures`. Spending here is **fee-for-service only** -- Medicare
+      Advantage beneficiaries are counted but their utilization and spending are not in this
+      file, so a county with high MA penetration looks different for reasons unrelated to
+      cost of care.
+    columns:
+      - name: measure_year
+        description: Annual grain, 2014-2024. There is no finer cadence to present this at.
+        data_tests: [not_null]
+      - name: geo_level
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['National', 'State', 'County']
+      - name: age_level
+        description: >
+          County rows are `All` only. State and national rows also appear as `<65` and `>=65`,
+          **which sum to their own `All`** -- filter to one age level or a state total comes
+          out twice its true size. HLT-E3 uses `>=65`.
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ['All', '<65', '>=65']
+      - name: county_fips
+        description: Populated on county rows only; state and national rows carry no county key.
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('dim_geography_county')
+                field: county_fips
+      - name: is_unassigned_county
+        description: >
+          The `XX000` bucket. Michigan's is `26000` / MI-UNKNOWN -- eleven rows, one per year,
+          real beneficiaries whose county could not be determined. A county denominator either
+          includes them explicitly or states that it does not.
+      - name: suppressed_cell_count
+        description: >
+          How many of this row's measures CMS withheld as a small cell. 686,853 `*` cells
+          across the file, concentrated in county rows, which is exactly where Michigan county
+          analysis lives. A row with many is a small county and deserves the same caution the
+          insurance track gives a county with under ten claims.
+      - name: ffs_beneficiary_denominator
+        description: >
+          Original-Medicare beneficiary count. The correct denominator for anything
+          per-capita here, because the spending is fee-for-service.
+
+  - name: stg_hlt__cdc_healthy_aging
+    description: >
+      CDC Alzheimer's Disease and Healthy Aging. **A row is a cell -- indicator by place by
+      cycle by stratification -- never a person.** The track's genuinely cognitive source:
+      HLT-E1 from the Cognitive Decline class, HLT-E4 from Caregiving. **State grain only;
+      this source has no county at all**, so Michigan county analysis in this track comes
+      from CMS.
+    columns:
+      - name: cdc_rowid
+        description: >
+          **Not a key.** 284,142 rows carry 36,046 distinct values, because it encodes the
+          stratification categories and not their values. Never tested for uniqueness, never
+          joined on.
+      - name: cycle_key
+        description: >
+          Joins `dim_period` at survey-cycle grain. Eight of the ten cycles are single years;
+          2019-2022 and 2021-2022 are not, and carry 9,261 rows between them.
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('seed_survey_cycles')
+                field: cycle_key
+      - name: location_kind
+        description: >
+          `state` · `district` · `territory` · `census_region` · `national`. The column that
+          stops a sum across all of them at once -- `locationabbr` mixes 51 states and DC with
+          three territories, four census regions and a national row **as peers**, so summing
+          it counts every state up to three times. The rollups are kept deliberately because
+          HLT-E1 compares Michigan against them.
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['state', 'district', 'territory', 'census_region', 'national', 'other']
+      - name: data_value
+        description: >
+          Numeric on every row that has one. NULL where suppressed -- see `is_suppressed`.
+      - name: is_suppressed
+        description: >
+          91,334 rows have no value. Asks a different question from `has_footnote`: a
+          footnote can also annotate a value that is present.
+      - name: has_confidence_interval
+        description: >
+          **HLT-E1 asks whether Michigan is *significantly* better or worse than national.**
+          This is a self-reported telephone survey and its state estimates carry real sampling
+          error, so ranking point estimates manufactures a story out of noise. A comparison
+          without both limits is not defensible, and one that has them is allowed to return
+          "no significant difference" -- a finding, not a failure to find one.
+      - name: is_cognitive_decline
+        description: The class HLT-E1 draws on.
+      - name: is_caregiving
+        description: The class HLT-E4 draws on.
+
+  - name: int_hlt__cms_service_measures
+    description: >
+      The 202 service-keyed CMS columns turned long: one row per geography, year, age level,
+      service and measure. 7,472,788 rows, which is 36,994 x 202 exactly. This is what makes
+      the health drill bank -- service category, standardized versus not, payment versus
+      utilization -- a `WHERE` clause instead of twenty models. **A row is a geographic
+      aggregate, never a beneficiary**, and the spending is fee-for-service only.
+    columns:
+      - name: service_code
+        description: Twenty categories; the population denominators are deliberately not among them.
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('seed_cms_service_category')
+                field: service_code
+      - name: service_name
+        data_tests: [not_null]
+      - name: measure_kind
+        description: >
+          Which question the number answers, and they are not interchangeable. `amount` total
+          dollars · `per_capita` dollars per fee-for-service beneficiary · `per_user` dollars
+          per beneficiary who used the service · `share_of_pymt` percent of that geography's
+          total · `user_count` and `user_pct` beneficiaries using it · `per_1000` events,
+          stays, days or visits per 1,000.
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['amount', 'per_capita', 'per_user', 'share_of_pymt',
+                         'user_count', 'user_pct', 'per_1000']
+      - name: is_standardized
+        description: >
+          **The single easiest invisible error in this track.** CMS's standardized columns
+          remove geographic wage and payment-policy differences, and only those make a
+          Michigan-versus-national comparison mean anything. The unstandardized twins measure
+          something real and different. A flag rather than a substring in a column name, so a
+          test can assert a cross-geography measure used the right one.
+        data_tests: [not_null]
+      - name: measure_value
+        description: NULL where CMS suppressed the cell. Not zero.
+      - name: is_suppressed
+        description: 614,457 of the unpivoted cells. Suppression is information, not absence.
+      - name: is_long_term_care
+        description: >
+          SNF, home health, hospice, inpatient rehabilitation and long-term care hospital.
+          What HLT-E2 measures. **This is a care-burden grouping and not a dementia measure** --
+          dementia is a leading driver of long-term-care need but is not the only one, and
+          nothing in this file carries a condition dimension.
