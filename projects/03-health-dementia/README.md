@@ -138,6 +138,14 @@ to 66.0 against a median near 5,000 after. `stg_ref__acs5_subject` therefore pub
 estimate only from 2017 onward, and HLT-E5 runs on the eight vintages that are real rather than
 fifteen with seven quietly wrong.
 
+**And there is no pre-2017 line to switch to.** The 2016 vintage publishes the 65-and-over
+population as a *share*, not a count — `S0101_C01_028E` reads 13.8 for Wayne County where the
+2017 count reads 253,640. Recovering a count would mean multiplying that share by total
+population, or summing the twelve `B01001` age brackets: a derived figure presented as the
+publisher's, or the aggregation this track already refuses. Eight vintages is what ACS
+supports, the 2019-to-2024 comparison sits inside them, and this is settled rather than
+outstanding.
+
 ## Drill bank
 
 Latest-cycle indicator values with confidence intervals · per-beneficiary and per-capita spend ·

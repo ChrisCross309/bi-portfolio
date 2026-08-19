@@ -22,10 +22,27 @@
 
   So the estimate and its margin are published here **only from the 2017 vintage onward**,
   and `population_65_plus_is_published` says so on every row rather than leaving a consumer
-  to infer it from a NULL. The pre-2017 column is not re-pointed at the correct line: that
-  would mean re-fetching a different variable from the Census API, which is ingestion's job
-  and not a typing decision. The vintages are landed and the boundary is recorded; what
-  changed is that the wrong half is no longer offered as a population.
+  to infer it from a NULL.
+
+  ## There is no pre-2017 line to re-point this at
+
+  The obvious next thought is that the count must be elsewhere in the table. It is not.
+  Checked against the Census API for Wayne County MI, the 2016 vintage of `S0101` publishes
+  the 65-and-over population **as a share, not a count**:
+
+      2016  S0101_C01_028E = 13.8       "SELECTED AGE CATEGORIES!!65 years and over"
+      2016  S0101_C01_030E = 37.8       "SUMMARY INDICATORS!!Median age (years)"
+      2017  S0101_C01_030E = 253,640    the count, after the table was restructured
+
+  Every route to a pre-2017 count is one this repo refuses on purpose. Multiplying the share
+  by total population is a derived figure presented as the publisher's, and carrying the
+  publisher's own total is the entire reason this model exists rather than reading `B01001`.
+  Summing the twelve `B01001` brackets is the aggregation the note above already rules out.
+  Carrying the share as its own column would be honest but is a *different measure* from the
+  post-2017 count, discontinuous at exactly the 2017 boundary.
+
+  Eight vintages is what the publisher supports, and HLT-E5's 2019-to-2024 comparison sits
+  inside them. **This is finished, not deferred** -- nobody needs to go looking again.
 
   Every caveat in `stg_ref__acs5_detailed` applies here identically: overlapping vintages are
   not a time series, a 5-year estimate describes its whole window rather than its final year,
