@@ -279,6 +279,20 @@ models:
         description: >
           Debt-to-income band as published. HMDA bands this rather than publishing the ratio,
           which is one reason a denial-rate gap here cannot be a finding.
+      - name: denial_reason_1_label
+        data_type: varchar
+        description: >
+          The **primary** denial reason, decoded from `seed_hmda_code_lists`. NULL on anything
+          that was not denied. **Descriptive, never a finding** -- the same rule the demographic
+          columns carry, and for the same reason: HMDA has no credit score and no
+          underwriting-level DTI.
+      - name: applicant_income_bracket
+        data_type: varchar
+        description: >
+          Applicant income against **the area's own median family income**, not a dollar band --
+          $80,000 is a different applicant in Ann Arbor than in Alcona. The four are the FFIEC's
+          own CRA income levels: `low` under 50%, `moderate` 50-80%, `middle` 80-120%, `upper`
+          120% and above. NULL for the 389,541 applications reporting no income. Descriptive only.
       - name: application_count
         data_type: bigint
         description: >
@@ -341,6 +355,12 @@ models:
         description: >
           Applications from lenders using HMDA's partial exemption, which lets them leave fields
           blank. Their absence is a filing status, not missing data.
+      - name: has_secondary_denial_reason
+        data_type: bigint
+        description: >
+          Applications carrying a second denial reason. HMDA allows up to four and 126,500 use
+          more than one; counting them here keeps three further dimensions out of a mart that
+          would multiply by every one of them.
       - name: denial_rate_pct
         data_type: double
         description: >
@@ -432,3 +452,141 @@ models:
         description: >
           The most recent month that passes the completeness test -- the right default 'as of' for
           an executive page.
+
+  - name: fct_fin_complaints_daily_state
+    description: >
+      Complaints by the day CFPB received them, by state, and by its full product and issue
+      taxonomy. The two drills the other complaint marts deliberately cannot carry: the
+      daily-weekly-monthly-quarterly-YTD ladder, and product -> sub-product -> issue. State grain,
+      not county -- the county mart exists to divide by population and the taxonomy would multiply
+      it tenfold to serve a drill with no per-capita question in it. **Recent days are incomplete
+      by design**, because a complaint publishes only after the company responds or fifteen days
+      elapse; filter on `rpt_fin_publication_window` before trending at any grain. Excludes the
+      63,546 complaints with no usable state, which the geo mart counts under `state_unassigned`.
+    columns:
+      - name: date_received
+        data_type: date
+        description: >
+          The day CFPB received the complaint. The finest grain published, and what every coarser
+          rollup aggregates from. Joins `dim_date`.
+      - name: year_month
+        data_type: varchar
+        description: >
+          `YYYY-MM` of receipt. Joins `dim_period` at month grain, and joins
+          `rpt_fin_publication_window` to find out whether the month is safe to trend.
+      - name: received_year
+        data_type: smallint
+        description: >
+          Calendar year of receipt.
+      - name: received_quarter
+        data_type: tinyint
+        description: >
+          Calendar quarter of receipt, 1-4.
+      - name: state_code
+        data_type: varchar
+        description: >
+          Two-letter postal code. Joins `dim_state`. Never NULL here: complaints without a usable
+          state are excluded, and the geo mart carries them as `state_unassigned`.
+      - name: state_name
+        data_type: varchar
+        description: >
+          Full state name as published.
+      - name: is_michigan
+        data_type: boolean
+        description: >
+          The Michigan lens, applied at the point of use. Every other state is retained so
+          Michigan has a benchmark.
+      - name: census_division_name
+        data_type: varchar
+        description: >
+          Census division, from `dim_state`. Michigan's is `East North Central` -- the Great Lakes
+          peer group the drill bank compares against.
+      - name: product_family
+        data_type: varchar
+        description: >
+          Grouped product, from `seed_cfpb_product_family`. **The stable one**: CFPB renamed its
+          product taxonomy mid-archive, so `product` is not comparable across the whole series and
+          this is.
+      - name: product
+        data_type: varchar
+        description: >
+          CFPB's own product label, as published on the complaint. Not stable across the archive
+          -- see `product_family`.
+      - name: sub_product
+        data_type: varchar
+        description: >
+          CFPB's sub-product, one level below `product`. 127 product/sub-product pairs across the
+          archive.
+      - name: issue
+        data_type: varchar
+        description: >
+          What the consumer said went wrong, in CFPB's taxonomy.
+      - name: sub_issue
+        data_type: varchar
+        description: >
+          One level below `issue`. 441 issue/sub-issue pairs across the archive.
+      - name: complaint_count
+        data_type: bigint
+        description: >
+          Complaints received. A count of complaints, never of consumers or of problems.
+      - name: closed_complaints
+        data_type: bigint
+        description: >
+          Complaints the company has closed. **The denominator for every rate here** -- including
+          those still in progress would understate every rate by more in a recent window than an
+          old one.
+      - name: pending_complaints
+        data_type: bigint
+        description: >
+          Still awaiting a company response, and deliberately outside the rate denominators.
+      - name: timely_count
+        data_type: bigint
+        description: >
+          Closed complaints the company answered within CFPB's window.
+      - name: relief_count
+        data_type: bigint
+        description: >
+          Closed complaints resolved with relief of any kind, monetary or not.
+      - name: monetary_relief_count
+        data_type: bigint
+        description: >
+          Closed with monetary relief.
+      - name: non_monetary_relief_count
+        data_type: bigint
+        description: >
+          Closed with non-monetary relief.
+      - name: untimely_count
+        data_type: bigint
+        description: >
+          Closed complaints answered outside the window.
+      - name: older_american_count
+        data_type: bigint
+        description: >
+          Complaints carrying CFPB's `Older American` tag. The consumer's own tag, not an age
+          field -- and the narrative bridge to the health track's subject matter, which is
+          thematic only and shares no data.
+      - name: servicemember_count
+        data_type: bigint
+        description: >
+          Complaints carrying CFPB's `Servicemember` tag.
+      - name: narrative_count
+        data_type: bigint
+        description: >
+          Complaints where the consumer published a narrative. Consent-dependent, so this measures
+          willingness to publish rather than severity.
+      - name: timely_rate_pct
+        data_type: double
+        description: >
+          Timely responses over closed complaints. **Recompute from `timely_count` and
+          `closed_complaints`** before aggregating across days -- a rate column cannot be summed
+          or averaged.
+      - name: relief_rate_pct
+        data_type: double
+        description: >
+          Relief over closed complaints. Same rule: recompute from the components rather than
+          aggregating this column.
+      - name: is_small_cell
+        data_type: boolean
+        description: >
+          Fewer than ten complaints. At daily grain that is most rows, which is the point: a daily
+          rate is noise and the ladder exists to be rolled up.

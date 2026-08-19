@@ -21,6 +21,23 @@
   they are counted separately and kept out of decided_applications. Including purchased loans
   in particular would be counting someone else's underwriting as this lender's.
 
+  ## Denial reasons and the income bracket
+
+  Both were in raw and in staging and in neither mart, which left the denial-reason mix and
+  the income drill unanswerable from the semantic layer even though HMDA publishes them.
+
+  `denial_reason_1_label` is the **primary** reason and is a dimension here. HMDA allows up
+  to four; 126,500 denied applications carry a second, and `has_secondary_denial_reason`
+  counts them rather than adding three more dimensions to a mart that would multiply by them.
+
+  `applicant_income_bracket` is applicant income against **the area's own median family
+  income**, not a dollar band -- $80,000 is a different applicant in Ann Arbor than in
+  Alcona. The four brackets are the FFIEC's own CRA income levels, not thresholds invented
+  here: low under 50%, moderate 50-80%, middle 80-120%, upper 120% and above. 389,541
+  applications report no income and get no bracket.
+
+  Adding both costs 2,815,382 rows to 3,249,311 -- 15%.
+
   ## The national benchmark is not in this table
 
   Raw is Michigan-only by decision, so the national side of FIN-E4 comes from the publisher's
@@ -51,6 +68,17 @@ SELECT
     h.applicant_sex_label,
     h.dti_band,
 
+    -- Descriptive only, exactly as the demographic columns are. See the note above.
+    h.denial_reason_1_label,
+    CASE
+        WHEN h.income IS NULL OR h.ffiec_msa_md_median_family_income IS NULL THEN NULL
+        -- `income` is thousands of dollars as HMDA publishes it; the area median is dollars.
+        WHEN 100.0 * h.income * 1000 / h.ffiec_msa_md_median_family_income < 50  THEN 'low'
+        WHEN 100.0 * h.income * 1000 / h.ffiec_msa_md_median_family_income < 80  THEN 'moderate'
+        WHEN 100.0 * h.income * 1000 / h.ffiec_msa_md_median_family_income < 120 THEN 'middle'
+        ELSE 'upper'
+    END                                                     AS applicant_income_bracket,
+
     COUNT(*)                                                AS application_count,
 
     -- Decisions this lender made on applications brought to it.
@@ -73,6 +101,9 @@ SELECT
     MEDIAN(h.income) FILTER (WHERE h.action_taken = '1')    AS median_applicant_income,
 
     COUNT(*) FILTER (WHERE h.is_partially_exempt)           AS partially_exempt_count,
+    -- HMDA allows up to four reasons; only the primary one is a dimension here.
+    COUNT(*) FILTER (WHERE h.denial_reason_2_label IS NOT NULL)
+                                                            AS has_secondary_denial_reason,
 
     -- **Descriptive only.** See the model description: no credit score, no DTI underwriting
     -- detail, so this is a gap warranting review and never a finding.

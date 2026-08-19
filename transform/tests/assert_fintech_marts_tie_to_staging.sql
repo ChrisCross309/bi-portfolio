@@ -57,6 +57,24 @@ WITH checks AS (
 
     UNION ALL
 
+    -- The daily mart is the same population as the company mart at a different grain, so it
+    -- must carry the same complaints. If the two ever disagree, one of them filtered.
+    SELECT
+        'daily_complaints',
+        (SELECT SUM(complaint_count) FROM {{ ref('fct_fin_complaints_daily_state') }}),
+        (SELECT COUNT(*) FROM {{ ref('stg_fin__cfpb_complaints') }} WHERE state_code IS NOT NULL)
+
+    UNION ALL
+
+    -- And roll up to exactly the company mart, which is the property that makes the
+    -- daily-weekly-monthly ladder trustworthy rather than merely available.
+    SELECT
+        'daily_rolls_up_to_company',
+        (SELECT SUM(complaint_count) FROM {{ ref('fct_fin_complaints_daily_state') }}),
+        (SELECT SUM(complaint_count) FROM {{ ref('fct_fin_complaints_monthly_company') }})
+
+    UNION ALL
+
     -- HMDA applications, likewise.
     SELECT
         'hmda_applications',
