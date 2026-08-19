@@ -46,18 +46,36 @@ fintech mart cite another track's ID.
 | FIN-E4 | `fct_fin_hmda_annual` | year × MI county × lender × loan characteristics |
 | FIN-E5 | `rpt_fin_entity_match_rate` | one row per coverage basis |
 
+`fct_fin_complaints_daily_state` carries the two drills the question-shaped marts cannot: the
+daily→weekly→monthly→quarterly→YTD ladder, and product → sub-product → issue → sub-issue. State
+grain rather than county, because the county mart exists to divide by population and the full
+taxonomy would multiply it tenfold to serve a drill with no per-capita question in it.
+
 `rpt_fin_publication_window` is the model FIN-E1 must be filtered by rather than a question of
 its own: a complaint publishes only after the company responds or fifteen days elapse, so the
 newest month always looks like a fall until it is excluded.
 
 ## Drill bank
 
-Timely-response % · relief % · median and p90 days-to-response · top companies by MI volume · the
+Timely-response % · relief % · top companies by MI volume · the
 full daily→weekly→monthly→quarterly→YTD ladder (CFPB updates daily — the narrative engine's home
 domain) · application-cohort vintage curves (structurally identical to loss development) ·
 product→sub-product→issue · company · channel · county/ZIP · consumer tags (is the older-American
 share rising?) · HMDA county, purpose, loan type, income band, denial-reason mix · per-capita rate
 vs. national · peer-median benchmarks.
+
+### One drill the data cannot support
+
+**Median and p90 days-to-response is not buildable, and the bank no longer claims it.** CFPB
+publishes `Date received` and `Date sent to company` and **no company-response date at all**, so
+there is no interval to measure. The one that does exist — receipt to forwarding — is degenerate:
+median 0 days, 90th percentile 0 days, because the CFPB forwards almost everything the same day.
+7,050 complaints are even stamped as sent before they were received.
+
+A proxy built on days-to-*send* would answer a different question while looking like this one, so
+`fct_fin_complaints_daily_state` carries the response *outcome* — timely, relief, pending — and no
+response *duration*. Timeliness is CFPB's own flag against its own window, which is the real
+measure of whether a company responded in time.
 
 ## Fair-lending framing
 
