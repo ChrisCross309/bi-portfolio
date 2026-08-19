@@ -53,6 +53,7 @@
 SELECT
     c.date_received,
     c.received_year_month                                   AS year_month,
+    'month:' || c.received_year_month                       AS period_id,
     CAST(year(c.date_received) AS SMALLINT)                 AS received_year,
     CAST(quarter(c.date_received) AS TINYINT)               AS received_quarter,
 

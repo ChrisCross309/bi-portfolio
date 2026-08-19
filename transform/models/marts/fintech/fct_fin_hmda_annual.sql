@@ -48,6 +48,7 @@
 
 SELECT
     CAST(h.activity_year AS SMALLINT)                       AS activity_year,
+    'year:' || CAST(h.activity_year AS VARCHAR)             AS period_id,
     h.county_fips,
     g.county_name,
     COALESCE(g.is_michigan, FALSE)                          AS is_michigan,

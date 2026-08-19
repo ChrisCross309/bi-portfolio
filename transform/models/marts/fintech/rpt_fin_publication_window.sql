@@ -47,6 +47,7 @@ extent AS (
 
 SELECT
     m.received_year_month                                       AS year_month,
+    'month:' || m.received_year_month                           AS period_id,
     m.first_received,
     m.last_received,
     m.complaint_count,

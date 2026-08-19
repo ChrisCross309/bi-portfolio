@@ -2,3 +2,7 @@ county_fips,county_name,geography_kind,note,source_doc
 78010,VI-St. Croix,island_area,Named by CMS Geographic Variation; ACS 5-year county files exclude the island areas.,https://data.cms.gov/data.json
 78020,VI-St. John,island_area,Named by CMS Geographic Variation; ACS 5-year county files exclude the island areas.,https://data.cms.gov/data.json
 78030,VI-St. Thomas,island_area,Named by CMS Geographic Variation; ACS 5-year county files exclude the island areas.,https://data.cms.gov/data.json
+AA000,AA-UNKNOWN,unknown_county,"Armed Forces Americas military postal region. HUD's ZIP crosswalk serves these ZIPs, so the CFPB allocation produces the key; no census county exists behind it.",https://www.huduser.gov/portal/dataset/uspszip-api.html
+AE000,AE-UNKNOWN,unknown_county,"Armed Forces Europe military postal region. Same origin as AA000 -- a real destination for mail and complaints, and not a county.",https://www.huduser.gov/portal/dataset/uspszip-api.html
+AP000,AP-UNKNOWN,unknown_county,"Armed Forces Pacific military postal region. Same origin as AA000.",https://www.huduser.gov/portal/dataset/uspszip-api.html
+69000,MP-UNKNOWN,unknown_county,"Northern Mariana Islands, county unassigned. ACS 5-year county files exclude the island areas entirely, so no vintage supplies this key.",https://www.huduser.gov/portal/dataset/uspszip-api.html

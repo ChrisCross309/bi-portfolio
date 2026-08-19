@@ -29,6 +29,7 @@ SELECT
     c.year_of_loss                              AS loss_year,
     c.loss_month,
     c.loss_year_month,
+    'month:' || c.loss_year_month                       AS period_id,
 
     c.amount_paid_on_building_claim,
     c.amount_paid_on_contents_claim,

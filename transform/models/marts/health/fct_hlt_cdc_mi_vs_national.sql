@@ -140,6 +140,7 @@ with_prior AS (
 
 SELECT
     w.cycle_key,
+    'survey_cycle:' || w.cycle_key                          AS period_id,
     w.year_start,
     w.year_end,
     w.spans_multiple_years,

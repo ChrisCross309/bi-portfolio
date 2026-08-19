@@ -25,6 +25,18 @@
   The cycles come from a seed rather than from the CDC table, so that a conformed dimension
   is not reaching into a track's source for its own definition. A dbt test in the health
   staging PR asserts the seed still matches what CDC publishes.
+
+  ## period_id, and why period_key alone will not do
+
+  `period_key` is unique *within* a grain and not across them: 2015 through 2022 each exist
+  twice, once as a calendar year and once as a CDC survey cycle that happens to span one
+  year. Eight collisions in 1,051 rows.
+
+  That is fine for SQL, which can join on both columns, and fatal for a BI tool, which needs
+  a single-column unique key on the one side of a relationship. `period_id` is that key --
+  `grain:period_key`, so `month:2019-01`, `year:2019` and `survey_cycle:2019` are three
+  distinct rows that can never be confused. Every fact carries the matching value, built the
+  same way from its own grain, so the join is a plain equality rather than a composite.
 */
 
 WITH months AS (
@@ -74,8 +86,16 @@ cycles AS (
         CAST(year_end AS SMALLINT)                  AS calendar_year,
         CAST(spans_multiple_years AS BOOLEAN)       AS spans_multiple_years
     FROM {{ ref('seed_survey_cycles') }}
+),
+
+combined AS (
+    SELECT * FROM monthly
+    UNION ALL SELECT * FROM annual
+    UNION ALL SELECT * FROM cycles
 )
 
-SELECT * FROM monthly
-UNION ALL SELECT * FROM annual
-UNION ALL SELECT * FROM cycles
+SELECT
+    -- The single-column key a BI relationship needs. See the note above.
+    grain || ':' || period_key      AS period_id,
+    *
+FROM combined

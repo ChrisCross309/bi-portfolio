@@ -49,6 +49,17 @@ WITH referenced AS (
     SELECT 'zip_county_crosswalk', geoid
     FROM {{ source('raw_shared', 'zip_county_crosswalk') }}
 
+    UNION
+
+    -- Not a raw source. CFPB publishes no county at all -- its geography is a ZIP, resolved
+    -- through HUD's crosswalk in the fintech allocation -- so these keys exist only
+    -- downstream and were the one family this test could not see. 1,553 mart rows carried
+    -- four of them: the military postal regions HUD serves and the Northern Marianas, none
+    -- of which any publisher names in a raw file. They reach the dimension through
+    -- `seed_county_exceptions`, which is a source of keys as well as labels for this reason.
+    SELECT 'cfpb_complaint_allocation', county_fips
+    FROM {{ ref('int_fin__complaint_county_allocation') }}
+
 )
 
 SELECT r.source_name, r.county_fips

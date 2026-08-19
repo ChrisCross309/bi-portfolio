@@ -136,6 +136,7 @@ joined AS (
 SELECT
     j.measure_year,
     j.period_key,
+    'year:' || j.period_key                                  AS period_id,
     j.period_grain,
 
     j.geo_level,
