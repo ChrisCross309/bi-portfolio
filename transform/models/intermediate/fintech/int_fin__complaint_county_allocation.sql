@@ -53,7 +53,12 @@ WITH complaints AS (
         zip_mask_kind,
         product_family,
         COUNT(*)                                        AS complaint_count,
-        COUNT(*) FILTER (WHERE is_timely_response)      AS timely_count,
+        -- Timely **among closed**. CFPB sets its timeliness flag on 592,496 complaints that
+        -- are still In progress, so counting them against a closed denominator produced
+        -- rates above 100% -- 107% on one company. A response cannot be timely before
+        -- it exists.
+        COUNT(*) FILTER (WHERE is_timely_response AND NOT is_response_pending)
+                                                       AS timely_count,
         COUNT(*) FILTER (WHERE response_grants_relief)  AS relief_count,
         COUNT(*) FILTER (WHERE is_response_pending)     AS pending_count,
         COUNT(*) FILTER (WHERE has_tag_older_american)  AS older_american_count

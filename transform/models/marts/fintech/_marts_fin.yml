@@ -66,7 +66,8 @@ models:
       - name: allocated_timely
         data_type: double
         description: >
-          Allocated complaints the company answered on time. Fractional, same as the count.
+          Allocated complaints the company answered on time, **among closed only**. Fractional,
+          same as the count. The closed denominator is `allocated_complaints - allocated_pending`.
       - name: allocated_relief
         data_type: double
         description: >
@@ -161,7 +162,9 @@ models:
       - name: timely_count
         data_type: bigint
         description: >
-          Closed complaints the company answered within the CFPB's window.
+          Closed complaints the company answered within CFPB's window. **Among closed only** --
+          CFPB sets its timeliness flag on 592,496 complaints that are still In progress, and
+          counting those against a closed denominator produced rates above 100%.
       - name: relief_count
         data_type: bigint
         description: >
@@ -577,7 +580,9 @@ models:
       - name: timely_count
         data_type: bigint
         description: >
-          Closed complaints the company answered within CFPB's window.
+          Closed complaints the company answered within CFPB's window. **Among closed only**, for
+          the same reason the company mart states: the timeliness flag is set on complaints that
+          are still In progress.
       - name: relief_count
         data_type: bigint
         description: >

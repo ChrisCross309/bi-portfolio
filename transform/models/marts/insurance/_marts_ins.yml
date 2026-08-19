@@ -451,7 +451,10 @@ models:
       - name: year_month
         data_type: varchar
         description: >
-          `YYYY-MM`. Joins `dim_period` at month grain.
+          `YYYY-MM` of the month end. Joins `dim_period` at month grain. **The series stops at the
+          file's own `as_of_date`**: policy terms run years past it, and a month beyond the
+          snapshot holds only the policies whose terms already reach that far -- an in-force count
+          that is not one.
       - name: period_id
         data_type: varchar
         description: >
