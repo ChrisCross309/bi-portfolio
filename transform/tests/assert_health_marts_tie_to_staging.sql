@@ -22,16 +22,17 @@ WITH checks AS (
 
     UNION ALL
 
-    -- Michigan county-years x five long-term-care services x two measure kinds.
+    -- Every Michigan county measure CMS publishes, across all twenty service categories and
+    -- both standardization flavours. The mart no longer filters -- `is_long_term_care` and
+    -- `is_standardized` are columns now -- so this is a straight cardinality check, and it is
+    -- what would catch the national benchmark fanning out: six services publish both covered
+    -- stays and covered days per 1,000, which share every key except `source_column`.
     SELECT
-        'ltc_county_measures',
+        'county_service_measures',
         (SELECT COUNT(*) FROM {{ ref('fct_hlt_medicare_service_county') }}),
         (SELECT COUNT(*) FROM {{ ref('int_hlt__cms_service_measures') }}
-         WHERE is_long_term_care
-           AND age_level = 'All'
-           AND is_michigan_county
-           AND ((measure_kind = 'per_capita' AND is_standardized)
-                OR (measure_kind = 'user_pct' AND NOT is_standardized)))
+         WHERE age_level = 'All'
+           AND is_michigan_county)
 
     UNION ALL
 
