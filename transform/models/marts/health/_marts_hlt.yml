@@ -34,6 +34,12 @@ models:
           not.
         data_tests:
           - not_null
+      - name: period_id
+        data_type: varchar
+        description: >
+          The single-column key a BI relationship needs. `grain:period_key`, because
+          `period_key` alone is **not unique** -- 2015 through 2022 each exist as both a
+          calendar year and a CDC survey cycle. Joins `dim_period.period_id`.
       - name: year_start
         data_type: smallint
         description: >
@@ -233,6 +239,12 @@ models:
           not.
         data_tests:
           - not_null
+      - name: period_id
+        data_type: varchar
+        description: >
+          The single-column key a BI relationship needs. `grain:period_key`, because
+          `period_key` alone is **not unique** -- 2015 through 2022 each exist as both a
+          calendar year and a CDC survey cycle. Joins `dim_period.period_id`.
       - name: year_start
         data_type: smallint
         description: >
@@ -448,6 +460,12 @@ models:
         description: >
           The period this row describes, as text. `YYYY-MM` at month grain, `YYYY` at year grain,
           and the cycle label at survey-cycle grain.
+      - name: period_id
+        data_type: varchar
+        description: >
+          The single-column key a BI relationship needs. `grain:period_key`, because
+          `period_key` alone is **not unique** -- 2015 through 2022 each exist as both a
+          calendar year and a CDC survey cycle. Joins `dim_period.period_id`.
       - name: period_grain
         data_type: varchar
         description: >
@@ -613,6 +631,12 @@ models:
         description: >
           The period this row describes, as text. `YYYY-MM` at month grain, `YYYY` at year grain,
           and the cycle label at survey-cycle grain.
+      - name: period_id
+        data_type: varchar
+        description: >
+          The single-column key a BI relationship needs. `grain:period_key`, because
+          `period_key` alone is **not unique** -- 2015 through 2022 each exist as both a
+          calendar year and a CDC survey cycle. Joins `dim_period.period_id`.
       - name: period_grain
         data_type: varchar
         description: >
@@ -739,6 +763,12 @@ models:
         data_type: varchar
         description: >
           ACS 5-year vintage, as text.
+      - name: period_id
+        data_type: varchar
+        description: >
+          The single-column key a BI relationship needs. `grain:period_key`, because
+          `period_key` alone is **not unique** -- 2015 through 2022 each exist as both a
+          calendar year and a CDC survey cycle. Joins `dim_period.period_id`.
       - name: vintage_year
         data_type: smallint
         description: >

@@ -83,6 +83,7 @@ vintages AS (
 
 SELECT
     p.vintage,
+    'year:' || p.vintage                        AS period_id,
     p.vintage_year,
     p.vintage_window_start,
     p.vintage_window_end,

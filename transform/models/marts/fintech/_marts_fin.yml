@@ -11,6 +11,12 @@ models:
         data_type: varchar
         description: >
           `YYYY-MM`. Joins `dim_period` at month grain.
+      - name: period_id
+        data_type: varchar
+        description: >
+          The single-column key a BI relationship needs. `grain:period_key`, because
+          `period_key` alone is **not unique** -- 2015 through 2022 each exist as both a
+          calendar year and a CDC survey cycle. Joins `dim_period.period_id`.
       - name: received_year
         data_type: smallint
         description: >
@@ -109,6 +115,12 @@ models:
         data_type: varchar
         description: >
           `YYYY-MM`. Joins `dim_period` at month grain.
+      - name: period_id
+        data_type: varchar
+        description: >
+          The single-column key a BI relationship needs. `grain:period_key`, because
+          `period_key` alone is **not unique** -- 2015 through 2022 each exist as both a
+          calendar year and a CDC survey cycle. Joins `dim_period.period_id`.
       - name: received_year
         data_type: smallint
         description: >
@@ -207,11 +219,22 @@ models:
         data_type: smallint
         description: >
           HMDA reporting year. Annual is the only cadence this source has.
+      - name: period_id
+        data_type: varchar
+        description: >
+          The single-column key a BI relationship needs. `grain:period_key`, because
+          `period_key` alone is **not unique** -- 2015 through 2022 each exist as both a
+          calendar year and a CDC survey cycle. Joins `dim_period.period_id`.
       - name: county_fips
         data_type: varchar
         description: >
           Five-digit state+county FIPS. Joins `dim_geography_county`. NULL where the publisher
           reported no county, which is a real category and not a load failure.
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('dim_geography_county')
+                field: county_fips
       - name: county_name
         data_type: varchar
         description: >
@@ -410,6 +433,12 @@ models:
         data_type: varchar
         description: >
           `YYYY-MM`. Joins `dim_period` at month grain.
+      - name: period_id
+        data_type: varchar
+        description: >
+          The single-column key a BI relationship needs. `grain:period_key`, because
+          `period_key` alone is **not unique** -- 2015 through 2022 each exist as both a
+          calendar year and a CDC survey cycle. Joins `dim_period.period_id`.
       - name: first_received
         data_type: date
         description: >
@@ -474,6 +503,12 @@ models:
         description: >
           `YYYY-MM` of receipt. Joins `dim_period` at month grain, and joins
           `rpt_fin_publication_window` to find out whether the month is safe to trend.
+      - name: period_id
+        data_type: varchar
+        description: >
+          The single-column key a BI relationship needs. `grain:period_key`, because
+          `period_key` alone is **not unique** -- 2015 through 2022 each exist as both a
+          calendar year and a CDC survey cycle. Joins `dim_period.period_id`.
       - name: received_year
         data_type: smallint
         description: >

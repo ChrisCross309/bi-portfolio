@@ -60,6 +60,7 @@ vintage_bounds AS (
 
 SELECT
     a.received_year_month                                   AS year_month,
+    'month:' || a.received_year_month                       AS period_id,
     CAST(SUBSTR(a.received_year_month, 1, 4) AS SMALLINT)   AS received_year,
     a.state_code,
     a.county_fips,

@@ -109,6 +109,12 @@ models:
       contract:
         enforced: true
     columns:
+      - name: period_id
+        data_type: varchar
+        description: >
+          `grain:period_key` -- `month:2019-01`, `year:2019`, `survey_cycle:2019`. Unique across
+          all 1,051 rows, which `period_key` is not: eight years are also CDC survey cycles. SQL
+          can join on grain and key together; a BI tool needs one column, and this is it.
       - name: grain
         data_type: varchar
         description: "`month`, `year` or `survey_cycle`. The grain a mart is declaring."

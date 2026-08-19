@@ -55,6 +55,7 @@ in_force AS (
 SELECT
     f.month_end,
     strftime(f.month_end, '%Y-%m')                      AS year_month,
+    'month:' || strftime(f.month_end, '%Y-%m')          AS period_id,
     CAST(year(f.month_end) AS SMALLINT)                 AS calendar_year,
     f.county_fips,
     g.county_name,
@@ -74,4 +75,4 @@ SELECT
 FROM in_force f
 LEFT JOIN {{ ref('dim_geography_county') }} g
     ON g.county_fips = f.county_fips
-GROUP BY 1, 2, 3, 4, 5, 6
+GROUP BY ALL

@@ -154,6 +154,7 @@ enrolment AS (
 SELECT
     m.measure_year,
     m.period_key,
+    'year:' || m.period_key                                 AS period_id,
     m.period_grain,
 
     m.county_fips,

@@ -37,6 +37,13 @@
   one the health README documents; every state has one. A county denominator either includes
   these explicitly or states that it does not, and it can do neither if they have no row.
 
+  Not every key reaches this table through a raw source. The CFPB carries no county at all --
+  its geography is a ZIP, resolved through HUD's crosswalk in the fintech allocation -- so the
+  military postal regions HUD serves (`AA000`, `AE000`, `AP000`) and the Northern Marianas
+  (`69000`) appear downstream and in no raw file. `seed_county_exceptions` is therefore a
+  source of *keys* as well as labels: a seeded code gets a row here whether or not a publisher
+  named it. 1,553 fact rows were unjoinable before that was true.
+
   `island_area` -- the US Virgin Islands, Guam, American Samoa, the Northern Marianas, and
   the Freely Associated States that HUD serves. ACS 5-year county files exclude the island
   areas entirely, and NFIP carries 3,513 claims in them. INS-E5 ties our totals to FEMA's
@@ -123,6 +130,14 @@ referenced AS (
     SELECT DISTINCT county_fips
     FROM {{ ref('stg_ref__acs5_subject') }}
     WHERE geo_level = 'county'
+
+    UNION
+
+    -- Keys no publisher names in raw, because they are produced downstream by the ZIP
+    -- crosswalk. See the note above. A seed row is a deliberate assertion that the key is
+    -- real, which is exactly what makes it safe to admit one here.
+    SELECT DISTINCT county_fips
+    FROM {{ ref('seed_county_exceptions') }}
 
 ),
 

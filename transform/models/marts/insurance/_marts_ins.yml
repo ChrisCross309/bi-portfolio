@@ -28,6 +28,12 @@ models:
         data_type: varchar
         description: >
           `YYYY-MM` of the loss date. Joins `dim_period` at month grain.
+      - name: period_id
+        data_type: varchar
+        description: >
+          The single-column key a BI relationship needs. `grain:period_key`, because
+          `period_key` alone is **not unique** -- 2015 through 2022 each exist as both a
+          calendar year and a CDC survey cycle. Joins `dim_period.period_id`.
       - name: loss_year_key
         data_type: varchar
         description: >
@@ -263,6 +269,12 @@ models:
         data_type: varchar
         description: >
           `YYYY-MM` of the loss date. Joins `dim_period` at month grain.
+      - name: period_id
+        data_type: varchar
+        description: >
+          The single-column key a BI relationship needs. `grain:period_key`, because
+          `period_key` alone is **not unique** -- 2015 through 2022 each exist as both a
+          calendar year and a CDC survey cycle. Joins `dim_period.period_id`.
       - name: amount_paid_on_building_claim
         data_type: decimal(12,2)
         description: >
@@ -440,6 +452,12 @@ models:
         data_type: varchar
         description: >
           `YYYY-MM`. Joins `dim_period` at month grain.
+      - name: period_id
+        data_type: varchar
+        description: >
+          The single-column key a BI relationship needs. `grain:period_key`, because
+          `period_key` alone is **not unique** -- 2015 through 2022 each exist as both a
+          calendar year and a CDC survey cycle. Joins `dim_period.period_id`.
       - name: calendar_year
         data_type: smallint
         description: >

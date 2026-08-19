@@ -25,6 +25,7 @@
 
 SELECT
     c.received_year_month                                   AS year_month,
+    'month:' || c.received_year_month                       AS period_id,
     CAST(SUBSTR(c.received_year_month, 1, 4) AS SMALLINT)   AS received_year,
     c.state_code,
     COALESCE(s.is_michigan, FALSE)                          AS is_michigan,
@@ -67,4 +68,4 @@ FROM {{ ref('stg_fin__cfpb_complaints') }} c
 LEFT JOIN {{ ref('dim_state') }} s
     ON s.state_code = c.state_code
 WHERE c.state_code IS NOT NULL
-GROUP BY 1, 2, 3, 4, 5, 6
+GROUP BY ALL

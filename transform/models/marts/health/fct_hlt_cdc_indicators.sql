@@ -48,6 +48,7 @@
 SELECT
     -- period ---------------------------------------------------------------------
     c.cycle_key,
+    'survey_cycle:' || c.cycle_key                  AS period_id,
     c.year_start,
     c.year_end,
     c.period_grain,

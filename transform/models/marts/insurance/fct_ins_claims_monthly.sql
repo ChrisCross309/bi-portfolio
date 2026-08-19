@@ -143,6 +143,7 @@ SELECT
     a.loss_year,
     a.loss_month,
     a.loss_year_month,
+    'month:' || a.loss_year_month                       AS period_id,
     CAST(a.loss_year AS VARCHAR)                        AS loss_year_key,
 
     a.state_code,
