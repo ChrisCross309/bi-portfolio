@@ -143,6 +143,17 @@ def tsv_relation(landing: Path) -> str:
     return f"read_csv({sql_literal(landing)}, all_varchar=true, header=true, delim='\\t', quote='')"
 
 
+def relation_columns(con: duckdb.DuckDBPyConnection, relation: str) -> list[str]:
+    """The column roster a landing file actually carries, read through the loader's own reader.
+
+    Taken from `tsv_relation` rather than from the file's header bytes, so the roster recorded
+    in the baseline is by construction the one the loader produces -- which is what L2 compares
+    against `information_schema`. Reading the header separately would let the two disagree
+    about padding or delimiters and call it drift.
+    """
+    return [column[0] for column in con.execute(f"SELECT * FROM {relation} LIMIT 0").description]
+
+
 def padding_failures(widths: list[int]) -> list[str]:
     """A uniform pad width is a documented quirk; a mixed one is a silent join bug."""
     if widths == [SERIES_ID_WIDTH]:
@@ -459,23 +470,6 @@ def run(mode: str, force: bool = False) -> int:
                 log("SKIPPED (current): both files match the recorded last-modified")
                 return 0
 
-            write_baseline(
-                TRACK,
-                OBSERVATIONS_SOURCE,
-                {
-                    "note": "BLS documents its flat-file layout in cu.txt rather than as "
-                    "machine-readable field metadata; this is a pointer file, per "
-                    "CLAUDE.md rule 8.",
-                    "field_reference": FIELD_REFERENCE,
-                    "api_reference": API_REFERENCE,
-                    "directory_index": CU_DIRECTORY,
-                    "files_listed": available,
-                    "files_landed": [OBSERVATIONS_FILE, SERIES_FILE],
-                    "retrieved_at": datetime.now(UTC).isoformat().replace("+00:00", "Z"),
-                },
-                kind="pointer",
-            )
-
             landing_dir.mkdir(parents=True, exist_ok=True)
             landed = {}
             for name, meta in resolved.items():
@@ -498,6 +492,41 @@ def run(mode: str, force: bool = False) -> int:
     try:
         observations_relation = tsv_relation(landed[OBSERVATIONS_FILE])
         series_relation = tsv_relation(landed[SERIES_FILE])
+
+        # One baseline per source, each carrying its own column roster. BLS publishes no
+        # machine-readable field metadata -- it documents the layout in cu.txt prose -- so the
+        # roster is read from the download, the same way `ingest.fintech.hmda` records one for
+        # HMDA. Without it both sources reported SKIP in L2 and no BLS schema change could be
+        # detected at all. It is written here rather than before the download, because a
+        # roster is not something a publisher's directory index can tell us.
+        #
+        # Live only. A fixture run never contacts BLS, so it has nothing to report about what
+        # BLS publishes -- and a committed baseline rewritten by an offline run would destroy
+        # the property `write_baseline` exists for, that a modified baseline means a publisher
+        # moved.
+        if mode == "live":
+            for source, landing_file, relation in (
+                (OBSERVATIONS_SOURCE, OBSERVATIONS_FILE, observations_relation),
+                (SERIES_SOURCE, SERIES_FILE, series_relation),
+            ):
+                write_baseline(
+                    TRACK,
+                    source,
+                    {
+                        "note": "BLS documents its flat-file layout in cu.txt rather than as "
+                        "machine-readable field metadata, so this is a pointer file per "
+                        "CLAUDE.md rule 8 -- with the column roster observed in the file "
+                        "itself, which is what makes drift detectable.",
+                        "field_reference": FIELD_REFERENCE,
+                        "api_reference": API_REFERENCE,
+                        "directory_index": CU_DIRECTORY,
+                        "file_landed": landing_file,
+                        "files_listed": available,
+                        "columns_observed": relation_columns(con, relation),
+                        "retrieved_at": datetime.now(UTC).isoformat().replace("+00:00", "Z"),
+                    },
+                    kind="pointer",
+                )
 
         log(f"converting observations -> {observations_raw}")
         obs_landing, obs_raw = repartition_to_raw(

@@ -19,10 +19,15 @@ comparison is between two committed things -- the baseline and the fixture that 
 from -- so a fixture regenerated after a publisher changed shape, without its baseline being
 refreshed, fails here rather than being discovered by a confused reader later.
 
-Drift is not uniformly detectable, and this refuses to pretend otherwise. Seven sources
-publish a full field roster, two publish the variables we request, one publishes only a
-column count, and three publish nothing machine-readable at all. The last group reports SKIP
-with the reason, never PASS -- the same rule L1 follows, for the same reason.
+Drift is not uniformly detectable, and this refuses to pretend otherwise. Nine sources give a
+full field roster, two give the variables we request, one gives only a column count, and two
+give nothing machine-readable at all. The last pair reports SKIP with the reason, never PASS
+-- the same rule L1 follows, for the same reason.
+
+Two of the nine are BLS, which publishes no field metadata either: its roster is read from the
+download itself, the way `ingest.fintech.hmda` records one. A roster observed in the file is
+weaker evidence than a publisher's own schema endpoint -- it cannot tell an intended rename
+from a mistake -- but it is the difference between detecting a change and not.
 
 Run:  python -m reconcile.l2_reconciliation [--track TRACK] [--mode live|fixture]
 """
@@ -135,21 +140,9 @@ DRIFT: tuple[DriftSpec, ...] = (
     DriftSpec(
         "acs5_subject", "shared__acs5_subject__pointer", key_names("variables_requested"), "subset"
     ),
+    DriftSpec("cpi_u", "shared__cpi_u__pointer", key_names("columns_observed"), "exact"),
     DriftSpec(
-        "cpi_u",
-        "shared__cpi_u__pointer",
-        None,
-        "none",
-        "BLS documents its flat-file layout in cu.txt rather than as field metadata; the "
-        "baseline records which files were landed, not which columns they carry",
-    ),
-    DriftSpec(
-        "cpi_u_series",
-        None,
-        None,
-        "none",
-        "no baseline is committed for this source at all -- it lands from the same BLS "
-        "directory as cpi_u and was never given its own snapshot under rule 8",
+        "cpi_u_series", "shared__cpi_u_series__pointer", key_names("columns_observed"), "exact"
     ),
     DriftSpec(
         "zip_county_crosswalk",

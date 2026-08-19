@@ -2,14 +2,22 @@
   "api_reference": "https://www.bls.gov/developers/api_signature_v2.htm",
   "columns_observed": [
     "series_id",
-    "year",
-    "period",
-    "value",
-    "footnote_codes"
+    "area_code",
+    "item_code",
+    "seasonal",
+    "periodicity_code",
+    "base_code",
+    "base_period",
+    "series_title",
+    "footnote_codes",
+    "begin_year",
+    "begin_period",
+    "end_year",
+    "end_period"
   ],
   "directory_index": "https://download.bls.gov/pub/time.series/cu/",
   "field_reference": "https://download.bls.gov/pub/time.series/cu/cu.txt",
-  "file_landed": "cu.data.1.AllItems",
+  "file_landed": "cu.series",
   "files_listed": [
     "cu.area",
     "cu.aspect",
@@ -45,5 +53,5 @@
     "cu.txt"
   ],
   "note": "BLS documents its flat-file layout in cu.txt rather than as machine-readable field metadata, so this is a pointer file per CLAUDE.md rule 8 -- with the column roster observed in the file itself, which is what makes drift detectable.",
-  "retrieved_at": "2026-08-19T11:59:47.583897Z"
+  "retrieved_at": "2026-08-19T11:59:47.592352Z"
 }

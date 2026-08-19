@@ -31,7 +31,11 @@ from reconcile.l2_reconciliation import (
 from reconcile.results import FAIL, PASS, SKIP, WARN
 
 CLAIMS = next(s for s in RAW_SOURCES if s.source == "nfip_claims")
-CPI_SERIES = next(s for s in RAW_SOURCES if s.source == "cpi_u_series")
+# CFPB publishes no machine-readable field metadata and no roster can be observed
+# from its bulk file that any baseline records, so it is the standing example of a
+# source whose drift genuinely cannot be checked. BLS used to be that example and
+# stopped being one when its column roster started being recorded.
+NO_ROSTER = next(s for s in RAW_SOURCES if s.source == "cfpb_complaints")
 
 
 def warehouse(raw_columns: list[str], staged_rows: int | None, raw_rows: int = 3):
@@ -181,10 +185,10 @@ def test_a_rename_is_reported_as_both_halves() -> None:
 
 def test_a_source_with_no_roster_skips_and_never_passes() -> None:
     con = warehouse(["series_id", "area_code"], staged_rows=None)
-    con.execute(f"CREATE TABLE {CPI_SERIES.table} AS SELECT * FROM {CLAIMS.table}")
-    results = check_schema_drift(con, CPI_SERIES)
+    con.execute(f"CREATE TABLE {NO_ROSTER.table} AS SELECT * FROM {CLAIMS.table}")
+    results = check_schema_drift(con, NO_ROSTER)
     assert statuses(results) == [SKIP]
-    assert "no baseline is committed" in results[0].detail
+    assert "no machine-readable field metadata" in results[0].detail
 
 
 def test_an_unloaded_table_skips_rather_than_failing() -> None:
