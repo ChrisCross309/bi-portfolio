@@ -20,49 +20,6 @@ models:
         description: >
           Calendar year the flood loss occurred, not the year the claim was paid.
         data_tests: [not_null]
-      - name: county_fips
-        data_type: varchar
-        description: >
-          Five-digit state+county FIPS. Joins `dim_geography_county`. NULL where the publisher
-          reported no county, which is a real category and not a load failure.
-        data_tests:
-          - relationships:
-              arguments:
-                to: ref('dim_geography_county')
-                field: county_fips
-      - name: paid_total
-        data_type: decimal(38,2)
-        description: >
-          Gross, so NULL-paid claims are skipped rather than counted as zero. `net_paid_total`
-          makes the opposite choice. Staging carries both because they answer different
-          questions and neither is right in general.
-      - name: paid_total_constant
-        data_type: double
-        description: >
-          **INS-E2.** Restated in constant dollars of the deflator base year using CPI-U's
-          unadjusted annual average. NULL for any year BLS has not published one for -- 2026
-          has none, so it has no constant-dollar figure rather than a silently nominal one.
-      - name: is_complete_loss_year
-        data_type: boolean
-        description: >
-          The loss year is over. The file runs to July 2026, so 2026 is partial and plotting
-          it beside a full year shows a collapse that is an artifact of the download date.
-      - name: is_development_mature
-        data_type: boolean
-        description: >
-          Twelve months have passed since the year ended. A flood claim is not paid the day
-          it is filed -- nationally the median gap from loss to last payment is 45-60 days and
-          the 90th percentile runs 140-220 -- so **the most recent complete year always
-          understates itself**. INS-E1 asks for the latest complete year; this is the flag
-          that says whether that year has finished settling. With data through July 2026,
-          2025 is complete and not yet mature.
-      - name: is_small_cell
-        data_type: boolean
-        description: >
-          Fewer than ten claims. The insurance README's display rule: show the count beside
-          the rate, and grey a rate built on a handful rather than publishing a number that
-          looks precise. A 100% loss rate drawn from one claim is misleading regardless of
-          privacy.
       - name: loss_month
         data_type: tinyint
         description: >
@@ -79,6 +36,16 @@ models:
         data_type: varchar
         description: >
           Two-letter postal code. Joins `dim_state`.
+      - name: county_fips
+        data_type: varchar
+        description: >
+          Five-digit state+county FIPS. Joins `dim_geography_county`. NULL where the publisher
+          reported no county, which is a real category and not a load failure.
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('dim_geography_county')
+                field: county_fips
       - name: county_name
         data_type: varchar
         description: >
@@ -98,6 +65,36 @@ models:
         description: >
           The publisher reported no state for these claims. Kept rather than dropped, so a
           national total still reconciles.
+      - name: rated_flood_zone
+        data_type: varchar
+        description: >
+          The flood zone the policy was rated on, which is what determined the premium. National
+          for the first time -- this was Michigan-only until the characteristics landed here.
+      - name: flood_zone_current
+        data_type: varchar
+        description: >
+          The flood zone currently mapped at the property. Differs from `rated_flood_zone` where
+          the map was revised after the policy was written, which is what the non-SFHA-share drill
+          turns on.
+      - name: occupancy_type
+        data_type: smallint
+        description: >
+          NFIP occupancy code -- single family, two-to-four family, other residential,
+          non-residential.
+      - name: pre_firm_indicator
+        data_type: boolean
+        description: >
+          The building predates its community's first Flood Insurance Rate Map, so it was never
+          built to the flood standard.
+      - name: post_firm_construction_indicator
+        data_type: boolean
+        description: >
+          The building was constructed after its community's first Flood Insurance Rate Map.
+      - name: crs_class_code
+        data_type: smallint
+        description: >
+          Community Rating System class, 1-10. A lower class means the community does more
+          floodplain management and its policyholders get a larger premium discount.
       - name: claim_count
         data_type: bigint
         description: >
@@ -127,6 +124,12 @@ models:
         data_type: decimal(38,2)
         description: >
           Paid on the Increased Cost of Compliance claim, nominal dollars.
+      - name: paid_total
+        data_type: decimal(38,2)
+        description: >
+          Gross, so NULL-paid claims are skipped rather than counted as zero. `net_paid_total`
+          makes the opposite choice. Staging carries both because they answer different
+          questions and neither is right in general.
       - name: net_paid_total
         data_type: decimal(38,2)
         description: >
@@ -146,11 +149,57 @@ models:
           Severity. NULL rather than zero where nothing paid, so an average is over claims that
           actually paid. Recompute from `paid_total` and `claim_count` before aggregating -- this
           column cannot be summed or averaged.
+      - name: paid_total_constant
+        data_type: double
+        description: >
+          **INS-E2.** Restated in constant dollars of the deflator base year using CPI-U's
+          unadjusted annual average. NULL for any year BLS has not published one for -- 2026
+          has none, so it has no constant-dollar figure rather than a silently nominal one.
       - name: avg_paid_per_claim_constant
         data_type: double
         description: >
           Severity in constant dollars. Same rule: recompute from the components rather than
           aggregating this column.
+      - name: is_complete_loss_year
+        data_type: boolean
+        description: >
+          The loss year is over. The file runs to July 2026, so 2026 is partial and plotting
+          it beside a full year shows a collapse that is an artifact of the download date.
+      - name: is_development_mature
+        data_type: boolean
+        description: >
+          Twelve months have passed since the year ended. A flood claim is not paid the day
+          it is filed -- nationally the median gap from loss to last payment is 45-60 days and
+          the 90th percentile runs 140-220 -- so **the most recent complete year always
+          understates itself**. INS-E1 asks for the latest complete year; this is the flag
+          that says whether that year has finished settling. With data through July 2026,
+          2025 is complete and not yet mature.
+      - name: county_population
+        data_type: bigint
+        description: >
+          ACS county population, the denominator for per-capita paid. **Never sum it**: it repeats
+          across every characteristic row of a county-month, because population is a property of
+          the county and not of the flood zone. Take MAX within a county-month, or aggregate the
+          rate's components instead.
+      - name: population_vintage_window
+        data_type: varchar
+        description: >
+          Which ACS five-year window the population came from. Exactly one vintage per loss year
+          -- the estimate ending in that year -- because the windows overlap and matching on
+          containment fans the join out.
+      - name: population_is_extrapolated
+        data_type: boolean
+        description: >
+          The loss year falls outside ACS's published range, so the nearest vintage was used. TRUE
+          for every loss year before 2010, which is most of the file: NFIP claims start in 1978
+          and ACS does not. A per-capita rate on those years is indicative, not measured.
+      - name: is_small_cell
+        data_type: boolean
+        description: >
+          Fewer than ten claims. The insurance README's display rule: show the count beside
+          the rate, and grey a rate built on a handful rather than publishing a number that
+          looks precise. A 100% loss rate drawn from one claim is misleading regardless of
+          privacy.
 
   - name: fct_ins_claims_detail_mi
     description: >

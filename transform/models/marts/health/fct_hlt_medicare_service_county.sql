@@ -1,8 +1,9 @@
 {{ config(materialized = 'table') }}
 
 /*
-  **HLT-E2.** Michigan county use of long-term-care services against the national rate, by
-  year, service and measure.
+  **HLT-E2.** Michigan county Medicare service use and payment against the national rate, by
+  year, service and measure. All twenty CMS service categories, every measure kind, and both
+  standardization flavours -- `is_long_term_care` is what narrows it to HLT-E2's own slice.
 
   **A row is a geographic aggregate, never a beneficiary.** Nothing here sums to a patient
   count. Public aggregate data only: no PHI, no re-identification, no individual-level
@@ -24,6 +25,19 @@
   national level, where they sum to their own `All`. So the benchmark is taken at `All` on
   both sides and `age_level` is a column rather than an assumption. HLT-E3, which does need
   `>=65`, is a state-versus-national question for exactly this reason.
+
+  ## Both standardization flavours are here, and mixing them is the easy mistake
+
+  CMS publishes each payment twice: standardized, which removes geographic wage and
+  payment-policy differences, and unstandardized, which does not. The drill bank asks for
+  both, so both are carried and `is_standardized` separates them -- but **only the
+  standardized ones make a Michigan-versus-national comparison mean anything**, and a chart
+  that mixes them is wrong in a way no reader can see. `is_standardized` is part of the key
+  on `ratio_to_national`, so a standardized payment is never benchmarked against its
+  unstandardized twin.
+
+  Utilization measures -- `user_pct`, `user_count`, `per_1000` -- have no standardized twin
+  and carry `is_standardized = FALSE` as published.
 
   ## Standardized payments, and fee-for-service only
 
@@ -59,7 +73,7 @@
   county rollup includes them explicitly or excludes them explicitly, and never by accident.
 */
 
-WITH long_term_care AS (
+WITH service_measures AS (
 
     SELECT
         m.measure_year,
@@ -73,18 +87,15 @@ WITH long_term_care AS (
         m.age_level,
         m.service_code,
         m.service_name,
+        m.is_long_term_care,
         m.measure_kind,
         m.is_standardized,
+        m.source_column,
         m.measure_value,
         m.is_suppressed
     FROM {{ ref('int_hlt__cms_service_measures') }} m
-    WHERE m.is_long_term_care
-      -- County grain publishes 'All' only; the benchmark is taken at the same level.
-      AND m.age_level = 'All'
-      AND (
-            (m.measure_kind = 'per_capita' AND m.is_standardized)
-         OR (m.measure_kind = 'user_pct'   AND NOT m.is_standardized)
-      )
+    -- County grain publishes 'All' only; the benchmark is taken at the same level.
+    WHERE m.age_level = 'All'
 
 ),
 
@@ -94,16 +105,18 @@ national AS (
         measure_year,
         service_code,
         measure_kind,
+        is_standardized,
+        source_column,
         measure_value       AS national_value,
         is_suppressed       AS national_is_suppressed
-    FROM long_term_care
+    FROM service_measures
     WHERE geo_level = 'National'
 
 ),
 
 michigan AS (
 
-    SELECT * FROM long_term_care WHERE is_michigan_county
+    SELECT * FROM service_measures WHERE is_michigan_county
 
 ),
 
@@ -114,11 +127,13 @@ service_coverage AS (
     SELECT
         service_code,
         measure_kind,
+        is_standardized,
+        source_column,
         COUNT(*)                                            AS county_year_cells,
         COUNT(*) FILTER (WHERE is_suppressed)                AS suppressed_cells,
         100.0 * COUNT(*) FILTER (WHERE is_suppressed) / COUNT(*) AS suppressed_pct
     FROM michigan
-    GROUP BY 1, 2
+    GROUP BY 1, 2, 3, 4
 
 ),
 
@@ -152,8 +167,10 @@ SELECT
 
     m.service_code,
     m.service_name,
+    m.is_long_term_care,
     m.measure_kind,
     m.is_standardized,
+    m.source_column,
 
     m.measure_value                                         AS county_value,
     n.national_value,
@@ -181,12 +198,17 @@ SELECT
 
 FROM michigan m
 LEFT JOIN national n
-    ON  n.measure_year = m.measure_year
-    AND n.service_code = m.service_code
-    AND n.measure_kind = m.measure_kind
+    ON  n.measure_year   = m.measure_year
+    AND n.service_code   = m.service_code
+    AND n.measure_kind   = m.measure_kind
+    -- CMS's own column name is the only unique key of a measure: six services publish both
+    -- covered *stays* and covered *days* per 1,000, which share a service, a measure kind and
+    -- a standardization flag. Joining without it benchmarks each against the other.
+    AND n.source_column  = m.source_column
 LEFT JOIN service_coverage sc
-    ON  sc.service_code = m.service_code
-    AND sc.measure_kind = m.measure_kind
+    ON  sc.service_code   = m.service_code
+    AND sc.measure_kind   = m.measure_kind
+    AND sc.source_column  = m.source_column
 LEFT JOIN enrolment e
     ON  e.measure_year = m.measure_year
     AND e.county_fips  = m.county_fips

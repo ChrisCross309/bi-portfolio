@@ -40,25 +40,21 @@ WITH allocated AS (
 
 population AS (
 
-    -- One row per county per vintage window, so a complaint year picks the vintage that
-    -- actually covers it rather than the most recent one published.
-    SELECT
-        county_fips,
-        vintage_window_start,
-        vintage_window_end,
-        total_population
+    -- One row per county per vintage. ACS 5-year windows **overlap** -- 2018 falls inside
+    -- five of them -- so "the vintage whose window contains this year" matches many rows and
+    -- fans the join out, repeating every measure once per matching vintage. The rule is one
+    -- vintage per year: the estimate ending in that year, clamped to the published range.
+    SELECT county_fips, vintage_year, vintage_window_start, vintage_window_end, total_population
     FROM {{ ref('stg_ref__acs5_detailed') }}
     WHERE geo_level = 'county'
       AND total_population IS NOT NULL
 
 ),
 
-latest_population AS (
+vintage_bounds AS (
 
-    -- The newest vintage, for complaint years that fall past every window.
-    SELECT county_fips, vintage_window_start, vintage_window_end, total_population
+    SELECT MIN(vintage_year) AS earliest_vintage, MAX(vintage_year) AS latest_vintage
     FROM population
-    QUALIFY ROW_NUMBER() OVER (PARTITION BY county_fips ORDER BY vintage_window_end DESC) = 1
 
 )
 
@@ -79,17 +75,13 @@ SELECT
     a.allocated_pending,
     a.allocated_older_american,
 
-    COALESCE(p.total_population, lp.total_population)       AS county_population,
-    COALESCE(
-        p.vintage_window_start || '-' || p.vintage_window_end,
-        lp.vintage_window_start || '-' || lp.vintage_window_end
-    )                                                       AS population_vintage_window,
-    p.total_population IS NULL AND lp.total_population IS NOT NULL
-                                                            AS population_is_extrapolated,
+    p.total_population                                      AS county_population,
+    p.vintage_window_start || '-' || p.vintage_window_end   AS population_vintage_window,
+    CAST(SUBSTR(a.received_year_month, 1, 4) AS SMALLINT)
+        NOT BETWEEN b.earliest_vintage AND b.latest_vintage AS population_is_extrapolated,
     CASE
-        WHEN COALESCE(p.total_population, lp.total_population) > 0
-        THEN 100000.0 * a.allocated_complaints
-             / COALESCE(p.total_population, lp.total_population)
+        WHEN p.total_population > 0
+        THEN 100000.0 * a.allocated_complaints / p.total_population
     END                                                     AS complaints_per_100k,
 
     a.allocated_complaints < 10                             AS is_small_cell
@@ -97,9 +89,10 @@ SELECT
 FROM allocated a
 LEFT JOIN {{ ref('dim_geography_county') }} g
     ON g.county_fips = a.county_fips
+CROSS JOIN vintage_bounds b
 LEFT JOIN population p
-    ON p.county_fips = a.county_fips
-   AND CAST(SUBSTR(a.received_year_month, 1, 4) AS SMALLINT)
-       BETWEEN p.vintage_window_start AND p.vintage_window_end
-LEFT JOIN latest_population lp
-    ON lp.county_fips = a.county_fips
+    ON  p.county_fips = a.county_fips
+    AND p.vintage_year = LEAST(
+            GREATEST(CAST(SUBSTR(a.received_year_month, 1, 4) AS SMALLINT), b.earliest_vintage),
+            b.latest_vintage
+        )

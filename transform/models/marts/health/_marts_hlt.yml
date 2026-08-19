@@ -500,18 +500,21 @@ models:
         description: >
           CMS service category code. Joins `seed_cms_service_category`.
         data_tests:
-          - accepted_values:
+          - relationships:
               arguments:
-                values:
-                  - 'SNF'
-                  - 'HH'
-                  - 'HOSPC'
-                  - 'IRF'
-                  - 'LTCH'
+                to: ref('seed_cms_service_category')
+                field: service_code
       - name: service_name
         data_type: varchar
         description: >
           Readable service category name.
+      - name: is_long_term_care
+        data_type: boolean
+        description: >
+          Skilled nursing, home health, hospice, inpatient rehabilitation and long-term care
+          hospital. **This is HLT-E2's own slice** -- now a `WHERE` clause rather than a filter
+          baked into the model, since all twenty service categories are carried. A care-burden
+          grouping and **not a dementia measure**.
       - name: measure_kind
         data_type: varchar
         description: >
@@ -524,6 +527,13 @@ models:
           easiest invisible error in this track** -- only standardized payments make a
           Michigan-versus-national comparison mean anything, and the unstandardized twin measures
           something real and different.
+      - name: source_column
+        data_type: varchar
+        description: >
+          CMS's own column name, and the only unique key of a measure: six services publish both
+          covered *stays* and covered *days* per 1,000, which share a service code, a measure kind
+          and a standardization flag. Also what lets a figure be traced back to the published
+          file.
       - name: county_value
         data_type: double
         description: >

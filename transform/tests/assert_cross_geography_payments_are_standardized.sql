@@ -11,11 +11,12 @@
   carries `is_standardized` as a flag rather than leaving it buried in a column name -- and
   why this test can exist at all.
 
-  Two checks, one per mart that crosses geography.
-
-  HLT-E2's per-beneficiary payments must be standardized. Its `user_pct` measures are
-  utilization shares with no standardized twin, so they are correctly unstandardized and are
-  not caught here.
+  The service mart now carries **both** flavours, because the drill bank asks to compare
+  them, so "every payment is standardized" is no longer the invariant -- an unstandardized
+  per-capita row is expected there. What must stay true is that the two are never mixed: a
+  county value is benchmarked against a national value from the *same* CMS column, which is
+  what `source_column` is in the join key for. Six services publish both covered stays and
+  covered days per 1,000 and share every other key, so this is not theoretical.
 
   HLT-E3's cost per beneficiary must be the standardized series, value for value. Filtering
   for it in the model is an intention; joining back to the intermediate and comparing the
@@ -24,13 +25,29 @@
 
 WITH unstandardized_payments AS (
 
+    -- A payment measure must be identifiable as one flavour or the other. NULL here would
+    -- make the standardized/unstandardized split unusable and every cross-geography
+    -- comparison built on it unverifiable.
     SELECT
-        'HLT-E2 per-capita payment is not standardized'  AS claim,
-        county_fips                                      AS subject,
+        'payment measure with no standardization flag'    AS claim,
+        county_fips                                       AS subject,
         service_code || ' ' || CAST(measure_year AS VARCHAR) AS detail
     FROM {{ ref('fct_hlt_medicare_service_county') }}
-    WHERE measure_kind = 'per_capita'
-      AND NOT is_standardized
+    WHERE measure_kind IN ('per_capita', 'per_user', 'amount', 'share_of_pymt')
+      AND is_standardized IS NULL
+
+    UNION ALL
+
+    -- HLT-E2's own slice must still resolve to the standardized long-term-care payments it
+    -- has always meant, now that those are a filter rather than the whole model.
+    SELECT
+        'HLT-E2 standardized long-term-care slice is empty',
+        'all counties',
+        'is_long_term_care AND is_standardized AND per_capita'
+    WHERE NOT EXISTS (
+        SELECT 1 FROM {{ ref('fct_hlt_medicare_service_county') }}
+        WHERE is_long_term_care AND is_standardized AND measure_kind = 'per_capita'
+    )
 
 ),
 
