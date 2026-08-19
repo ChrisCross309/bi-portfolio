@@ -109,6 +109,7 @@ platform/reconcile/l1_integrity.py                      the integrity harness
 platform/reconcile/l2_reconciliation.py                 schema drift + staging conservation
 platform/reconcile/baselines/                           committed schema snapshots
 transform/                                              the dbt semantic layer
+transform/models/meta/meta_dictionary.sql               every column, typed and described
 projects/0N-<track>/README.md                           questions verbatim + scope/caveats
 tests/fixtures/                                         committed per-source samples
 ```

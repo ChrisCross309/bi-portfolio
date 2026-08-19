@@ -175,11 +175,18 @@ SELECT
 
     m.measure_value                                         AS county_value,
     n.national_value,
+    -- Only where a ratio to the nation means anything. `amount` and `user_count` are
+    -- absolute totals, so a county over the nation is roughly one three-thousandth -- a
+    -- number that looks like a benchmark, sits in a column named for one, and is not one.
+    -- The rate-like kinds land near 1 and compare properly.
     CASE
+        WHEN m.measure_kind IN ('amount', 'user_count')     THEN NULL
         WHEN n.national_value > 0 AND NOT m.is_suppressed
         THEN m.measure_value / n.national_value
     END                                                     AS ratio_to_national,
+    -- Same rule: a county's dollars minus the nation's is not a gap, it is the nation.
     CASE
+        WHEN m.measure_kind IN ('amount', 'user_count')     THEN NULL
         WHEN NOT m.is_suppressed THEN m.measure_value - n.national_value
     END                                                     AS gap_to_national,
 

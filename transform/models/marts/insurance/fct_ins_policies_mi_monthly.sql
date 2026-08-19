@@ -19,6 +19,19 @@
   expansion because a negative-length term cannot be in force on any date, and counted
   separately so the exclusion is visible rather than silent.
 
+  ## The spine stops where the file does
+
+  Policy terms run years ahead -- the newest termination date is 2029-08-29 against a file
+  `as_of_date` of 2026-08-03 -- so a spine built from `MAX(policy_termination_date)` produced
+  three years of months past the data. Those months are not an in-force count. They hold only
+  the policies whose terms already reach that far, and none of the policies written after the
+  snapshot, so `MAX(year_month)` returned **13 policies in force** where the real latest month
+  holds **18,727**. A reader asking the obvious question got an answer wrong by a factor of
+  1,440.
+
+  The spine now ends at the month containing `as_of_date`. What is lost is not information:
+  a 2029 month from a 2026 file was never an in-force figure.
+
   The national benchmark for INS-E4 does not come from here. Raw is Michigan-only by
   decision, so the national side is FEMA's own published state statistics, recorded in the
   policies manifest and surfaced in rpt_ins_reconciliation.
@@ -30,7 +43,8 @@ WITH month_ends AS (
     FROM {{ ref('dim_date') }}
     WHERE is_month_end
       AND date_day >= (SELECT MIN(policy_effective_date) FROM {{ ref('stg_ins__nfip_policies') }})
-      AND date_day <= (SELECT MAX(policy_termination_date) FROM {{ ref('stg_ins__nfip_policies') }})
+      -- The file's own snapshot date, not the furthest termination date. See the note above.
+      AND date_day <= (SELECT MAX(as_of_date) FROM {{ ref('stg_ins__nfip_policies') }})
 
 ),
 

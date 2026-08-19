@@ -565,12 +565,15 @@ models:
         data_type: double
         description: >
           County value over the national value. Below 1 means the county uses less than the
-          nation. Recompute from `county_value` and `national_value` before aggregating.
+          nation. **NULL for `amount` and `user_count`**, which are absolute totals: a county over
+          the nation there is roughly one three-thousandth, a number that looks like a benchmark
+          and is not one. Recompute from `county_value` and `national_value` before aggregating.
       - name: gap_to_national
         data_type: double
         description: >
-          Local value minus national, in the measure's own units. Positive means above national,
-          which is not the same as better.
+          County value minus the national value, in the measure's own units. **NULL for `amount`
+          and `user_count`** -- subtracting a nation's dollars from a county's returns the nation,
+          not a gap.
       - name: is_suppressed
         data_type: boolean
         description: >

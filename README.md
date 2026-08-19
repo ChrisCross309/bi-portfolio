@@ -98,7 +98,7 @@ compared against. National sources are never filtered to Michigan in raw.
 | Session | Scope | Status |
 |---|---|---|
 | 1 | Every raw pipeline, all three tracks: discover → download → land → parquet → DuckDB `raw` → L1 integrity → schema baselines | **complete** — 12 sources, 24.8M rows |
-| **2** | Semantic layer: dbt staging/intermediate/marts per project, seeds, contracts, tests, conformed dimensions, L2 reconciliation | **complete** — 38 models, 17 singular tests, 9 seeds |
+| **2** | Semantic layer: dbt staging/intermediate/marts per project, seeds, contracts, tests, conformed dimensions, L2 reconciliation | **complete** — 40 models, 21 singular tests, 9 seeds |
 | 3 | Power BI: one `.pbip` semantic model and report per project, executive summary drilling to detail | planned |
 
 Session 1 landed no dbt models, no marts, and no Power BI artifacts. Its finish line was that every
@@ -109,7 +109,23 @@ marts for all three tracks. It reads the live warehouse locally and the committe
 which is why the whole thing still builds on a fresh clone with no network.
 
 **All fifteen executive questions now resolve to a named mart**, listed in each project README's
-*Answered by* table. Contracts are enforced on marts and conformed dimensions, so a column that
+*Answered by* table. Every mart and conformed column carries a description **into the database** --
+`+persist_docs` writes them as DuckDB COMMENTs, so any SQL client or BI tool shows them without a
+manual. `meta.meta_dictionary` is the queryable version of the same thing:
+
+```sql
+-- which table holds the flood zone, and what does the column mean?
+SELECT relation_name, column_name, column_description
+FROM meta.meta_dictionary
+WHERE layer = 'mart' AND column_name ILIKE '%flood%';
+
+-- the columns that tell you not to aggregate them
+SELECT relation_name, column_name FROM meta.meta_dictionary
+WHERE column_description ILIKE '%cannot be summed%' OR column_description ILIKE '%never sum it%';
+```
+
+It is a view over DuckDB's own catalogue rather than dbt's manifest, so it describes what actually
+landed and cannot go stale against the warehouse it documents. Contracts are enforced on marts and conformed dimensions, so a column that
 silently changes type fails the build rather than a Power BI refresh in session 3. Session 2 landed
 no Power BI artifacts, and it deliberately left three findings as findings rather than smoothing
 them: HLT-E1 returns "no significant difference" in every comparable cell, HLT-E4's

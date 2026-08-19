@@ -36,7 +36,12 @@ SELECT
     COUNT(*) FILTER (WHERE NOT c.is_response_pending)       AS closed_complaints,
     COUNT(*) FILTER (WHERE c.is_response_pending)           AS pending_complaints,
 
-    COUNT(*) FILTER (WHERE c.is_timely_response)            AS timely_count,
+    -- Timely **among closed**. CFPB sets its timeliness flag on 592,496 complaints that
+    -- are still In progress, so counting them against a closed denominator produced
+    -- rates above 100% -- 107% on one company. A response cannot be timely before
+    -- it exists.
+    COUNT(*) FILTER (WHERE c.is_timely_response AND NOT c.is_response_pending)
+                                                            AS timely_count,
     COUNT(*) FILTER (WHERE c.response_grants_relief)        AS relief_count,
     COUNT(*) FILTER (WHERE c.response_family = 'monetary_relief')
                                                             AS monetary_relief_count,
@@ -53,7 +58,7 @@ SELECT
     -- Rates over closed complaints only, and NULL rather than zero where nothing has closed.
     CASE
         WHEN COUNT(*) FILTER (WHERE NOT c.is_response_pending) > 0
-        THEN 100.0 * COUNT(*) FILTER (WHERE c.is_timely_response)
+        THEN 100.0 * COUNT(*) FILTER (WHERE c.is_timely_response AND NOT c.is_response_pending)
              / COUNT(*) FILTER (WHERE NOT c.is_response_pending)
     END                                                     AS timely_rate_pct,
     CASE
